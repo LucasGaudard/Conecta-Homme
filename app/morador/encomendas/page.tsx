@@ -5,6 +5,8 @@ export const dynamic = "force-dynamic";
 
 export default async function ResidentPackagesPage() {
   const packages = await getResidentPackages();
+  const waiting = packages.filter((item) => item.status === "WAITING_PICKUP");
+  const delivered = packages.filter((item) => item.status === "DELIVERED");
 
   return (
     <div className="space-y-6">
@@ -18,7 +20,12 @@ export default async function ResidentPackagesPage() {
         </p>
       </div>
 
-      <PackageList packages={packages} />
+      <section className="space-y-4">
+        <PackageList title="Aguardando retirada" packages={waiting} />
+      </section>
+      <section className="space-y-4">
+        <PackageList title="Entregues" packages={delivered} />
+      </section>
     </div>
   );
 }

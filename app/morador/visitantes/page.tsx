@@ -1,5 +1,6 @@
 import { VisitorForm } from "@/components/resident/visitor-form";
 import { VisitorTable } from "@/components/resident/visitor-table";
+import { getVisitorQrCodesForResident } from "@/lib/qrcode/queries";
 import { getResidentVisitors } from "@/lib/resident/queries";
 
 type ResidentVisitorsPageProps = {
@@ -14,9 +15,10 @@ export const dynamic = "force-dynamic";
 export default async function ResidentVisitorsPage({
   searchParams,
 }: ResidentVisitorsPageProps) {
-  const [{ error, success }, authorizations] = await Promise.all([
+  const [{ error, success }, authorizations, qrCodes] = await Promise.all([
     searchParams,
     getResidentVisitors(),
+    getVisitorQrCodesForResident(),
   ]);
   const now = new Date();
   const active = authorizations.filter(
@@ -42,15 +44,15 @@ export default async function ResidentVisitorsPage({
 
       <section className="space-y-4">
         <h3 className="text-lg font-semibold text-navy-950">Visitantes ativos</h3>
-        <VisitorTable title="Visitantes ativos" authorizations={active} />
+        <VisitorTable title="Visitantes ativos" authorizations={active} qrCodes={qrCodes} />
       </section>
       <section className="space-y-4">
         <h3 className="text-lg font-semibold text-navy-950">Visitantes expirados</h3>
-        <VisitorTable title="Visitantes expirados" authorizations={expired} />
+        <VisitorTable title="Visitantes expirados" authorizations={expired} qrCodes={qrCodes} />
       </section>
       <section className="space-y-4">
         <h3 className="text-lg font-semibold text-navy-950">Visitantes cancelados</h3>
-        <VisitorTable title="Visitantes cancelados" authorizations={canceled} />
+        <VisitorTable title="Visitantes cancelados" authorizations={canceled} qrCodes={qrCodes} />
       </section>
     </div>
   );

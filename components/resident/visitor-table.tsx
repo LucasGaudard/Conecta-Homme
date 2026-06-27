@@ -1,8 +1,10 @@
-import type { Visitor, VisitAuthorization } from "@prisma/client";
-import { Ban } from "lucide-react";
+import type { QRCodeToken, Visitor, VisitAuthorization } from "@prisma/client";
+import { Ban, QrCode } from "lucide-react";
+import { QrTokenResult } from "@/components/qrcode/qr-token-result";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { cancelVisitorAuthorizationAction } from "@/lib/resident/actions";
+import { generateVisitorQrCodeAction } from "@/lib/qrcode/actions";
 import { formatDateTime, formatVisitorStatus } from "@/components/resident/resident-format";
 
 type VisitorAuthorizationRow = VisitAuthorization & {
@@ -11,10 +13,11 @@ type VisitorAuthorizationRow = VisitAuthorization & {
 
 type VisitorTableProps = {
   authorizations: VisitorAuthorizationRow[];
+  qrCodes?: QRCodeToken[];
   title: string;
 };
 
-export function VisitorTable({ authorizations, title }: VisitorTableProps) {
+export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTableProps) {
   if (authorizations.length === 0) {
     return <EmptyState message={`Nenhum visitante em ${title.toLowerCase()}.`} />;
   }
@@ -29,14 +32,21 @@ export function VisitorTable({ authorizations, title }: VisitorTableProps) {
             <th className="px-4 py-3 font-medium">Inicio</th>
             <th className="px-4 py-3 font-medium">Fim</th>
             <th className="px-4 py-3 font-medium">Status</th>
+            <th className="px-4 py-3 font-medium">QR Code</th>
             <th className="px-4 py-3 font-medium">Acoes</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
           {authorizations.map((authorization) => {
             const cancel = cancelVisitorAuthorizationAction.bind(null, authorization.id);
+            const generateQr = generateVisitorQrCodeAction.bind(null, authorization.id);
             const isCancelable =
               authorization.status === "AUTHORIZED" && authorization.endsAt >= new Date();
+            const qrCode = qrCodes.find(
+              (item) =>
+                item.visitAuthorizationId === authorization.id &&
+                (!item.expiresAt || item.expiresAt >= new Date()),
+            );
 
             return (
               <tr key={authorization.id} className="text-slate-600">
@@ -50,6 +60,21 @@ export function VisitorTable({ authorizations, title }: VisitorTableProps) {
                 <td className="px-4 py-3">{formatDateTime(authorization.startsAt)}</td>
                 <td className="px-4 py-3">{formatDateTime(authorization.endsAt)}</td>
                 <td className="px-4 py-3">{formatVisitorStatus(authorization.status, authorization.endsAt)}</td>
+                <td className="px-4 py-3">
+                  {isCancelable ? (
+                    <div className="space-y-3">
+                      <QrTokenResult qrCode={qrCode} />
+                      <form action={generateQr}>
+                        <Button type="submit" size="sm" variant="outline">
+                          <QrCode className="h-4 w-4" />
+                          {qrCode ? "Reutilizar QR" : "Gerar QR"}
+                        </Button>
+                      </form>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-slate-400">Indisponivel</span>
+                  )}
+                </td>
                 <td className="px-4 py-3">
                   {isCancelable ? (
                     <form action={cancel}>
