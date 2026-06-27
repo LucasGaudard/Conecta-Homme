@@ -21,7 +21,7 @@ export const adminNavigation: NavigationItem[] = [
   { title: "Unidades", href: "/admin/unidades", icon: Building2 },
   { title: "Encomendas", href: "/admin/encomendas", icon: Package },
   { title: "Moradores", href: "/admin/unidades", icon: Users },
-  { title: "Relatorios", href: "/admin", icon: BarChart3 },
+  { title: "Relatorios", href: "/admin/relatorios", icon: BarChart3 },
   { title: "Condominio", href: "/admin/unidades", icon: Building2 },
 ];
 
