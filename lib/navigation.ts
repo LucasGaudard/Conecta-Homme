@@ -33,7 +33,8 @@ export const porterNavigation: NavigationItem[] = [
 
 export const residentNavigation: NavigationItem[] = [
   { title: "Dashboard", href: "/morador", icon: Home },
-  { title: "Acessos", href: "/morador", icon: ShieldCheck },
-  { title: "Encomendas", href: "/morador", icon: Package },
-  { title: "Servicos", href: "/morador", icon: Boxes },
+  { title: "Visitantes", href: "/morador/visitantes", icon: Users },
+  { title: "Encomendas", href: "/morador/encomendas", icon: Package },
+  { title: "Acessos", href: "/morador/acessos", icon: ShieldCheck },
+  { title: "Configuracoes", href: "/morador/configuracoes", icon: Boxes },
 ];
