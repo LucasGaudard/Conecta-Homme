@@ -1,31 +1,35 @@
-import { createHash } from "node:crypto";
 import { PrismaClient, UserRole } from "@prisma/client";
+import { hashPassword } from "../lib/auth/password";
 
 const prisma = new PrismaClient();
 
-function passwordHash(password: string) {
-  return createHash("sha256").update(password).digest("hex");
-}
-
 async function main() {
+  const adminPasswordHash = await hashPassword("admin123");
+  const porterPasswordHash = await hashPassword("portaria123");
+  const residentPasswordHash = await hashPassword("morador123");
+
   const admin = await prisma.user.upsert({
     where: { email: "admin@conectahomme.com" },
-    update: {},
+    update: {
+      passwordHash: adminPasswordHash,
+    },
     create: {
       name: "Administrador Conecta Homme",
       email: "admin@conectahomme.com",
-      passwordHash: passwordHash("admin123"),
+      passwordHash: adminPasswordHash,
       role: UserRole.ADMIN,
     },
   });
 
   const porter = await prisma.user.upsert({
     where: { email: "portaria@conectahomme.com" },
-    update: {},
+    update: {
+      passwordHash: porterPasswordHash,
+    },
     create: {
       name: "Portaria Conecta Homme",
       email: "portaria@conectahomme.com",
-      passwordHash: passwordHash("portaria123"),
+      passwordHash: porterPasswordHash,
       role: UserRole.PORTER,
     },
   });
@@ -50,12 +54,14 @@ async function main() {
     where: { email: "morador@conectahomme.com" },
     update: {
       unitId: unit.id,
+      passwordHash: residentPasswordHash,
+      username: "a201",
     },
     create: {
       name: "Morador A201",
       email: "morador@conectahomme.com",
       username: "a201",
-      passwordHash: passwordHash("morador123"),
+      passwordHash: residentPasswordHash,
       role: UserRole.RESIDENT,
       unitId: unit.id,
     },

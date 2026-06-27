@@ -1,10 +1,18 @@
 import Link from "next/link";
-import { Building2, Lock, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { redirect } from "next/navigation";
+import { Building2 } from "lucide-react";
+import { LoginForm } from "@/components/auth/login-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { roleHomePath } from "@/lib/auth/constants";
+import { getCurrentSession } from "@/lib/auth/current-user";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await getCurrentSession();
+
+  if (session) {
+    redirect(roleHomePath[session.role]);
+  }
+
   return (
     <main className="grid min-h-screen bg-slate-50 lg:grid-cols-[0.95fr_1.05fr]">
       <section className="hidden bg-navy-950 px-10 py-12 text-white lg:flex lg:flex-col lg:justify-between">
@@ -24,7 +32,7 @@ export default function LoginPage() {
           </h1>
           <p className="leading-7 text-blue-100">
             Interface preparada para os perfis de administracao, portaria e
-            moradores. Autenticacao real sera adicionada em etapa futura.
+            moradores com acesso seguro por perfil.
           </p>
         </div>
       </section>
@@ -34,35 +42,11 @@ export default function LoginPage() {
           <CardHeader>
             <CardTitle className="text-2xl text-navy-950">Entrar</CardTitle>
             <p className="text-sm text-slate-500">
-              Acesso visual para demonstracao da primeira etapa.
+              Use seu e-mail ou usuario para acessar.
             </p>
           </CardHeader>
           <CardContent>
-            <form className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-navy-950" htmlFor="email">
-                  E-mail
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <Input id="email" type="email" placeholder="usuario@condominio.com" className="pl-10" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-navy-950" htmlFor="password">
-                  Senha
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <Input id="password" type="password" placeholder="Digite sua senha" className="pl-10" />
-                </div>
-              </div>
-
-              <Button className="w-full" size="lg" type="button">
-                Acessar
-              </Button>
-            </form>
+            <LoginForm />
           </CardContent>
         </Card>
       </section>
