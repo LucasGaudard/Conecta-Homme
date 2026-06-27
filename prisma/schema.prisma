@@ -1,0 +1,244 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  PORTER
+  RESIDENT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum UnitStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PresenceStatus {
+  HOME
+  AWAY
+  DO_NOT_DISTURB
+}
+
+enum VisitorStatus {
+  AUTHORIZED
+  EXPIRED
+  USED
+  CANCELED
+}
+
+enum AccessType {
+  ENTRY
+  EXIT
+}
+
+enum AccessMethod {
+  MANUAL
+  QR_CODE
+}
+
+enum PackageStatus {
+  WAITING_PICKUP
+  DELIVERED
+}
+
+enum QRCodeType {
+  RESIDENT
+  VISITOR
+}
+
+enum QRCodeStatus {
+  ACTIVE
+  EXPIRED
+  CANCELED
+}
+
+enum NotificationType {
+  PACKAGE
+  VISITOR
+  ACCESS
+  SYSTEM
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  username     String?    @unique
+  passwordHash String
+  role         UserRole
+  status       UserStatus @default(ACTIVE)
+  phone        String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  unitId       String?
+
+  unit              Unit?                @relation(fields: [unitId], references: [id])
+  authorizedVisits  VisitAuthorization[] @relation("UserAuthorizedVisits")
+  accessLogs        AccessLog[]          @relation("AccessLogUser")
+  porterAccessLogs  AccessLog[]          @relation("AccessLogPorter")
+  receivedPackages  Package[]            @relation("PackageReceivedBy")
+  deliveredPackages Package[]            @relation("PackageDeliveredBy")
+  notifications     Notification[]
+
+  @@index([unitId])
+}
+
+model Unit {
+  id              String         @id @default(cuid())
+  block           String
+  apartment       String
+  responsibleName String
+  cpf             String?
+  phone           String?
+  email           String?
+  status          UnitStatus     @default(ACTIVE)
+  presenceStatus  PresenceStatus @default(HOME)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  users               User[]
+  visitAuthorizations VisitAuthorization[]
+  accessLogs          AccessLog[]
+  packages            Package[]
+  notifications       Notification[]
+  qrCodeTokens        QRCodeToken[]
+
+  @@unique([block, apartment])
+}
+
+model Visitor {
+  id        String   @id @default(cuid())
+  name      String
+  document  String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  visitAuthorizations VisitAuthorization[]
+  accessLogs          AccessLog[]
+  qrCodeTokens        QRCodeToken[]
+}
+
+model VisitAuthorization {
+  id             String        @id @default(cuid())
+  visitorId      String
+  unitId         String
+  authorizedById String
+  startsAt       DateTime
+  endsAt         DateTime
+  status         VisitorStatus @default(AUTHORIZED)
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  visitor      Visitor       @relation(fields: [visitorId], references: [id])
+  unit         Unit          @relation(fields: [unitId], references: [id])
+  authorizedBy User          @relation("UserAuthorizedVisits", fields: [authorizedById], references: [id])
+  qrCodeTokens QRCodeToken[]
+
+  @@index([visitorId])
+  @@index([unitId])
+  @@index([authorizedById])
+}
+
+model AccessLog {
+  id           String       @id @default(cuid())
+  unitId       String?
+  visitorId    String?
+  userId       String?
+  porterId     String?
+  accessType   AccessType
+  accessMethod AccessMethod @default(MANUAL)
+  occurredAt   DateTime     @default(now())
+  notes        String?
+  createdAt    DateTime     @default(now())
+
+  unit    Unit?    @relation(fields: [unitId], references: [id])
+  visitor Visitor? @relation(fields: [visitorId], references: [id])
+  user    User?    @relation("AccessLogUser", fields: [userId], references: [id])
+  porter  User?    @relation("AccessLogPorter", fields: [porterId], references: [id])
+
+  @@index([unitId])
+  @@index([visitorId])
+  @@index([userId])
+  @@index([porterId])
+  @@index([occurredAt])
+}
+
+model Package {
+  id             String        @id @default(cuid())
+  unitId         String
+  carrier        String?
+  trackingCode   String?
+  description    String?
+  status         PackageStatus @default(WAITING_PICKUP)
+  receivedById   String?
+  deliveredById  String?
+  pickedUpByName String?
+  receivedAt     DateTime      @default(now())
+  deliveredAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  unit        Unit  @relation(fields: [unitId], references: [id])
+  receivedBy  User? @relation("PackageReceivedBy", fields: [receivedById], references: [id])
+  deliveredBy User? @relation("PackageDeliveredBy", fields: [deliveredById], references: [id])
+
+  @@index([unitId])
+  @@index([receivedById])
+  @@index([deliveredById])
+}
+
+model Notification {
+  id        String             @id @default(cuid())
+  userId    String?
+  unitId    String?
+  title     String
+  message   String
+  type      NotificationType
+  status    NotificationStatus @default(UNREAD)
+  createdAt DateTime           @default(now())
+  readAt    DateTime?
+
+  user User? @relation(fields: [userId], references: [id])
+  unit Unit? @relation(fields: [unitId], references: [id])
+
+  @@index([userId])
+  @@index([unitId])
+}
+
+model QRCodeToken {
+  id                   String       @id @default(cuid())
+  token                String       @unique
+  type                 QRCodeType
+  status               QRCodeStatus @default(ACTIVE)
+  unitId               String?
+  visitorId            String?
+  visitAuthorizationId String?
+  expiresAt            DateTime?
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  unit               Unit?               @relation(fields: [unitId], references: [id])
+  visitor            Visitor?            @relation(fields: [visitorId], references: [id])
+  visitAuthorization VisitAuthorization? @relation(fields: [visitAuthorizationId], references: [id])
+
+  @@index([unitId])
+  @@index([visitorId])
+  @@index([visitAuthorizationId])
+}
