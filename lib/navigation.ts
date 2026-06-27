@@ -18,9 +18,10 @@ export type NavigationItem = {
 
 export const adminNavigation: NavigationItem[] = [
   { title: "Dashboard", href: "/admin", icon: Home },
-  { title: "Moradores", href: "/admin", icon: Users },
+  { title: "Unidades", href: "/admin/unidades", icon: Building2 },
+  { title: "Moradores", href: "/admin/unidades", icon: Users },
   { title: "Relatorios", href: "/admin", icon: BarChart3 },
-  { title: "Condominio", href: "/admin", icon: Building2 },
+  { title: "Condominio", href: "/admin/unidades", icon: Building2 },
 ];
 
 export const porterNavigation: NavigationItem[] = [
