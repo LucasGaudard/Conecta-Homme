@@ -17,7 +17,7 @@ export async function getCurrentUser() {
     return null;
   }
 
-  return prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: session.userId },
     select: {
       id: true,
@@ -27,4 +27,10 @@ export async function getCurrentUser() {
       status: true,
     },
   });
+
+  if (!user || user.status !== "ACTIVE") {
+    return null;
+  }
+
+  return user;
 }

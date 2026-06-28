@@ -33,7 +33,8 @@ export default async function AdminReportsPage({
   searchParams,
 }: AdminReportsPageProps) {
   const rawFilters = await searchParams;
-  const filters = reportFiltersSchema.parse(rawFilters);
+  const parsedFilters = reportFiltersSchema.safeParse(rawFilters);
+  const filters = parsedFilters.success ? parsedFilters.data : {};
   const data = await getAdminReportsData(filters);
 
   return (

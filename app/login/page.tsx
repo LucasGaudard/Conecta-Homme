@@ -4,13 +4,13 @@ import { Building2 } from "lucide-react";
 import { LoginForm } from "@/components/auth/login-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { roleHomePath } from "@/lib/auth/constants";
-import { getCurrentSession } from "@/lib/auth/current-user";
+import { getCurrentUser } from "@/lib/auth/current-user";
 
 export default async function LoginPage() {
-  const session = await getCurrentSession();
+  const user = await getCurrentUser();
 
-  if (session) {
-    redirect(roleHomePath[session.role]);
+  if (user) {
+    redirect(roleHomePath[user.role]);
   }
 
   return (

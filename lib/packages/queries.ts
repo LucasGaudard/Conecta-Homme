@@ -75,7 +75,8 @@ export async function getAdminPackages(filters: {
   to?: string;
 }) {
   await requireRole(UserRole.ADMIN);
-  const parsed = adminPackageFiltersSchema.parse(filters);
+  const parsedResult = adminPackageFiltersSchema.safeParse(filters);
+  const parsed = parsedResult.success ? parsedResult.data : {};
   const query = parsed.q?.trim();
   const receivedAt =
     parsed.from || parsed.to

@@ -1,6 +1,6 @@
 "use server";
 
-import { NotificationStatus, NotificationType, PackageStatus, UserRole } from "@prisma/client";
+import { NotificationStatus, NotificationType, PackageStatus, UnitStatus, UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
@@ -50,6 +50,16 @@ export async function createPackageAction(formData: FormData) {
   }
 
   const data = parsed.data;
+  const unit = await prisma.unit.findUnique({
+    where: { id: data.unitId },
+    select: { status: true },
+  });
+
+  if (!unit || unit.status !== UnitStatus.ACTIVE) {
+    redirectToPorterPackages(data.query, {
+      error: "Unidade inexistente ou inativa.",
+    });
+  }
 
   await prisma.$transaction([
     prisma.package.create({
@@ -98,8 +108,11 @@ export async function deliverPackageAction(formData: FormData) {
     });
   }
 
-  await prisma.package.update({
-    where: { id: parsed.data.packageId },
+  const updated = await prisma.package.updateMany({
+    where: {
+      id: parsed.data.packageId,
+      status: PackageStatus.WAITING_PICKUP,
+    },
     data: {
       deliveredAt: new Date(),
       deliveredById: porter.id,
@@ -107,6 +120,12 @@ export async function deliverPackageAction(formData: FormData) {
       status: PackageStatus.DELIVERED,
     },
   });
+
+  if (updated.count === 0) {
+    redirectToPorterPackages(undefined, {
+      error: "Encomenda inexistente ou ja entregue.",
+    });
+  }
 
   revalidatePath("/admin");
   revalidatePath("/admin/encomendas");

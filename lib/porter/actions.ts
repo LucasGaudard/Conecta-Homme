@@ -1,6 +1,6 @@
 "use server";
 
-import { AccessMethod, UserRole } from "@prisma/client";
+import { AccessMethod, UnitStatus, UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
@@ -53,6 +53,16 @@ export async function registerManualAccessAction(formData: FormData) {
   }
 
   const data = parsed.data;
+  const unit = await prisma.unit.findUnique({
+    where: { id: data.unitId },
+    select: { status: true },
+  });
+
+  if (!unit || unit.status !== UnitStatus.ACTIVE) {
+    redirectToPorter(data.query, {
+      error: "Unidade inexistente ou inativa.",
+    });
+  }
 
   await prisma.accessLog.create({
     data: {

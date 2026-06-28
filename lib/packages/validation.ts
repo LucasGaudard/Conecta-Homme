@@ -1,6 +1,14 @@
 import { PackageStatus } from "@prisma/client";
 import { z } from "zod";
 
+const optionalDate = z
+  .string()
+  .trim()
+  .optional()
+  .refine((value) => !value || !Number.isNaN(new Date(`${value}T00:00:00`).getTime()), {
+    message: "Data invalida.",
+  });
+
 const optionalText = z
   .string()
   .trim()
@@ -21,8 +29,8 @@ export const deliverPackageSchema = z.object({
 });
 
 export const adminPackageFiltersSchema = z.object({
-  from: z.string().optional(),
+  from: optionalDate,
   q: z.string().optional(),
   status: z.nativeEnum(PackageStatus).or(z.literal("ALL")).optional(),
-  to: z.string().optional(),
+  to: optionalDate,
 });

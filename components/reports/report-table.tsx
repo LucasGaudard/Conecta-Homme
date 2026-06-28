@@ -3,7 +3,6 @@ import { ReportEmptyState } from "@/components/reports/report-empty-state";
 import {
   formatAccessMethod,
   formatAccessType,
-  formatPackageStatus,
   formatReportDate,
   formatVisitorStatus,
 } from "@/lib/reports/format";
