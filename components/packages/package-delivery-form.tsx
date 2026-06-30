@@ -1,6 +1,6 @@
 import { CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { deliverPackageAction } from "@/lib/packages/actions";
 
 type PackageDeliveryFormProps = {
@@ -9,13 +9,13 @@ type PackageDeliveryFormProps = {
 
 export function PackageDeliveryForm({ packageId }: PackageDeliveryFormProps) {
   return (
-    <form action={deliverPackageAction} className="flex min-w-72 gap-2">
+    <form action={deliverPackageAction} className="flex w-full flex-col gap-2 sm:min-w-72 sm:flex-row">
       <input type="hidden" name="packageId" value={packageId} />
       <Input name="pickedUpByName" placeholder="Quem retirou" required />
-      <Button type="submit" size="sm">
+      <SubmitButton size="sm" className="h-10" pendingLabel="Entregando...">
         <CheckCircle2 className="h-4 w-4" />
         Entregar
-      </Button>
+      </SubmitButton>
     </form>
   );
 }

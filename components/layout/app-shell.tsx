@@ -18,7 +18,9 @@ export async function AppShell({ children, navigation, profile, title }: AppShel
       <Sidebar navigation={navigation} profile={profile} user={user} />
       <div className="min-h-screen lg:pl-72">
         <Header title={title} profile={profile} user={user} />
-        <main className="px-4 py-7 sm:px-6 lg:px-8 lg:py-8">{children}</main>
+        <main className="min-w-0 animate-enter px-4 py-5 sm:px-6 sm:py-7 lg:px-8 lg:py-8">
+          {children}
+        </main>
       </div>
     </div>
   );

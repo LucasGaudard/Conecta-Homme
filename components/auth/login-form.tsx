@@ -7,6 +7,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ToastMessage } from "@/components/ui/toast-message";
 import { type LoginInput, loginSchema } from "@/lib/auth/validation";
 
 export function LoginForm() {
@@ -90,13 +92,22 @@ export function LoginForm() {
       </div>
 
       {serverError ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 shadow-sm">
-          {serverError}
-        </div>
+        <ToastMessage
+          type="error"
+          title="Login invalido"
+          description={serverError}
+        />
       ) : null}
 
       <Button className="w-full" size="lg" type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Entrando..." : "Acessar"}
+        {isSubmitting ? (
+          <>
+            <LoadingSpinner />
+            Entrando...
+          </>
+        ) : (
+          "Acessar"
+        )}
       </Button>
     </form>
   );

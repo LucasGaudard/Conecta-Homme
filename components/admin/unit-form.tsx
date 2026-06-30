@@ -1,6 +1,6 @@
 import type { PresenceStatus, Unit, UnitStatus } from "@prisma/client";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { createUnitAction, updateUnitAction } from "@/lib/units/actions";
 import { formatPresenceStatus, formatUnitStatus } from "@/lib/units/format";
 
@@ -32,7 +32,7 @@ export function UnitForm({ error, mode, unit }: UnitFormProps) {
 
       <section className="surface-card p-5">
         <h3 className="text-base font-semibold text-navy-950">Dados da unidade</h3>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {mode === "create" ? (
             <>
               <div className={fieldClass}>
@@ -103,7 +103,7 @@ export function UnitForm({ error, mode, unit }: UnitFormProps) {
       {mode === "create" ? (
         <section className="surface-card p-5">
           <h3 className="text-base font-semibold text-navy-950">Morador inicial</h3>
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className={fieldClass}>
               <label className={labelClass} htmlFor="residentName">Nome</label>
               <Input id="residentName" name="residentName" required placeholder="Nome do morador" />
@@ -125,7 +125,12 @@ export function UnitForm({ error, mode, unit }: UnitFormProps) {
       ) : null}
 
       <div className="flex justify-end gap-3">
-        <Button type="submit">{mode === "create" ? "Cadastrar unidade" : "Salvar alteracoes"}</Button>
+        <SubmitButton
+          className="w-full sm:w-auto"
+          pendingLabel={mode === "create" ? "Cadastrando..." : "Salvando..."}
+        >
+          {mode === "create" ? "Cadastrar unidade" : "Salvar alteracoes"}
+        </SubmitButton>
       </div>
     </form>
   );

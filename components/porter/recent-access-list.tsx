@@ -23,7 +23,38 @@ export function RecentAccessList({ accesses }: RecentAccessListProps) {
   }
 
   return (
-    <div className="table-shell">
+    <>
+    <div className="mobile-list">
+      {accesses.map((access) => (
+        <article key={access.id} className="mobile-card">
+          <p className="text-base font-semibold text-navy-950">
+            {access.unit
+              ? `${access.unit.block}-${access.unit.apartment}`
+              : "Nao vinculada"}
+          </p>
+          <dl className="mobile-field-grid">
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Tipo</dt>
+              <dd className="mobile-field-value">{formatAccessType(access.accessType)}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Metodo</dt>
+              <dd className="mobile-field-value">{formatAccessMethod(access.accessMethod)}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Horario</dt>
+              <dd className="mobile-field-value">{formatShortDateTime(access.occurredAt)}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Porteiro</dt>
+              <dd className="mobile-field-value">{access.porter?.name ?? "Nao informado"}</dd>
+            </div>
+          </dl>
+        </article>
+      ))}
+    </div>
+
+    <div className="table-shell hidden md:block">
       <table className="data-table min-w-[760px]">
         <thead>
           <tr>
@@ -51,5 +82,6 @@ export function RecentAccessList({ accesses }: RecentAccessListProps) {
         </tbody>
       </table>
     </div>
+    </>
   );
 }

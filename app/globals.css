@@ -33,12 +33,25 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
+  html,
+  body {
+    @apply overflow-x-hidden;
+  }
+
   ::selection {
     @apply bg-navy-100 text-navy-950;
   }
 }
 
 @layer components {
+  .animate-enter {
+    animation: enter 220ms ease-out both;
+  }
+
+  .animate-toast-in {
+    animation: toast-in 240ms ease-out both;
+  }
+
   .surface-card {
     @apply rounded-lg border border-slate-200/80 bg-white shadow-soft transition duration-200;
   }
@@ -56,7 +69,8 @@
   }
 
   .table-shell {
-    @apply overflow-x-auto rounded-lg border border-slate-200/80 bg-white shadow-soft;
+    @apply max-w-full overflow-x-auto rounded-lg border border-slate-200/80 bg-white shadow-soft;
+    -webkit-overflow-scrolling: touch;
   }
 
   .data-table {
@@ -89,5 +103,57 @@
 
   .info-tile {
     @apply rounded-md border border-slate-200/70 bg-slate-50/70 p-3;
+  }
+
+  .mobile-list {
+    @apply grid gap-3 md:hidden;
+  }
+
+  .mobile-card {
+    @apply rounded-lg border border-slate-200/80 bg-white p-4 shadow-soft;
+  }
+
+  .mobile-card-header {
+    @apply flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between;
+  }
+
+  .mobile-field-grid {
+    @apply mt-4 grid gap-3 text-sm;
+  }
+
+  .mobile-field {
+    @apply rounded-md border border-slate-200/70 bg-slate-50/70 p-3;
+  }
+
+  .mobile-field-label {
+    @apply text-xs font-medium uppercase text-slate-400;
+  }
+
+  .mobile-field-value {
+    @apply mt-1 break-words text-sm text-slate-700;
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }

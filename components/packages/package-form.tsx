@@ -1,7 +1,7 @@
 import type { Unit } from "@prisma/client";
 import { PackagePlus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { createPackageAction } from "@/lib/packages/actions";
 
 type PackageFormProps = {
@@ -19,8 +19,8 @@ export function PackageForm({ query, units }: PackageFormProps) {
           Busque a unidade e registre a encomenda recebida na portaria.
         </p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="space-y-2 md:col-span-2">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="space-y-2 sm:col-span-2">
           <span className="field-label">Unidade</span>
           <select
             name="unitId"
@@ -43,16 +43,20 @@ export function PackageForm({ query, units }: PackageFormProps) {
           <span className="field-label">Codigo de rastreio</span>
           <Input name="trackingCode" placeholder="Opcional" />
         </label>
-        <label className="space-y-2 md:col-span-2">
+        <label className="space-y-2 sm:col-span-2">
           <span className="field-label">Descricao</span>
           <Input name="description" placeholder="Opcional" />
         </label>
       </div>
       <div className="flex justify-end">
-        <Button type="submit" disabled={units.length === 0}>
+        <SubmitButton
+          disabled={units.length === 0}
+          className="w-full sm:w-auto"
+          pendingLabel="Cadastrando..."
+        >
           <PackagePlus className="h-4 w-4" />
           Cadastrar encomenda
-        </Button>
+        </SubmitButton>
       </div>
     </form>
   );

@@ -21,7 +21,36 @@ export function AccessHistory({ accesses }: AccessHistoryProps) {
   }
 
   return (
-    <div className="table-shell">
+    <>
+    <div className="mobile-list">
+      {accesses.map((access) => (
+        <article key={access.id} className="mobile-card">
+          <p className="text-base font-semibold text-navy-950">
+            {formatAccessType(access.accessType)}
+          </p>
+          <dl className="mobile-field-grid">
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Horario</dt>
+              <dd className="mobile-field-value">{formatDateTime(access.occurredAt)}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Metodo</dt>
+              <dd className="mobile-field-value">{formatAccessMethod(access.accessMethod)}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Porteiro</dt>
+              <dd className="mobile-field-value">{access.porter?.name ?? "Nao informado"}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Observacao</dt>
+              <dd className="mobile-field-value">{access.notes ?? "Sem observacao"}</dd>
+            </div>
+          </dl>
+        </article>
+      ))}
+    </div>
+
+    <div className="table-shell hidden md:block">
       <table className="data-table min-w-[720px]">
         <thead>
           <tr>
@@ -47,5 +76,6 @@ export function AccessHistory({ accesses }: AccessHistoryProps) {
         </tbody>
       </table>
     </div>
+    </>
   );
 }

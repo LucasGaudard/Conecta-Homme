@@ -1,8 +1,8 @@
 import type { QRCodeToken, Visitor, VisitAuthorization } from "@prisma/client";
 import { Ban, QrCode } from "lucide-react";
 import { QrTokenResult } from "@/components/qrcode/qr-token-result";
-import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/dashboard/empty-state";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { cancelVisitorAuthorizationAction } from "@/lib/resident/actions";
 import { generateVisitorQrCodeAction } from "@/lib/qrcode/actions";
 import { formatDateTime, formatVisitorStatus } from "@/components/resident/resident-format";
@@ -23,7 +23,77 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
   }
 
   return (
-    <div className="table-shell">
+    <>
+    <div className="mobile-list">
+      {authorizations.map((authorization) => {
+        const cancel = cancelVisitorAuthorizationAction.bind(null, authorization.id);
+        const generateQr = generateVisitorQrCodeAction.bind(null, authorization.id);
+        const isCancelable =
+          authorization.status === "AUTHORIZED" && authorization.endsAt >= new Date();
+        const qrCode = qrCodes.find(
+          (item) =>
+            item.visitAuthorizationId === authorization.id &&
+            (!item.expiresAt || item.expiresAt >= new Date()),
+        );
+
+        return (
+          <article key={authorization.id} className="mobile-card">
+            <div className="mobile-card-header">
+              <div className="min-w-0">
+                <p className="text-base font-semibold text-navy-950">
+                  {authorization.visitor.name}
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                  {authorization.visitor.document ?? "Documento nao informado"}
+                </p>
+              </div>
+              <div className="text-right">
+                {formatVisitorStatus(authorization.status, authorization.endsAt)}
+              </div>
+            </div>
+            <dl className="mobile-field-grid">
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Telefone</dt>
+                <dd className="mobile-field-value">{authorization.visitor.phone ?? "Nao informado"}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Inicio</dt>
+                <dd className="mobile-field-value">{formatDateTime(authorization.startsAt)}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Fim</dt>
+                <dd className="mobile-field-value">{formatDateTime(authorization.endsAt)}</dd>
+              </div>
+            </dl>
+            <div className="mt-4 space-y-3">
+              {isCancelable ? (
+                <>
+                  <QrTokenResult qrCode={qrCode} />
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <form action={generateQr}>
+                      <SubmitButton size="sm" variant="outline" className="h-10 w-full" pendingLabel="Gerando...">
+                        <QrCode className="h-4 w-4" />
+                        {qrCode ? "Reutilizar QR" : "Gerar QR"}
+                      </SubmitButton>
+                    </form>
+                    <form action={cancel}>
+                      <SubmitButton size="sm" variant="outline" className="h-10 w-full" pendingLabel="Cancelando...">
+                        <Ban className="h-4 w-4" />
+                        Cancelar
+                      </SubmitButton>
+                    </form>
+                  </div>
+                </>
+              ) : (
+                <span className="text-sm text-slate-400">QR Code indisponivel. Sem acao.</span>
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <div className="table-shell hidden md:block">
       <table className="data-table min-w-[760px]">
         <thead>
           <tr>
@@ -65,10 +135,10 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
                     <div className="space-y-3">
                       <QrTokenResult qrCode={qrCode} />
                       <form action={generateQr}>
-                        <Button type="submit" size="sm" variant="outline">
+                        <SubmitButton size="sm" variant="outline" pendingLabel="Gerando...">
                           <QrCode className="h-4 w-4" />
                           {qrCode ? "Reutilizar QR" : "Gerar QR"}
-                        </Button>
+                        </SubmitButton>
                       </form>
                     </div>
                   ) : (
@@ -78,10 +148,10 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
                 <td>
                   {isCancelable ? (
                     <form action={cancel}>
-                      <Button type="submit" size="sm" variant="outline">
+                      <SubmitButton size="sm" variant="outline" pendingLabel="Cancelando...">
                         <Ban className="h-4 w-4" />
                         Cancelar
-                      </Button>
+                      </SubmitButton>
                     </form>
                   ) : (
                     <span className="text-xs text-slate-400">Sem acao</span>
@@ -93,5 +163,6 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
         </tbody>
       </table>
     </div>
+    </>
   );
 }

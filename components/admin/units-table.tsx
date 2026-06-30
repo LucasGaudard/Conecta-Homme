@@ -53,7 +53,7 @@ export function UnitsTable({ units }: UnitsTableProps) {
   return (
     <div className="space-y-4">
       <div className="surface-card p-4">
-        <div className="grid gap-4 lg:grid-cols-[1fr_220px_260px]">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-[1fr_220px_260px]">
           <SearchInput
             value={query}
             onChange={setQuery}
@@ -86,7 +86,48 @@ export function UnitsTable({ units }: UnitsTableProps) {
       {filteredUnits.length === 0 ? (
         <EmptyState message="Nenhuma unidade encontrada com os filtros atuais." />
       ) : (
-        <div className="table-shell">
+        <>
+        <div className="mobile-list">
+          {filteredUnits.map((unit) => (
+            <article key={unit.id} className="mobile-card">
+              <div className="mobile-card-header">
+                <div className="min-w-0">
+                  <p className="text-base font-semibold text-navy-950">
+                    Unidade {unit.block}-{unit.apartment}
+                  </p>
+                  <p className="mt-1 break-words text-sm text-slate-500">
+                    {unit.responsibleName}
+                  </p>
+                </div>
+                <UnitRowActions unitId={unit.id} />
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <StatusBadge status={unit.status as UnitStatus} type="unit" />
+                <StatusBadge status={unit.presenceStatus as PresenceStatus} type="presence" />
+              </div>
+              <dl className="mobile-field-grid">
+                <div className="mobile-field">
+                  <dt className="mobile-field-label">CPF</dt>
+                  <dd className="mobile-field-value">{maskCpf(unit.cpf)}</dd>
+                </div>
+                <div className="mobile-field">
+                  <dt className="mobile-field-label">Telefone</dt>
+                  <dd className="mobile-field-value">{unit.phone ?? "Nao informado"}</dd>
+                </div>
+                <div className="mobile-field">
+                  <dt className="mobile-field-label">E-mail</dt>
+                  <dd className="mobile-field-value">{unit.email ?? "Nao informado"}</dd>
+                </div>
+                <div className="mobile-field">
+                  <dt className="mobile-field-label">Moradores</dt>
+                  <dd className="mobile-field-value">{unit._count.users}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
+
+        <div className="table-shell hidden md:block">
           <table className="data-table min-w-[980px]">
             <thead>
               <tr>
@@ -126,6 +167,7 @@ export function UnitsTable({ units }: UnitsTableProps) {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   );

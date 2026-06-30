@@ -1,6 +1,6 @@
 import { SearchCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type QrValidationFormProps = {
   defaultToken?: string;
@@ -19,10 +19,10 @@ export function QrValidationForm({ defaultToken = "" }: QrValidationFormProps) {
           defaultValue={defaultToken}
           placeholder="Cole ou digite o token"
         />
-        <Button type="submit">
+        <SubmitButton pendingLabel="Validando...">
           <SearchCheck className="h-4 w-4" />
           Validar
-        </Button>
+        </SubmitButton>
       </div>
     </form>
   );

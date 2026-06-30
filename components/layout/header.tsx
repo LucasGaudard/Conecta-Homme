@@ -1,6 +1,6 @@
 import { ChevronRight, LogOut } from "lucide-react";
 import { AvatarInitial } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type HeaderProps = {
   profile: "ADMIN" | "PORTER" | "RESIDENT";
@@ -20,14 +20,14 @@ const profileLabels = {
 export function Header({ profile, title, user }: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
-      <div className="flex min-h-16 items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="flex min-h-14 items-center justify-between gap-3 px-4 py-2.5 sm:min-h-16 sm:px-6 sm:py-3 lg:px-8">
         <div className="min-w-0">
-          <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-slate-500">
+          <div className="mb-0.5 hidden items-center gap-1.5 text-xs font-medium text-slate-500 sm:flex">
             <span>{profileLabels[profile]}</span>
             <ChevronRight className="h-3.5 w-3.5" />
             <span className="truncate text-slate-600">{title}</span>
           </div>
-          <h1 className="truncate text-xl font-semibold tracking-normal text-navy-950">
+          <h1 className="truncate text-base font-semibold tracking-normal text-navy-950 sm:text-xl">
             {title}
           </h1>
         </div>
@@ -48,10 +48,10 @@ export function Header({ profile, title, user }: HeaderProps) {
             </div>
           </div>
           <form action="/api/auth/logout" method="post">
-            <Button variant="outline" size="sm" type="submit">
+            <SubmitButton variant="outline" size="sm" pendingLabel="Saindo...">
               <LogOut className="h-4 w-4" />
               <span className="hidden sm:inline">Sair</span>
-            </Button>
+            </SubmitButton>
           </form>
         </div>
       </div>

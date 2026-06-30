@@ -1,7 +1,7 @@
 import type { Unit } from "@prisma/client";
 import { FeedbackAlert } from "@/components/admin/feedback-alert";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { updateResidentSettingsAction } from "@/lib/resident/actions";
 
 type SettingsFormProps = {
@@ -17,7 +17,7 @@ export function SettingsForm({ error, success, unit }: SettingsFormProps) {
   return (
     <form action={updateResidentSettingsAction} className="surface-card space-y-5 p-5">
       <FeedbackAlert error={error} success={success} />
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className={fieldClass}>
           <label className={labelClass} htmlFor="block">Bloco</label>
           <Input id="block" value={unit.block} disabled />
@@ -44,7 +44,9 @@ export function SettingsForm({ error, success, unit }: SettingsFormProps) {
         </div>
       </div>
       <div className="flex justify-end">
-        <Button type="submit">Salvar configuracoes</Button>
+        <SubmitButton className="w-full sm:w-auto" pendingLabel="Salvando...">
+          Salvar configuracoes
+        </SubmitButton>
       </div>
     </form>
   );

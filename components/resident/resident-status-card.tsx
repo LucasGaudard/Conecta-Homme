@@ -1,8 +1,8 @@
 import { Car, Home, Ban } from "lucide-react";
 import { FeedbackAlert } from "@/components/admin/feedback-alert";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { updateResidentPresenceAction } from "@/lib/resident/actions";
 import type { PresenceStatus } from "@prisma/client";
 
@@ -55,14 +55,14 @@ export function ResidentStatusCard({
           {options.map((option) => (
             <form key={option.value} action={updateResidentPresenceAction}>
               <input type="hidden" name="presenceStatus" value={option.value} />
-              <Button
-                type="submit"
+              <SubmitButton
                 variant={presenceStatus === option.value ? "default" : "outline"}
                 className="h-auto w-full justify-start px-4 py-3"
+                pendingLabel="Atualizando..."
               >
                 <option.icon className="h-4 w-4" />
                 <span className="text-left">{option.label}</span>
-              </Button>
+              </SubmitButton>
             </form>
           ))}
         </div>

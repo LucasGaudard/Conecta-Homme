@@ -96,14 +96,14 @@ export default async function UnitDetailPage({
             vinculados e atividades recentes.
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button asChild variant="outline">
+        <div className="grid gap-3 sm:flex">
+          <Button asChild variant="outline" className="w-full sm:w-auto">
             <Link href="/admin/unidades">
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Link>
           </Button>
-          <Button asChild>
+          <Button asChild className="w-full sm:w-auto">
             <Link href={`/admin/unidades/${unit.id}/editar`}>
               <Pencil className="h-4 w-4" />
               Editar

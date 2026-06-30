@@ -16,7 +16,7 @@ export function PackageList({ packages, title }: PackageListProps) {
   return (
     <div className="space-y-4">
       {title ? <h3 className="text-lg font-semibold text-navy-950">{title}</h3> : null}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {packages.map((item) => (
         <article key={item.id} className="surface-card surface-card-hover p-5">
           <div className="flex items-start justify-between gap-3">

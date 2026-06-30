@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type UnitSearchProps = {
   defaultValue?: string;
@@ -23,7 +23,7 @@ export function UnitSearch({ defaultValue = "" }: UnitSearchProps) {
             placeholder="Bloco, apartamento, responsavel, telefone ou e-mail"
           />
         </div>
-        <Button type="submit">Buscar</Button>
+        <SubmitButton pendingLabel="Buscando...">Buscar</SubmitButton>
       </div>
     </form>
   );

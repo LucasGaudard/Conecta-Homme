@@ -28,7 +28,34 @@ export function ReportTable({ rows, type }: ReportTableProps) {
 
   if (type === "access") {
     return (
-      <div className="table-shell">
+      <>
+      <div className="mobile-list">
+        {rows.map((row) => (
+          <article key={String(row.id)} className="mobile-card">
+            <p className="text-base font-semibold text-navy-950">{unitLabel(row.unit)}</p>
+            <dl className="mobile-field-grid">
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Tipo</dt>
+                <dd className="mobile-field-value">{formatAccessType(row.accessType as never)}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Metodo</dt>
+                <dd className="mobile-field-value">{formatAccessMethod(row.accessMethod as never)}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Horario</dt>
+                <dd className="mobile-field-value">{formatReportDate(row.occurredAt as Date)}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Porteiro</dt>
+                <dd className="mobile-field-value">{(row.porter as { name?: string } | null)?.name ?? "Nao informado"}</dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+      </div>
+
+      <div className="table-shell hidden md:block">
         <table className="data-table min-w-[760px]">
           <thead>
             <tr>
@@ -52,12 +79,51 @@ export function ReportTable({ rows, type }: ReportTableProps) {
           </tbody>
         </table>
       </div>
+      </>
     );
   }
 
   if (type === "package") {
     return (
-      <div className="table-shell">
+      <>
+      <div className="mobile-list">
+        {rows.map((row) => (
+          <article key={String(row.id)} className="mobile-card">
+            <div className="mobile-card-header">
+              <p className="text-base font-semibold text-navy-950">{unitLabel(row.unit)}</p>
+              <PackageStatusBadge status={row.status as never} />
+            </div>
+            <dl className="mobile-field-grid">
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Transportadora</dt>
+                <dd className="mobile-field-value">{String(row.carrier ?? "Nao informado")}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Chegada</dt>
+                <dd className="mobile-field-value">{formatReportDate(row.receivedAt as Date)}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Entrega</dt>
+                <dd className="mobile-field-value">{formatReportDate(row.deliveredAt as Date | null)}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Recebido por</dt>
+                <dd className="mobile-field-value">{(row.receivedBy as { name?: string } | null)?.name ?? "Nao informado"}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Entregue por</dt>
+                <dd className="mobile-field-value">{(row.deliveredBy as { name?: string } | null)?.name ?? "Nao informado"}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Retirado por</dt>
+                <dd className="mobile-field-value">{String(row.pickedUpByName ?? "Nao informado")}</dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+      </div>
+
+      <div className="table-shell hidden md:block">
         <table className="data-table min-w-[980px]">
           <thead>
             <tr>
@@ -87,11 +153,44 @@ export function ReportTable({ rows, type }: ReportTableProps) {
           </tbody>
         </table>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="table-shell">
+    <>
+    <div className="mobile-list">
+      {rows.map((row) => (
+        <article key={String(row.id)} className="mobile-card">
+          <div className="mobile-card-header">
+            <p className="text-base font-semibold text-navy-950">
+              {(row.visitor as { name?: string } | null)?.name ?? "Nao informado"}
+            </p>
+            <span className="text-sm text-slate-600">{formatVisitorStatus(row.status as never)}</span>
+          </div>
+          <dl className="mobile-field-grid">
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Unidade</dt>
+              <dd className="mobile-field-value">{unitLabel(row.unit)}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Inicio</dt>
+              <dd className="mobile-field-value">{formatReportDate(row.startsAt as Date)}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Fim</dt>
+              <dd className="mobile-field-value">{formatReportDate(row.endsAt as Date)}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Autorizado por</dt>
+              <dd className="mobile-field-value">{(row.authorizedBy as { name?: string } | null)?.name ?? "Nao informado"}</dd>
+            </div>
+          </dl>
+        </article>
+      ))}
+    </div>
+
+    <div className="table-shell hidden md:block">
       <table className="data-table min-w-[860px]">
         <thead>
           <tr>
@@ -114,8 +213,9 @@ export function ReportTable({ rows, type }: ReportTableProps) {
               <td>{(row.authorizedBy as { name?: string } | null)?.name ?? "Nao informado"}</td>
             </tr>
           ))}
-        </tbody>
-      </table>
-    </div>
+      </tbody>
+    </table>
+  </div>
+  </>
   );
 }

@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 import type { ReportFilters } from "@/lib/reports/validation";
 
 type ReportFiltersProps = {
@@ -10,7 +10,7 @@ type ReportFiltersProps = {
 export function ReportFilters({ filters }: ReportFiltersProps) {
   return (
     <form className="surface-card p-4">
-      <div className="grid gap-4 xl:grid-cols-[1fr_150px_150px_160px_160px_170px_170px_auto]">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[1fr_150px_150px_160px_160px_170px_170px_auto]">
         <label className="space-y-2">
           <span className="field-label">Unidade</span>
           <div className="relative">
@@ -65,8 +65,10 @@ export function ReportFilters({ filters }: ReportFiltersProps) {
             <option value="CANCELED">Cancelados</option>
           </select>
         </label>
-        <div className="flex items-end">
-          <Button type="submit" className="w-full">Filtrar</Button>
+        <div className="flex items-end md:col-span-2 lg:col-span-4 xl:col-span-1">
+          <SubmitButton className="w-full" pendingLabel="Filtrando...">
+            Filtrar
+          </SubmitButton>
         </div>
       </div>
     </form>

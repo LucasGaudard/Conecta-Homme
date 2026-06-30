@@ -2,7 +2,7 @@ import type { QRCodeToken } from "@prisma/client";
 import { QrCode } from "lucide-react";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { QrCodeDisplay } from "@/components/qrcode/qr-code-display";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { generateResidentQrCodeAction } from "@/lib/qrcode/actions";
 import { formatDateTime } from "@/components/resident/resident-format";
 import type { Unit } from "@prisma/client";
@@ -15,7 +15,7 @@ type QrCodeCardProps = {
 export function QrCodeCard({ qrCode, unit }: QrCodeCardProps) {
   return (
     <section className="grid gap-4 lg:grid-cols-[320px_1fr]">
-      <div className="surface-card p-6 text-center">
+      <div className="surface-card p-4 text-center sm:p-6">
         {qrCode ? (
           <QrCodeDisplay token={qrCode.token} />
         ) : (
@@ -25,13 +25,13 @@ export function QrCodeCard({ qrCode, unit }: QrCodeCardProps) {
           </div>
         )}
         <form action={generateResidentQrCodeAction} className="mt-4">
-          <Button type="submit" className="w-full">
+          <SubmitButton className="w-full" pendingLabel="Gerando...">
             {qrCode ? "Reutilizar QR Code" : "Gerar QR Code"}
-          </Button>
+          </SubmitButton>
         </form>
       </div>
 
-      <div className="surface-card p-6">
+      <div className="surface-card p-4 sm:p-6">
         <div className="flex flex-wrap items-center gap-3">
           <h3 className="text-lg font-semibold text-navy-950">
             Unidade {unit.block}-{unit.apartment}

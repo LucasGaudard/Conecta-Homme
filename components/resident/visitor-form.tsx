@@ -1,7 +1,7 @@
 import { UserPlus } from "lucide-react";
 import { FeedbackAlert } from "@/components/admin/feedback-alert";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { createVisitorAuthorizationAction } from "@/lib/resident/actions";
 
 type VisitorFormProps = {
@@ -22,7 +22,7 @@ export function VisitorForm({ error, success }: VisitorFormProps) {
         </p>
       </div>
       <FeedbackAlert error={error} success={success} />
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className={fieldClass}>
           <label className={labelClass} htmlFor="name">Nome</label>
           <Input id="name" name="name" required placeholder="Nome do visitante" />
@@ -47,16 +47,16 @@ export function VisitorForm({ error, success }: VisitorFormProps) {
           <label className={labelClass} htmlFor="endTime">Hora final</label>
           <Input id="endTime" name="endTime" type="time" required />
         </div>
-        <div className={`${fieldClass} md:col-span-2`}>
+        <div className={`${fieldClass} sm:col-span-2`}>
           <label className={labelClass} htmlFor="notes">Observacao</label>
           <Input id="notes" name="notes" placeholder="Opcional" />
         </div>
       </div>
       <div className="flex justify-end">
-        <Button type="submit">
+        <SubmitButton className="w-full sm:w-auto" pendingLabel="Autorizando...">
           <UserPlus className="h-4 w-4" />
           Autorizar visitante
-        </Button>
+        </SubmitButton>
       </div>
     </form>
   );

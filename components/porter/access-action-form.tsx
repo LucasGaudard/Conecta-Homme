@@ -1,6 +1,6 @@
 import { LogIn, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { registerManualAccessAction } from "@/lib/porter/actions";
 
 type AccessActionFormProps = {
@@ -30,14 +30,25 @@ export function AccessActionForm({ query, unitId }: AccessActionFormProps) {
         </label>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row">
-        <Button type="submit" name="accessType" value="ENTRY" className="flex-1">
+        <SubmitButton
+          name="accessType"
+          value="ENTRY"
+          className="flex-1"
+          pendingLabel="Registrando..."
+        >
           <LogIn className="h-4 w-4" />
           Registrar entrada
-        </Button>
-        <Button type="submit" name="accessType" value="EXIT" variant="outline" className="flex-1">
+        </SubmitButton>
+        <SubmitButton
+          name="accessType"
+          value="EXIT"
+          variant="outline"
+          className="flex-1"
+          pendingLabel="Registrando..."
+        >
           <LogOut className="h-4 w-4" />
           Registrar saida
-        </Button>
+        </SubmitButton>
       </div>
     </form>
   );

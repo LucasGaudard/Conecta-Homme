@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type PackageFiltersProps = {
   defaultFrom?: string;
@@ -19,7 +19,7 @@ export function PackageFilters({
 }: PackageFiltersProps) {
   return (
     <form className="surface-card p-4">
-      <div className={mode === "admin" ? "grid gap-4 lg:grid-cols-[1fr_180px_160px_160px_auto]" : "grid gap-4 lg:grid-cols-[1fr_auto]"}>
+      <div className={mode === "admin" ? "grid gap-4 md:grid-cols-2 lg:grid-cols-[1fr_180px_160px_160px_auto]" : "grid gap-4 sm:grid-cols-[1fr_auto]"}>
         <label className="space-y-2">
           <span className="field-label">
             {mode === "porter" ? "Buscar unidade" : "Unidade ou responsavel"}
@@ -58,8 +58,10 @@ export function PackageFilters({
             </label>
           </>
         ) : null}
-        <div className="flex items-end">
-          <Button type="submit" className="w-full">Filtrar</Button>
+        <div className="flex items-end md:col-span-2 lg:col-span-1">
+          <SubmitButton className="w-full" pendingLabel="Filtrando...">
+            Filtrar
+          </SubmitButton>
         </div>
       </div>
     </form>

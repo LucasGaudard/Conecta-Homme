@@ -21,7 +21,65 @@ export function PackageTable({ mode, packages }: PackageTableProps) {
   }
 
   return (
-    <div className="table-shell">
+    <>
+    <div className="mobile-list">
+      {packages.map((item) => (
+        <article key={item.id} className="mobile-card">
+          <div className="mobile-card-header">
+            <div className="min-w-0">
+              <p className="text-base font-semibold text-navy-950">
+                {item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Nao informada"}
+              </p>
+              <p className="mt-1 break-words text-sm text-slate-500">
+                {item.unit?.responsibleName ?? "Nao informado"}
+              </p>
+            </div>
+            <PackageStatusBadge status={item.status} />
+          </div>
+          <dl className="mobile-field-grid">
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Transportadora</dt>
+              <dd className="mobile-field-value">{item.carrier ?? "Nao informado"}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Codigo</dt>
+              <dd className="mobile-field-value">{item.trackingCode ?? "Nao informado"}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Chegada</dt>
+              <dd className="mobile-field-value">{formatPackageDate(item.receivedAt)}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Entrega</dt>
+              <dd className="mobile-field-value">{formatPackageDate(item.deliveredAt)}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Recebido por</dt>
+              <dd className="mobile-field-value">{item.receivedBy?.name ?? "Nao informado"}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Entregue por</dt>
+              <dd className="mobile-field-value">{item.deliveredBy?.name ?? "Nao informado"}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Retirado por</dt>
+              <dd className="mobile-field-value">{item.pickedUpByName ?? "Nao informado"}</dd>
+            </div>
+          </dl>
+          {mode === "porter" ? (
+            <div className="mt-4">
+              {item.status === "WAITING_PICKUP" ? (
+                <PackageDeliveryForm packageId={item.id} />
+              ) : (
+                <span className="text-sm text-slate-400">Entregue</span>
+              )}
+            </div>
+          ) : null}
+        </article>
+      ))}
+    </div>
+
+    <div className="table-shell hidden md:block">
       <table className="data-table min-w-[1120px]">
         <thead>
           <tr>
@@ -67,5 +125,6 @@ export function PackageTable({ mode, packages }: PackageTableProps) {
         </tbody>
       </table>
     </div>
+    </>
   );
 }
