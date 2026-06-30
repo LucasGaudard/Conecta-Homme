@@ -8,8 +8,8 @@ type UnitSearchProps = {
 
 export function UnitSearch({ defaultValue = "" }: UnitSearchProps) {
   return (
-    <form className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <label className="text-sm font-medium text-navy-950" htmlFor="q">
+    <form className="surface-card p-4">
+      <label className="field-label" htmlFor="q">
         Busca rapida de unidade
       </label>
       <div className="mt-3 flex flex-col gap-3 sm:flex-row">

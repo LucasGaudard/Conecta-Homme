@@ -11,11 +11,11 @@ type SettingsFormProps = {
 };
 
 const fieldClass = "space-y-2";
-const labelClass = "text-sm font-medium text-navy-950";
+const labelClass = "field-label";
 
 export function SettingsForm({ error, success, unit }: SettingsFormProps) {
   return (
-    <form action={updateResidentSettingsAction} className="space-y-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <form action={updateResidentSettingsAction} className="surface-card space-y-5 p-5">
       <FeedbackAlert error={error} success={success} />
       <div className="grid gap-4 md:grid-cols-2">
         <div className={fieldClass}>

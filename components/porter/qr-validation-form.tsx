@@ -8,8 +8,8 @@ type QrValidationFormProps = {
 
 export function QrValidationForm({ defaultToken = "" }: QrValidationFormProps) {
   return (
-    <form className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <label className="text-sm font-medium text-navy-950" htmlFor="token">
+    <form className="surface-card p-4">
+      <label className="field-label" htmlFor="token">
         Token do QR Code
       </label>
       <div className="mt-3 flex flex-col gap-3 sm:flex-row">

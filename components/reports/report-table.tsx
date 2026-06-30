@@ -28,9 +28,9 @@ export function ReportTable({ rows, type }: ReportTableProps) {
 
   if (type === "access") {
     return (
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-        <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+      <div className="table-shell">
+        <table className="data-table min-w-[760px]">
+          <thead>
             <tr>
               <th className="px-4 py-3 font-medium">Unidade</th>
               <th className="px-4 py-3 font-medium">Tipo</th>
@@ -39,14 +39,14 @@ export function ReportTable({ rows, type }: ReportTableProps) {
               <th className="px-4 py-3 font-medium">Porteiro</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody>
             {rows.map((row) => (
-              <tr key={String(row.id)} className="text-slate-600">
-                <td className="px-4 py-3 font-medium text-navy-950">{unitLabel(row.unit)}</td>
-                <td className="px-4 py-3">{formatAccessType(row.accessType as never)}</td>
-                <td className="px-4 py-3">{formatAccessMethod(row.accessMethod as never)}</td>
-                <td className="px-4 py-3">{formatReportDate(row.occurredAt as Date)}</td>
-                <td className="px-4 py-3">{(row.porter as { name?: string } | null)?.name ?? "Nao informado"}</td>
+              <tr key={String(row.id)}>
+                <td className="font-medium text-navy-950">{unitLabel(row.unit)}</td>
+                <td>{formatAccessType(row.accessType as never)}</td>
+                <td>{formatAccessMethod(row.accessMethod as never)}</td>
+                <td>{formatReportDate(row.occurredAt as Date)}</td>
+                <td>{(row.porter as { name?: string } | null)?.name ?? "Nao informado"}</td>
               </tr>
             ))}
           </tbody>
@@ -57,9 +57,9 @@ export function ReportTable({ rows, type }: ReportTableProps) {
 
   if (type === "package") {
     return (
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-        <table className="w-full min-w-[980px] text-left text-sm">
-          <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+      <div className="table-shell">
+        <table className="data-table min-w-[980px]">
+          <thead>
             <tr>
               <th className="px-4 py-3 font-medium">Unidade</th>
               <th className="px-4 py-3 font-medium">Transportadora</th>
@@ -71,17 +71,17 @@ export function ReportTable({ rows, type }: ReportTableProps) {
               <th className="px-4 py-3 font-medium">Retirado por</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody>
             {rows.map((row) => (
-              <tr key={String(row.id)} className="text-slate-600">
-                <td className="px-4 py-3 font-medium text-navy-950">{unitLabel(row.unit)}</td>
-                <td className="px-4 py-3">{String(row.carrier ?? "Nao informado")}</td>
-                <td className="px-4 py-3"><PackageStatusBadge status={row.status as never} /></td>
-                <td className="px-4 py-3">{formatReportDate(row.receivedAt as Date)}</td>
-                <td className="px-4 py-3">{formatReportDate(row.deliveredAt as Date | null)}</td>
-                <td className="px-4 py-3">{(row.receivedBy as { name?: string } | null)?.name ?? "Nao informado"}</td>
-                <td className="px-4 py-3">{(row.deliveredBy as { name?: string } | null)?.name ?? "Nao informado"}</td>
-                <td className="px-4 py-3">{String(row.pickedUpByName ?? "Nao informado")}</td>
+              <tr key={String(row.id)}>
+                <td className="font-medium text-navy-950">{unitLabel(row.unit)}</td>
+                <td>{String(row.carrier ?? "Nao informado")}</td>
+                <td><PackageStatusBadge status={row.status as never} /></td>
+                <td>{formatReportDate(row.receivedAt as Date)}</td>
+                <td>{formatReportDate(row.deliveredAt as Date | null)}</td>
+                <td>{(row.receivedBy as { name?: string } | null)?.name ?? "Nao informado"}</td>
+                <td>{(row.deliveredBy as { name?: string } | null)?.name ?? "Nao informado"}</td>
+                <td>{String(row.pickedUpByName ?? "Nao informado")}</td>
               </tr>
             ))}
           </tbody>
@@ -91,9 +91,9 @@ export function ReportTable({ rows, type }: ReportTableProps) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table className="w-full min-w-[860px] text-left text-sm">
-        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+    <div className="table-shell">
+      <table className="data-table min-w-[860px]">
+        <thead>
           <tr>
             <th className="px-4 py-3 font-medium">Visitante</th>
             <th className="px-4 py-3 font-medium">Unidade</th>
@@ -103,15 +103,15 @@ export function ReportTable({ rows, type }: ReportTableProps) {
             <th className="px-4 py-3 font-medium">Autorizado por</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody>
           {rows.map((row) => (
-            <tr key={String(row.id)} className="text-slate-600">
-              <td className="px-4 py-3 font-medium text-navy-950">{(row.visitor as { name?: string } | null)?.name ?? "Nao informado"}</td>
-              <td className="px-4 py-3">{unitLabel(row.unit)}</td>
-              <td className="px-4 py-3">{formatVisitorStatus(row.status as never)}</td>
-              <td className="px-4 py-3">{formatReportDate(row.startsAt as Date)}</td>
-              <td className="px-4 py-3">{formatReportDate(row.endsAt as Date)}</td>
-              <td className="px-4 py-3">{(row.authorizedBy as { name?: string } | null)?.name ?? "Nao informado"}</td>
+            <tr key={String(row.id)}>
+              <td className="font-medium text-navy-950">{(row.visitor as { name?: string } | null)?.name ?? "Nao informado"}</td>
+              <td>{unitLabel(row.unit)}</td>
+              <td>{formatVisitorStatus(row.status as never)}</td>
+              <td>{formatReportDate(row.startsAt as Date)}</td>
+              <td>{formatReportDate(row.endsAt as Date)}</td>
+              <td>{(row.authorizedBy as { name?: string } | null)?.name ?? "Nao informado"}</td>
             </tr>
           ))}
         </tbody>

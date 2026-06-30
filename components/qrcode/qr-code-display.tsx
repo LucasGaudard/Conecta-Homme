@@ -8,7 +8,7 @@ type QrCodeDisplayProps = {
 
 export function QrCodeDisplay({ token }: QrCodeDisplayProps) {
   return (
-    <div className="inline-flex rounded-lg border border-slate-200 bg-white p-4">
+    <div className="inline-flex rounded-lg border border-slate-200 bg-white p-4 shadow-soft">
       <QRCodeSVG value={token} size={196} level="M" />
     </div>
   );

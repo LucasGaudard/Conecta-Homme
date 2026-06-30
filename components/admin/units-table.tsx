@@ -52,7 +52,7 @@ export function UnitsTable({ units }: UnitsTableProps) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="surface-card p-4">
         <div className="grid gap-4 lg:grid-cols-[1fr_220px_260px]">
           <SearchInput
             value={query}
@@ -86,9 +86,9 @@ export function UnitsTable({ units }: UnitsTableProps) {
       {filteredUnits.length === 0 ? (
         <EmptyState message="Nenhuma unidade encontrada com os filtros atuais." />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-          <table className="w-full min-w-[980px] border-collapse text-left text-sm">
-            <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+        <div className="table-shell">
+          <table className="data-table min-w-[980px]">
+            <thead>
               <tr>
                 <th className="px-4 py-3 font-medium">Bloco</th>
                 <th className="px-4 py-3 font-medium">Apartamento</th>
@@ -102,23 +102,23 @@ export function UnitsTable({ units }: UnitsTableProps) {
                 <th className="px-4 py-3 font-medium">Acoes</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody>
               {filteredUnits.map((unit) => (
-                <tr key={unit.id} className="text-slate-600">
-                  <td className="px-4 py-3 font-medium text-navy-950">{unit.block}</td>
-                  <td className="px-4 py-3">{unit.apartment}</td>
-                  <td className="px-4 py-3">{unit.responsibleName}</td>
-                  <td className="px-4 py-3">{maskCpf(unit.cpf)}</td>
-                  <td className="px-4 py-3">{unit.phone ?? "Nao informado"}</td>
-                  <td className="px-4 py-3">{unit.email ?? "Nao informado"}</td>
-                  <td className="px-4 py-3">
+                <tr key={unit.id}>
+                  <td className="font-medium text-navy-950">{unit.block}</td>
+                  <td>{unit.apartment}</td>
+                  <td>{unit.responsibleName}</td>
+                  <td>{maskCpf(unit.cpf)}</td>
+                  <td>{unit.phone ?? "Nao informado"}</td>
+                  <td>{unit.email ?? "Nao informado"}</td>
+                  <td>
                     <StatusBadge status={unit.status as UnitStatus} type="unit" />
                   </td>
-                  <td className="px-4 py-3">
+                  <td>
                     <StatusBadge status={unit.presenceStatus as PresenceStatus} type="presence" />
                   </td>
-                  <td className="px-4 py-3">{unit._count.users}</td>
-                  <td className="px-4 py-3">
+                  <td>{unit._count.users}</td>
+                  <td>
                     <UnitRowActions unitId={unit.id} />
                   </td>
                 </tr>

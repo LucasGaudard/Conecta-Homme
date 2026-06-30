@@ -51,7 +51,7 @@ export function LoginForm() {
   return (
     <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-2">
-        <label className="text-sm font-medium text-navy-950" htmlFor="identifier">
+        <label className="field-label" htmlFor="identifier">
           E-mail ou usuario
         </label>
         <div className="relative">
@@ -65,12 +65,12 @@ export function LoginForm() {
           />
         </div>
         {errors.identifier ? (
-          <p className="text-sm text-red-600">{errors.identifier.message}</p>
+          <p className="text-sm font-medium text-red-600">{errors.identifier.message}</p>
         ) : null}
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-navy-950" htmlFor="password">
+        <label className="field-label" htmlFor="password">
           Senha
         </label>
         <div className="relative">
@@ -85,12 +85,12 @@ export function LoginForm() {
           />
         </div>
         {errors.password ? (
-          <p className="text-sm text-red-600">{errors.password.message}</p>
+          <p className="text-sm font-medium text-red-600">{errors.password.message}</p>
         ) : null}
       </div>
 
       {serverError ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 shadow-sm">
           {serverError}
         </div>
       ) : null}

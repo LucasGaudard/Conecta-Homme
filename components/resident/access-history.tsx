@@ -21,9 +21,9 @@ export function AccessHistory({ accesses }: AccessHistoryProps) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+    <div className="table-shell">
+      <table className="data-table min-w-[720px]">
+        <thead>
           <tr>
             <th className="px-4 py-3 font-medium">Tipo</th>
             <th className="px-4 py-3 font-medium">Horario</th>
@@ -32,16 +32,16 @@ export function AccessHistory({ accesses }: AccessHistoryProps) {
             <th className="px-4 py-3 font-medium">Observacao</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody>
           {accesses.map((access) => (
-            <tr key={access.id} className="text-slate-600">
-              <td className="px-4 py-3 font-medium text-navy-950">
+            <tr key={access.id}>
+              <td className="font-medium text-navy-950">
                 {formatAccessType(access.accessType)}
               </td>
-              <td className="px-4 py-3">{formatDateTime(access.occurredAt)}</td>
-              <td className="px-4 py-3">{formatAccessMethod(access.accessMethod)}</td>
-              <td className="px-4 py-3">{access.porter?.name ?? "Nao informado"}</td>
-              <td className="px-4 py-3">{access.notes ?? "Sem observacao"}</td>
+              <td>{formatDateTime(access.occurredAt)}</td>
+              <td>{formatAccessMethod(access.accessMethod)}</td>
+              <td>{access.porter?.name ?? "Nao informado"}</td>
+              <td>{access.notes ?? "Sem observacao"}</td>
             </tr>
           ))}
         </tbody>

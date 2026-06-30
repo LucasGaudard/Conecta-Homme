@@ -10,12 +10,12 @@ type StatCardProps = {
 
 export function StatCard({ description, icon: Icon, title, value }: StatCardProps) {
   return (
-    <Card className="border-slate-200 bg-white shadow-sm">
+    <Card className="surface-card-hover">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="text-sm font-medium text-slate-500">
           {title}
         </CardTitle>
-        <span className="flex h-9 w-9 items-center justify-center rounded-md bg-navy-50 text-navy-900">
+        <span className="flex h-10 w-10 items-center justify-center rounded-md border border-navy-100 bg-navy-50 text-navy-900">
           <Icon className="h-4 w-4" />
         </span>
       </CardHeader>

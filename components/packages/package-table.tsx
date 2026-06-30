@@ -21,9 +21,9 @@ export function PackageTable({ mode, packages }: PackageTableProps) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
-        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+    <div className="table-shell">
+      <table className="data-table min-w-[1120px]">
+        <thead>
           <tr>
             <th className="px-4 py-3 font-medium">Unidade</th>
             <th className="px-4 py-3 font-medium">Responsavel</th>
@@ -38,23 +38,23 @@ export function PackageTable({ mode, packages }: PackageTableProps) {
             {mode === "porter" ? <th className="px-4 py-3 font-medium">Acao</th> : null}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody>
           {packages.map((item) => (
-            <tr key={item.id} className="text-slate-600">
-              <td className="px-4 py-3 font-medium text-navy-950">
+            <tr key={item.id}>
+              <td className="font-medium text-navy-950">
                 {item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Nao informada"}
               </td>
-              <td className="px-4 py-3">{item.unit?.responsibleName ?? "Nao informado"}</td>
-              <td className="px-4 py-3">{item.carrier ?? "Nao informado"}</td>
-              <td className="px-4 py-3">{item.trackingCode ?? "Nao informado"}</td>
-              <td className="px-4 py-3"><PackageStatusBadge status={item.status} /></td>
-              <td className="px-4 py-3">{formatPackageDate(item.receivedAt)}</td>
-              <td className="px-4 py-3">{formatPackageDate(item.deliveredAt)}</td>
-              <td className="px-4 py-3">{item.receivedBy?.name ?? "Nao informado"}</td>
-              <td className="px-4 py-3">{item.deliveredBy?.name ?? "Nao informado"}</td>
-              <td className="px-4 py-3">{item.pickedUpByName ?? "Nao informado"}</td>
+              <td>{item.unit?.responsibleName ?? "Nao informado"}</td>
+              <td>{item.carrier ?? "Nao informado"}</td>
+              <td>{item.trackingCode ?? "Nao informado"}</td>
+              <td><PackageStatusBadge status={item.status} /></td>
+              <td>{formatPackageDate(item.receivedAt)}</td>
+              <td>{formatPackageDate(item.deliveredAt)}</td>
+              <td>{item.receivedBy?.name ?? "Nao informado"}</td>
+              <td>{item.deliveredBy?.name ?? "Nao informado"}</td>
+              <td>{item.pickedUpByName ?? "Nao informado"}</td>
               {mode === "porter" ? (
-                <td className="px-4 py-3">
+                <td>
                   {item.status === "WAITING_PICKUP" ? (
                     <PackageDeliveryForm packageId={item.id} />
                   ) : (

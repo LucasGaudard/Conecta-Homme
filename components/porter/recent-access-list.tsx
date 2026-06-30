@@ -23,9 +23,9 @@ export function RecentAccessList({ accesses }: RecentAccessListProps) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+    <div className="table-shell">
+      <table className="data-table min-w-[760px]">
+        <thead>
           <tr>
             <th className="px-4 py-3 font-medium">Unidade</th>
             <th className="px-4 py-3 font-medium">Tipo</th>
@@ -34,18 +34,18 @@ export function RecentAccessList({ accesses }: RecentAccessListProps) {
             <th className="px-4 py-3 font-medium">Porteiro</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody>
           {accesses.map((access) => (
-            <tr key={access.id} className="text-slate-600">
-              <td className="px-4 py-3 font-medium text-navy-950">
+            <tr key={access.id}>
+              <td className="font-medium text-navy-950">
                 {access.unit
                   ? `${access.unit.block}-${access.unit.apartment}`
                   : "Nao vinculada"}
               </td>
-              <td className="px-4 py-3">{formatAccessType(access.accessType)}</td>
-              <td className="px-4 py-3">{formatAccessMethod(access.accessMethod)}</td>
-              <td className="px-4 py-3">{formatShortDateTime(access.occurredAt)}</td>
-              <td className="px-4 py-3">{access.porter?.name ?? "Nao informado"}</td>
+              <td>{formatAccessType(access.accessType)}</td>
+              <td>{formatAccessMethod(access.accessMethod)}</td>
+              <td>{formatShortDateTime(access.occurredAt)}</td>
+              <td>{access.porter?.name ?? "Nao informado"}</td>
             </tr>
           ))}
         </tbody>

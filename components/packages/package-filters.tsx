@@ -18,10 +18,10 @@ export function PackageFilters({
   mode,
 }: PackageFiltersProps) {
   return (
-    <form className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <form className="surface-card p-4">
       <div className={mode === "admin" ? "grid gap-4 lg:grid-cols-[1fr_180px_160px_160px_auto]" : "grid gap-4 lg:grid-cols-[1fr_auto]"}>
         <label className="space-y-2">
-          <span className="text-sm font-medium text-navy-950">
+          <span className="field-label">
             {mode === "porter" ? "Buscar unidade" : "Unidade ou responsavel"}
           </span>
           <div className="relative">
@@ -37,11 +37,11 @@ export function PackageFilters({
         {mode === "admin" ? (
           <>
             <label className="space-y-2">
-              <span className="text-sm font-medium text-navy-950">Status</span>
+              <span className="field-label">Status</span>
               <select
                 name="status"
                 defaultValue={defaultStatus}
-                className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15"
               >
                 <option value="ALL">Todos</option>
                 <option value="WAITING_PICKUP">Aguardando</option>
@@ -49,11 +49,11 @@ export function PackageFilters({
               </select>
             </label>
             <label className="space-y-2">
-              <span className="text-sm font-medium text-navy-950">De</span>
+              <span className="field-label">De</span>
               <Input name="from" type="date" defaultValue={defaultFrom} />
             </label>
             <label className="space-y-2">
-              <span className="text-sm font-medium text-navy-950">Ate</span>
+              <span className="field-label">Ate</span>
               <Input name="to" type="date" defaultValue={defaultTo} />
             </label>
           </>

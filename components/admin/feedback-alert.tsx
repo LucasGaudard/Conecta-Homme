@@ -12,8 +12,8 @@ export function FeedbackAlert({ error, success }: FeedbackAlertProps) {
     <div
       className={
         error
-          ? "rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-          : "rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
+          ? "rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 shadow-sm"
+          : "rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 shadow-sm"
       }
     >
       {error ?? success}

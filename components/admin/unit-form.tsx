@@ -17,7 +17,7 @@ type UnitFormProps =
     };
 
 const fieldClass = "space-y-2";
-const labelClass = "text-sm font-medium text-navy-950";
+const labelClass = "field-label";
 
 export function UnitForm({ error, mode, unit }: UnitFormProps) {
   const action = mode === "edit" ? updateUnitAction.bind(null, unit.id) : createUnitAction;
@@ -25,12 +25,12 @@ export function UnitForm({ error, mode, unit }: UnitFormProps) {
   return (
     <form action={action} className="space-y-6">
       {error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 shadow-sm">
           {error}
         </div>
       ) : null}
 
-      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="surface-card p-5">
         <h3 className="text-base font-semibold text-navy-950">Dados da unidade</h3>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {mode === "create" ? (
@@ -75,7 +75,7 @@ export function UnitForm({ error, mode, unit }: UnitFormProps) {
                   id="status"
                   name="status"
                   defaultValue={unit.status}
-                  className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15"
                 >
                   {(["ACTIVE", "INACTIVE"] satisfies UnitStatus[]).map((status) => (
                     <option key={status} value={status}>{formatUnitStatus(status)}</option>
@@ -88,7 +88,7 @@ export function UnitForm({ error, mode, unit }: UnitFormProps) {
                   id="presenceStatus"
                   name="presenceStatus"
                   defaultValue={unit.presenceStatus}
-                  className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15"
                 >
                   {(["HOME", "AWAY", "DO_NOT_DISTURB"] satisfies PresenceStatus[]).map((status) => (
                     <option key={status} value={status}>{formatPresenceStatus(status)}</option>
@@ -101,7 +101,7 @@ export function UnitForm({ error, mode, unit }: UnitFormProps) {
       </section>
 
       {mode === "create" ? (
-        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="surface-card p-5">
           <h3 className="text-base font-semibold text-navy-950">Morador inicial</h3>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             <div className={fieldClass}>

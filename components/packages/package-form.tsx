@@ -11,7 +11,7 @@ type PackageFormProps = {
 
 export function PackageForm({ query, units }: PackageFormProps) {
   return (
-    <form action={createPackageAction} className="space-y-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <form action={createPackageAction} className="surface-card space-y-5 p-5">
       <input type="hidden" name="query" value={query} />
       <div>
         <h3 className="text-base font-semibold text-navy-950">Cadastrar encomenda</h3>
@@ -21,11 +21,11 @@ export function PackageForm({ query, units }: PackageFormProps) {
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <label className="space-y-2 md:col-span-2">
-          <span className="text-sm font-medium text-navy-950">Unidade</span>
+          <span className="field-label">Unidade</span>
           <select
             name="unitId"
             required
-            className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15"
           >
             <option value="">Selecione uma unidade</option>
             {units.map((unit) => (
@@ -36,15 +36,15 @@ export function PackageForm({ query, units }: PackageFormProps) {
           </select>
         </label>
         <label className="space-y-2">
-          <span className="text-sm font-medium text-navy-950">Transportadora</span>
+          <span className="field-label">Transportadora</span>
           <Input name="carrier" placeholder="Opcional" />
         </label>
         <label className="space-y-2">
-          <span className="text-sm font-medium text-navy-950">Codigo de rastreio</span>
+          <span className="field-label">Codigo de rastreio</span>
           <Input name="trackingCode" placeholder="Opcional" />
         </label>
         <label className="space-y-2 md:col-span-2">
-          <span className="text-sm font-medium text-navy-950">Descricao</span>
+          <span className="field-label">Descricao</span>
           <Input name="description" placeholder="Opcional" />
         </label>
       </div>

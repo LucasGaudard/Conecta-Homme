@@ -18,7 +18,7 @@ type RecentListProps = {
 
 export function RecentList({ emptyMessage, icon, items, title }: RecentListProps) {
   return (
-    <Card className="border-slate-200 bg-white shadow-sm">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-base text-navy-950">{title}</CardTitle>
         {icon ? <span className="text-navy-700">{icon}</span> : null}
@@ -29,7 +29,7 @@ export function RecentList({ emptyMessage, icon, items, title }: RecentListProps
         ) : (
           <ul className="divide-y divide-slate-100">
             {items.map((item) => (
-              <li key={item.id} className="py-3 first:pt-0 last:pb-0">
+              <li key={item.id} className="rounded-md px-2 py-3 transition-colors first:pt-0 last:pb-0 hover:bg-slate-50">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-navy-950">

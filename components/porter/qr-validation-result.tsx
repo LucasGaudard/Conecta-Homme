@@ -15,7 +15,7 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
 
   if (!result.allowed || !("unit" in result) || !result.unit) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-5 text-red-700">
+      <div className="rounded-lg border border-red-200 bg-red-50 p-5 text-red-700 shadow-sm">
         <div className="flex items-center gap-2 font-semibold">
           <XCircle className="h-5 w-5" />
           {result.reason}
@@ -25,12 +25,12 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
   }
 
   return (
-    <div className="space-y-4 rounded-lg border border-emerald-200 bg-emerald-50 p-5">
+    <div className="space-y-4 rounded-lg border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
       <div className="flex items-center gap-2 font-semibold text-emerald-700">
         <CheckCircle2 className="h-5 w-5" />
         Acesso autorizado
       </div>
-      <div className="grid gap-3 rounded-md bg-white p-4 sm:grid-cols-2">
+      <div className="grid gap-3 rounded-lg border border-emerald-100 bg-white p-4 shadow-sm sm:grid-cols-2">
         <div>
           <p className="text-xs font-medium uppercase text-slate-400">Tipo</p>
           <p className="mt-1 text-sm text-navy-950">

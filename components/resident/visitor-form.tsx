@@ -10,11 +10,11 @@ type VisitorFormProps = {
 };
 
 const fieldClass = "space-y-2";
-const labelClass = "text-sm font-medium text-navy-950";
+const labelClass = "field-label";
 
 export function VisitorForm({ error, success }: VisitorFormProps) {
   return (
-    <form action={createVisitorAuthorizationAction} className="space-y-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <form action={createVisitorAuthorizationAction} className="surface-card space-y-5 p-5">
       <div>
         <h3 className="text-base font-semibold text-navy-950">Cadastrar visitante</h3>
         <p className="mt-1 text-sm text-slate-500">

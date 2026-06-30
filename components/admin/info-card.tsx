@@ -10,9 +10,9 @@ type InfoCardProps = {
 
 export function InfoCard({ description, icon: Icon, title, value }: InfoCardProps) {
   return (
-    <Card className="border-slate-200 bg-white shadow-sm">
+    <Card className="surface-card-hover">
       <CardContent className="flex items-start gap-4 p-5">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-navy-50 text-navy-900">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-navy-100 bg-navy-50 text-navy-900">
           <Icon className="h-5 w-5" />
         </span>
         <div>

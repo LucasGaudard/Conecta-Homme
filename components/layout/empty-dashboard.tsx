@@ -25,12 +25,14 @@ export function EmptyDashboard({ description, title }: EmptyDashboardProps) {
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {summaryCards.map((item) => (
-          <Card key={item.title} className="border-slate-200 shadow-sm">
+          <Card key={item.title} className="surface-card-hover">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-medium text-slate-500">
                 {item.title}
               </CardTitle>
-              <item.icon className="h-4 w-4 text-navy-700" />
+              <span className="flex h-9 w-9 items-center justify-center rounded-md border border-navy-100 bg-navy-50 text-navy-900">
+                <item.icon className="h-4 w-4" />
+              </span>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-semibold text-navy-950">--</div>
@@ -42,7 +44,7 @@ export function EmptyDashboard({ description, title }: EmptyDashboardProps) {
         ))}
       </section>
 
-      <section className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
+      <section className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center shadow-soft">
         <p className="text-sm font-medium text-navy-950">
           Dashboard vazio nesta etapa
         </p>

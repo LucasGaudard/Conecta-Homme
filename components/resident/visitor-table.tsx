@@ -23,9 +23,9 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+    <div className="table-shell">
+      <table className="data-table min-w-[760px]">
+        <thead>
           <tr>
             <th className="px-4 py-3 font-medium">Visitante</th>
             <th className="px-4 py-3 font-medium">Telefone</th>
@@ -36,7 +36,7 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
             <th className="px-4 py-3 font-medium">Acoes</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody>
           {authorizations.map((authorization) => {
             const cancel = cancelVisitorAuthorizationAction.bind(null, authorization.id);
             const generateQr = generateVisitorQrCodeAction.bind(null, authorization.id);
@@ -49,18 +49,18 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
             );
 
             return (
-              <tr key={authorization.id} className="text-slate-600">
-                <td className="px-4 py-3">
+              <tr key={authorization.id}>
+                <td>
                   <p className="font-medium text-navy-950">{authorization.visitor.name}</p>
                   <p className="text-xs text-slate-400">
                     {authorization.visitor.document ?? "Documento nao informado"}
                   </p>
                 </td>
-                <td className="px-4 py-3">{authorization.visitor.phone ?? "Nao informado"}</td>
-                <td className="px-4 py-3">{formatDateTime(authorization.startsAt)}</td>
-                <td className="px-4 py-3">{formatDateTime(authorization.endsAt)}</td>
-                <td className="px-4 py-3">{formatVisitorStatus(authorization.status, authorization.endsAt)}</td>
-                <td className="px-4 py-3">
+                <td>{authorization.visitor.phone ?? "Nao informado"}</td>
+                <td>{formatDateTime(authorization.startsAt)}</td>
+                <td>{formatDateTime(authorization.endsAt)}</td>
+                <td>{formatVisitorStatus(authorization.status, authorization.endsAt)}</td>
+                <td>
                   {isCancelable ? (
                     <div className="space-y-3">
                       <QrTokenResult qrCode={qrCode} />
@@ -75,7 +75,7 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
                     <span className="text-xs text-slate-400">Indisponivel</span>
                   )}
                 </td>
-                <td className="px-4 py-3">
+                <td>
                   {isCancelable ? (
                     <form action={cancel}>
                       <Button type="submit" size="sm" variant="outline">

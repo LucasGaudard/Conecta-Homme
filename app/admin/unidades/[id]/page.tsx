@@ -144,30 +144,30 @@ export default async function UnitDetailPage({
       <section className="grid gap-4 xl:grid-cols-[1fr_0.9fr]">
         <SectionCard title="Dados principais" icon={<Building2 className="h-4 w-4" />}>
           <dl className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-md bg-slate-50 p-3">
+            <div className="info-tile">
               <dt className="text-xs font-medium uppercase text-slate-400">Bloco</dt>
               <dd className="mt-1 text-sm font-medium text-navy-950">{unit.block}</dd>
             </div>
-            <div className="rounded-md bg-slate-50 p-3">
+            <div className="info-tile">
               <dt className="text-xs font-medium uppercase text-slate-400">Apartamento</dt>
               <dd className="mt-1 text-sm font-medium text-navy-950">{unit.apartment}</dd>
             </div>
-            <div className="rounded-md bg-slate-50 p-3">
+            <div className="info-tile">
               <dt className="text-xs font-medium uppercase text-slate-400">Responsavel</dt>
               <dd className="mt-1 text-sm text-navy-950">{unit.responsibleName}</dd>
             </div>
-            <div className="rounded-md bg-slate-50 p-3">
+            <div className="info-tile">
               <dt className="text-xs font-medium uppercase text-slate-400">CPF</dt>
               <dd className="mt-1 text-sm text-navy-950">{maskCpf(unit.cpf)}</dd>
             </div>
-            <div className="rounded-md bg-slate-50 p-3">
+            <div className="info-tile">
               <dt className="flex items-center gap-2 text-xs font-medium uppercase text-slate-400">
                 <Phone className="h-3.5 w-3.5" />
                 Telefone
               </dt>
               <dd className="mt-1 text-sm text-navy-950">{unit.phone ?? "Nao informado"}</dd>
             </div>
-            <div className="rounded-md bg-slate-50 p-3">
+            <div className="info-tile">
               <dt className="flex items-center gap-2 text-xs font-medium uppercase text-slate-400">
                 <Mail className="h-3.5 w-3.5" />
                 E-mail
@@ -185,7 +185,7 @@ export default async function UnitDetailPage({
               {unit.users.map((user) => (
                 <li
                   key={user.id}
-                  className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                  className="flex items-center justify-between gap-3 rounded-md px-2 py-3 transition-colors first:pt-0 last:pb-0 hover:bg-slate-50"
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-navy-950">{user.name}</p>
