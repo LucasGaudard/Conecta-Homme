@@ -1,4 +1,4 @@
-import { PackageStatus, UnitStatus, UserRole, VisitorStatus } from "@prisma/client";
+import { PackageStatus, PresenceStatus, UnitStatus, UserRole, VisitorStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 function getTodayRange() {
@@ -20,6 +20,9 @@ export async function getPorterDashboardData() {
     packagesWaitingPickup,
     accessLogsToday,
     recentAccessLogs,
+    pendingPackages,
+    todayVisitors,
+    doNotDisturbUnits,
   ] = await Promise.all([
     prisma.unit.count({
       where: {
@@ -51,9 +54,73 @@ export async function getPorterDashboardData() {
       },
     }),
     getRecentAccessLogs(),
+    prisma.package.findMany({
+      where: {
+        status: PackageStatus.WAITING_PICKUP,
+      },
+      include: {
+        unit: {
+          select: {
+            apartment: true,
+            block: true,
+            responsibleName: true,
+          },
+        },
+      },
+      orderBy: {
+        receivedAt: "desc",
+      },
+      take: 5,
+    }),
+    prisma.visitAuthorization.findMany({
+      where: {
+        endsAt: {
+          gte: start,
+        },
+        startsAt: {
+          lt: end,
+        },
+        status: VisitorStatus.AUTHORIZED,
+      },
+      include: {
+        unit: {
+          select: {
+            apartment: true,
+            block: true,
+            responsibleName: true,
+          },
+        },
+        visitor: {
+          select: {
+            name: true,
+            phone: true,
+          },
+        },
+      },
+      orderBy: {
+        startsAt: "asc",
+      },
+      take: 6,
+    }),
+    prisma.unit.findMany({
+      where: {
+        presenceStatus: PresenceStatus.DO_NOT_DISTURB,
+        status: UnitStatus.ACTIVE,
+      },
+      orderBy: [{ block: "asc" }, { apartment: "asc" }],
+      select: {
+        apartment: true,
+        block: true,
+        id: true,
+        responsibleName: true,
+      },
+      take: 6,
+    }),
   ]);
 
   return {
+    doNotDisturbUnits,
+    pendingPackages,
     recentAccessLogs,
     stats: {
       accessLogsToday,
@@ -61,6 +128,7 @@ export async function getPorterDashboardData() {
       totalActiveUnits,
       visitorsAuthorizedToday,
     },
+    todayVisitors,
   };
 }
 

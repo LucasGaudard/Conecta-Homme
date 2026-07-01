@@ -56,6 +56,9 @@ export async function getResidentDashboardData() {
     packagesWaitingPickup,
     authorizedVisitors,
     recentAccesses,
+    waitingPackages,
+    activeVisitors,
+    recentNotifications,
   ] = await Promise.all([
     prisma.package.count({
       where: {
@@ -88,9 +91,52 @@ export async function getResidentDashboardData() {
         },
       },
     }),
+    prisma.package.findMany({
+      where: {
+        status: PackageStatus.WAITING_PICKUP,
+        unitId: unit.id,
+      },
+      orderBy: {
+        receivedAt: "desc",
+      },
+      take: 4,
+    }),
+    prisma.visitAuthorization.findMany({
+      where: {
+        endsAt: {
+          gte: now,
+        },
+        status: VisitorStatus.AUTHORIZED,
+        unitId: unit.id,
+      },
+      include: {
+        visitor: {
+          select: {
+            name: true,
+            phone: true,
+          },
+        },
+      },
+      orderBy: {
+        startsAt: "asc",
+      },
+      take: 4,
+    }),
+    prisma.notification.findMany({
+      where: {
+        unitId: unit.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 5,
+    }),
   ]);
 
   return {
+    activeVisitors,
+    recentAccesses,
+    recentNotifications,
     resident,
     stats: {
       authorizedVisitors,
@@ -99,6 +145,7 @@ export async function getResidentDashboardData() {
       residenceStatus: unit.presenceStatus,
     },
     unit,
+    waitingPackages,
   };
 }
 
