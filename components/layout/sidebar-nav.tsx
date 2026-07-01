@@ -24,6 +24,7 @@ export function SidebarNav({ layout = "desktop", navigation }: SidebarNavProps) 
 
   return (
     <nav
+      aria-label={layout === "mobile" ? "Navegacao principal mobile" : "Navegacao principal"}
       className={cn(
         "flex gap-2",
         layout === "mobile"
@@ -37,9 +38,10 @@ export function SidebarNav({ layout = "desktop", navigation }: SidebarNavProps) 
         return (
           <Link
             key={item.title}
+            aria-current={active ? "page" : undefined}
             href={item.href}
             className={cn(
-              "group flex min-w-max items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition duration-200 lg:min-w-0",
+              "group flex min-w-max items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 lg:min-w-0",
               layout === "mobile" && "min-w-0",
               active
                 ? "bg-white text-navy-950 shadow-soft"

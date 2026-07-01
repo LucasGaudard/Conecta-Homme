@@ -88,6 +88,7 @@ export async function createPackageAction(formData: FormData) {
   revalidatePath("/admin/encomendas");
   revalidatePath("/morador");
   revalidatePath("/morador/encomendas");
+  revalidatePath("/morador/notificacoes");
   revalidatePath("/portaria");
   revalidatePath("/portaria/encomendas");
   redirectToPorterPackages(data.query, {
