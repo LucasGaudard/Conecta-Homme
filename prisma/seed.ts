@@ -8,6 +8,16 @@ async function main() {
   const porterPasswordHash = await hashPassword("portaria123");
   const residentPasswordHash = await hashPassword("morador123");
 
+  await prisma.condominiumSettings.upsert({
+    where: { id: "default" },
+    update: {},
+    create: {
+      id: "default",
+      name: "Conecta Homme",
+      porterHours: "24 horas",
+    },
+  });
+
   const admin = await prisma.user.upsert({
     where: { email: "admin@conectahomme.com" },
     update: {

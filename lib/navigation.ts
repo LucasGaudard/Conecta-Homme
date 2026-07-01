@@ -25,7 +25,7 @@ export const adminNavigation: NavigationItem[] = [
   { title: "Moradores", href: "/admin/unidades", icon: Users },
   { title: "Relatorios", href: "/admin/relatorios", icon: BarChart3 },
   { title: "Configuracoes", href: "/admin/configuracoes", icon: Settings },
-  { title: "Condominio", href: "/admin/unidades", icon: Building2 },
+  { title: "Condominio", href: "/admin/condominio", icon: Building2 },
 ];
 
 export const porterNavigation: NavigationItem[] = [

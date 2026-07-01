@@ -222,6 +222,18 @@ model Notification {
   @@index([unitId])
 }
 
+model CondominiumSettings {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String?
+  email       String?
+  address     String?
+  porterHours String?
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model QRCodeToken {
   id                   String       @id @default(cuid())
   token                String       @unique
