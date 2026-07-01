@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { AccessMethod, QRCodeStatus, QRCodeType, UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createAuditLog } from "@/lib/audit/logger";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/prisma";
 import { getQrValidationResult } from "@/lib/qrcode/queries";
@@ -26,8 +27,11 @@ async function requireResidentUnit() {
   }
 
   return {
+    email: currentUser.email,
     unitId: user.unitId,
     userId: user.id,
+    userName: currentUser.name,
+    userRole: currentUser.role,
   };
 }
 
@@ -58,7 +62,8 @@ function getStringValue(formData: FormData, key: string) {
 }
 
 export async function generateResidentQrCodeAction() {
-  const { unitId } = await requireResidentUnit();
+  const resident = await requireResidentUnit();
+  const { unitId } = resident;
   const existing = await prisma.qRCodeToken.findFirst({
     where: {
       status: QRCodeStatus.ACTIVE,
@@ -68,12 +73,39 @@ export async function generateResidentQrCodeAction() {
   });
 
   if (!existing) {
-    await prisma.qRCodeToken.create({
+    const token = await prisma.qRCodeToken.create({
       data: {
         status: QRCodeStatus.ACTIVE,
         token: tokenValue(),
         type: QRCodeType.RESIDENT,
         unitId,
+      },
+    });
+    await createAuditLog({
+      action: "GENERATE",
+      description: "QR Code permanente do morador gerado.",
+      entityId: token.id,
+      entityType: "QRCodeToken",
+      module: "QRCODE",
+      user: {
+        email: resident.email,
+        id: resident.userId,
+        name: resident.userName,
+        role: resident.userRole,
+      },
+    });
+  } else {
+    await createAuditLog({
+      action: "GENERATE",
+      description: "QR Code permanente do morador reutilizado.",
+      entityId: existing.id,
+      entityType: "QRCodeToken",
+      module: "QRCODE",
+      user: {
+        email: resident.email,
+        id: resident.userId,
+        name: resident.userName,
+        role: resident.userRole,
       },
     });
   }
@@ -86,7 +118,8 @@ export async function generateResidentQrCodeAction() {
 }
 
 export async function generateVisitorQrCodeAction(authorizationId: string) {
-  const { unitId } = await requireResidentUnit();
+  const resident = await requireResidentUnit();
+  const { unitId } = resident;
   const authorization = await prisma.visitAuthorization.findFirst({
     where: {
       id: authorizationId,
@@ -120,7 +153,7 @@ export async function generateVisitorQrCodeAction(authorizationId: string) {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 12);
 
-    await prisma.qRCodeToken.create({
+    const token = await prisma.qRCodeToken.create({
       data: {
         expiresAt,
         status: QRCodeStatus.ACTIVE,
@@ -129,6 +162,33 @@ export async function generateVisitorQrCodeAction(authorizationId: string) {
         unitId,
         visitAuthorizationId: authorization.id,
         visitorId: authorization.visitorId,
+      },
+    });
+    await createAuditLog({
+      action: "GENERATE",
+      description: `QR Code temporario gerado para visitante ${authorization.visitor.name}.`,
+      entityId: token.id,
+      entityType: "QRCodeToken",
+      module: "QRCODE",
+      user: {
+        email: resident.email,
+        id: resident.userId,
+        name: resident.userName,
+        role: resident.userRole,
+      },
+    });
+  } else {
+    await createAuditLog({
+      action: "GENERATE",
+      description: `QR Code temporario reutilizado para visitante ${authorization.visitor.name}.`,
+      entityId: existing.id,
+      entityType: "QRCodeToken",
+      module: "QRCODE",
+      user: {
+        email: resident.email,
+        id: resident.userId,
+        name: resident.userName,
+        role: resident.userRole,
       },
     });
   }
@@ -155,13 +215,21 @@ export async function registerQrAccessAction(formData: FormData) {
   const result = await getQrValidationResult(parsed.data.token);
 
   if (!result?.allowed || !("unit" in result) || !result.unit) {
+    await createAuditLog({
+      action: "VALIDATE",
+      description: `Tentativa de validacao de QR Code recusada: ${result?.reason ?? "QR Code invalido"}.`,
+      entityId: parsed.data.token,
+      entityType: "QRCodeToken",
+      module: "QRCODE",
+      user: porter,
+    });
     redirectWith("/portaria/validar-qr", {
       error: result?.reason ?? "QR Code invalido",
       token: parsed.data.token,
     });
   }
 
-  await prisma.accessLog.create({
+  const accessLog = await prisma.accessLog.create({
     data: {
       accessMethod: AccessMethod.QR_CODE,
       accessType: parsed.data.accessType,
@@ -170,6 +238,18 @@ export async function registerQrAccessAction(formData: FormData) {
       unitId: result.unit.id,
       visitorId: result.visitor?.id,
     },
+  });
+
+  await createAuditLog({
+    action: "VALIDATE",
+    description:
+      parsed.data.accessType === "ENTRY"
+        ? "Entrada via QR Code validada pela portaria."
+        : "Saida via QR Code validada pela portaria.",
+    entityId: accessLog.id,
+    entityType: "AccessLog",
+    module: "QRCODE",
+    user: porter,
   });
 
   revalidatePath("/portaria");

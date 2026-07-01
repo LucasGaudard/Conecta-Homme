@@ -3,6 +3,7 @@
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createAuditLog } from "@/lib/audit/logger";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { hashPassword } from "@/lib/auth/password";
 import { accountRouteByRole } from "@/lib/account/format";
@@ -59,6 +60,14 @@ export async function updateAccountAction(formData: FormData) {
         phone: data.phone,
         ...(passwordHash ? { passwordHash } : {}),
       },
+    });
+    await createAuditLog({
+      action: "UPDATE",
+      description: "Conta do usuario atualizada.",
+      entityId: currentUser.id,
+      entityType: "User",
+      module: "ACCOUNT",
+      user: currentUser,
     });
   } catch (error) {
     if (

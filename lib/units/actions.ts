@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { hashPassword } from "@/lib/auth/password";
+import { createAuditLog } from "@/lib/audit/logger";
 import { prisma } from "@/lib/prisma";
 import { createUnitSchema, updateUnitSchema } from "@/lib/units/validation";
 
@@ -14,6 +15,8 @@ async function requireAdmin() {
   if (!user || user.role !== UserRole.ADMIN) {
     redirect("/login");
   }
+
+  return user;
 }
 
 function getStringValue(formData: FormData, key: string) {
@@ -75,7 +78,7 @@ function handlePrismaError(error: unknown, path: string): never {
 }
 
 export async function createUnitAction(formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
 
   const parsed = createUnitSchema.safeParse(getCreatePayload(formData));
 
@@ -85,6 +88,7 @@ export async function createUnitAction(formData: FormData) {
 
   const data = parsed.data;
   let createdUnitId = "";
+  let createdUnitLabel = "";
 
   try {
     const passwordHash = await hashPassword(data.residentPassword);
@@ -118,9 +122,19 @@ export async function createUnitAction(formData: FormData) {
     });
 
     createdUnitId = unit.id;
+    createdUnitLabel = `${unit.block}-${unit.apartment}`;
   } catch (error) {
     handlePrismaError(error, "/admin/unidades/nova");
   }
+
+  await createAuditLog({
+    action: "CREATE",
+    description: `Unidade ${createdUnitLabel} cadastrada.`,
+    entityId: createdUnitId,
+    entityType: "Unit",
+    module: "UNIT",
+    user: admin,
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/unidades");
@@ -128,23 +142,34 @@ export async function createUnitAction(formData: FormData) {
 }
 
 export async function updateUnitAction(unitId: string, formData: FormData) {
-  await requireAdmin();
+  const admin = await requireAdmin();
 
   const parsed = updateUnitSchema.safeParse(getUpdatePayload(formData));
   const errorPath = `/admin/unidades/${unitId}/editar`;
+  let updatedUnitLabel = "";
 
   if (!parsed.success) {
     redirectWithError(errorPath, parsed.error.issues[0]?.message ?? "Dados invalidos.");
   }
 
   try {
-    await prisma.unit.update({
+    const unit = await prisma.unit.update({
       where: { id: unitId },
       data: parsed.data,
     });
+    updatedUnitLabel = `${unit.block}-${unit.apartment}`;
   } catch (error) {
     handlePrismaError(error, errorPath);
   }
+
+  await createAuditLog({
+    action: "UPDATE",
+    description: `Unidade ${updatedUnitLabel} atualizada.`,
+    entityId: unitId,
+    entityType: "Unit",
+    module: "UNIT",
+    user: admin,
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/unidades");
@@ -153,16 +178,17 @@ export async function updateUnitAction(unitId: string, formData: FormData) {
 }
 
 export async function inactivateUnitAction(unitId: string) {
-  await requireAdmin();
+  const admin = await requireAdmin();
 
-  await prisma.$transaction([
-    prisma.unit.update({
+  const unit = await prisma.$transaction(async (tx) => {
+    const updatedUnit = await tx.unit.update({
       where: { id: unitId },
       data: {
         status: UnitStatus.INACTIVE,
       },
-    }),
-    prisma.user.updateMany({
+    });
+
+    await tx.user.updateMany({
       where: {
         role: UserRole.RESIDENT,
         unitId,
@@ -170,8 +196,19 @@ export async function inactivateUnitAction(unitId: string) {
       data: {
         status: UserStatus.INACTIVE,
       },
-    }),
-  ]);
+    });
+
+    return updatedUnit;
+  });
+
+  await createAuditLog({
+    action: "INACTIVATE",
+    description: `Unidade ${unit.block}-${unit.apartment} inativada.`,
+    entityId: unit.id,
+    entityType: "Unit",
+    module: "UNIT",
+    user: admin,
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/unidades");

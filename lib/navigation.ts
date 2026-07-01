@@ -2,6 +2,7 @@ import {
   BarChart3,
   Bell,
   Building2,
+  FileClock,
   Home,
   Package,
   QrCode,
@@ -24,6 +25,7 @@ export const adminNavigation: NavigationItem[] = [
   { title: "Notificacoes", href: "/admin/notificacoes", icon: Bell },
   { title: "Moradores", href: "/admin/unidades", icon: Users },
   { title: "Relatorios", href: "/admin/relatorios", icon: BarChart3 },
+  { title: "Auditoria", href: "/admin/auditoria", icon: FileClock },
   { title: "Configuracoes", href: "/admin/configuracoes", icon: Settings },
   { title: "Condominio", href: "/admin/condominio", icon: Building2 },
 ];

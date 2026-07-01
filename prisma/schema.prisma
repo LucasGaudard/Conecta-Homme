@@ -94,6 +94,7 @@ model User {
   receivedPackages  Package[]            @relation("PackageReceivedBy")
   deliveredPackages Package[]            @relation("PackageDeliveredBy")
   notifications     Notification[]
+  auditLogs         AuditLog[]
 
   @@index([unitId])
 }
@@ -232,6 +233,29 @@ model CondominiumSettings {
   logoUrl     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  userName    String?
+  userEmail   String?
+  userRole    UserRole
+  action      String
+  module      String
+  description String
+  entityType  String?
+  entityId    String?
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([userRole])
+  @@index([action])
+  @@index([module])
+  @@index([createdAt])
+  @@index([entityType, entityId])
 }
 
 model QRCodeToken {

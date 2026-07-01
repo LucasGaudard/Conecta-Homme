@@ -3,6 +3,7 @@
 import { NotificationStatus, NotificationType, PackageStatus, UnitStatus, UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createAuditLog } from "@/lib/audit/logger";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/prisma";
 import { createPackageSchema, deliverPackageSchema } from "@/lib/packages/validation";
@@ -61,8 +62,8 @@ export async function createPackageAction(formData: FormData) {
     });
   }
 
-  await prisma.$transaction([
-    prisma.package.create({
+  const createdPackage = await prisma.$transaction(async (tx) => {
+    const packageRecord = await tx.package.create({
       data: {
         carrier: data.carrier,
         description: data.description,
@@ -72,8 +73,9 @@ export async function createPackageAction(formData: FormData) {
         trackingCode: data.trackingCode,
         unitId: data.unitId,
       },
-    }),
-    prisma.notification.create({
+    });
+
+    await tx.notification.create({
       data: {
         message: "Uma encomenda foi registrada para sua unidade.",
         status: NotificationStatus.UNREAD,
@@ -81,8 +83,19 @@ export async function createPackageAction(formData: FormData) {
         type: NotificationType.PACKAGE,
         unitId: data.unitId,
       },
-    }),
-  ]);
+    });
+
+    return packageRecord;
+  });
+
+  await createAuditLog({
+    action: "CREATE",
+    description: "Encomenda cadastrada para unidade.",
+    entityId: createdPackage.id,
+    entityType: "Package",
+    module: "PACKAGE",
+    user: porter,
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/encomendas");
@@ -109,6 +122,22 @@ export async function deliverPackageAction(formData: FormData) {
     });
   }
 
+  const packageRecord = await prisma.package.findFirst({
+    where: {
+      id: parsed.data.packageId,
+      status: PackageStatus.WAITING_PICKUP,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!packageRecord) {
+    redirectToPorterPackages(undefined, {
+      error: "Encomenda inexistente ou ja entregue.",
+    });
+  }
+
   const updated = await prisma.package.updateMany({
     where: {
       id: parsed.data.packageId,
@@ -127,6 +156,15 @@ export async function deliverPackageAction(formData: FormData) {
       error: "Encomenda inexistente ou ja entregue.",
     });
   }
+
+  await createAuditLog({
+    action: "DELIVER",
+    description: `Encomenda entregue para ${parsed.data.pickedUpByName}.`,
+    entityId: packageRecord.id,
+    entityType: "Package",
+    module: "PACKAGE",
+    user: porter,
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/encomendas");
