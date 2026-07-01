@@ -1,6 +1,19 @@
 import type { AccessLog, User, Visitor } from "@prisma/client";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import {
+  clampPage,
+  getSearchParam,
+  normalizePage,
+  normalizePageSize,
+  normalizeSortDirection,
+  pageCount,
+  pageSlice,
+  tableParamKeys,
+  type SearchParamRecord,
+} from "@/components/ui/data-table-params";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
+import { SortableHeader } from "@/components/ui/sortable-header";
+import {
   formatAccessMethod,
   formatAccessType,
   formatDateTime,
@@ -13,17 +26,47 @@ type AccessHistoryItem = AccessLog & {
 
 type AccessHistoryProps = {
   accesses: AccessHistoryItem[];
+  searchParams?: SearchParamRecord;
 };
 
-export function AccessHistory({ accesses }: AccessHistoryProps) {
+function historySortValue(access: AccessHistoryItem, sort: string) {
+  if (sort === "method") return access.accessMethod;
+  if (sort === "porter") return access.porter?.name ?? "";
+  if (sort === "type") return access.accessType;
+  return access.occurredAt;
+}
+
+export function AccessHistory({ accesses, searchParams }: AccessHistoryProps) {
   if (accesses.length === 0) {
     return <EmptyState message="Nenhum acesso registrado para sua unidade." />;
   }
 
+  const keys = tableParamKeys("accessHistory");
+  const pageSize = normalizePageSize(getSearchParam(searchParams, keys.pageSize));
+  const totalPages = pageCount(accesses.length, pageSize);
+  const page = clampPage(normalizePage(getSearchParam(searchParams, keys.page)), totalPages);
+  const sort = getSearchParam(searchParams, keys.sort) ?? "occurredAt";
+  const direction = normalizeSortDirection(getSearchParam(searchParams, keys.direction));
+  const sortedAccesses = [...accesses].sort((a, b) => {
+    const first = historySortValue(a, sort);
+    const second = historySortValue(b, sort);
+    const result =
+      first instanceof Date && second instanceof Date
+        ? first.getTime() - second.getTime()
+        : String(first).localeCompare(String(second), "pt-BR", { numeric: true });
+    return direction === "asc" ? result : -result;
+  });
+  const visibleAccesses = pageSlice(sortedAccesses, page, pageSize);
+
   return (
-    <>
+    <div className="space-y-4">
+    <div className="surface-card p-4">
+      <p className="text-sm font-medium text-navy-950">
+        {accesses.length} acesso(s) encontrados
+      </p>
+    </div>
     <div className="mobile-list">
-      {accesses.map((access) => (
+      {visibleAccesses.map((access) => (
         <article key={access.id} className="mobile-card">
           <p className="text-base font-semibold text-navy-950">
             {formatAccessType(access.accessType)}
@@ -54,15 +97,15 @@ export function AccessHistory({ accesses }: AccessHistoryProps) {
       <table className="data-table min-w-[720px]">
         <thead>
           <tr>
-            <th className="px-4 py-3 font-medium">Tipo</th>
-            <th className="px-4 py-3 font-medium">Horario</th>
-            <th className="px-4 py-3 font-medium">Metodo</th>
-            <th className="px-4 py-3 font-medium">Porteiro</th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="type" sortParam={keys.sort}>Tipo</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="occurredAt" sortParam={keys.sort}>Horario</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="method" sortParam={keys.sort}>Metodo</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="porter" sortParam={keys.sort}>Porteiro</SortableHeader></th>
             <th className="px-4 py-3 font-medium">Observacao</th>
           </tr>
         </thead>
         <tbody>
-          {accesses.map((access) => (
+          {visibleAccesses.map((access) => (
             <tr key={access.id}>
               <td className="font-medium text-navy-950">
                 {formatAccessType(access.accessType)}
@@ -76,6 +119,7 @@ export function AccessHistory({ accesses }: AccessHistoryProps) {
         </tbody>
       </table>
     </div>
-    </>
+    <DataTablePagination page={page} pageParam={keys.page} pageSize={pageSize} pageSizeParam={keys.pageSize} searchParams={searchParams} totalItems={accesses.length} totalPages={totalPages} />
+    </div>
   );
 }

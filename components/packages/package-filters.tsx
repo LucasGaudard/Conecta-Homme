@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { Button } from "@/components/ui/button";
 
 type PackageFiltersProps = {
   defaultFrom?: string;
@@ -17,8 +19,25 @@ export function PackageFilters({
   defaultTo = "",
   mode,
 }: PackageFiltersProps) {
+  const activeFilters = [
+    defaultQuery.trim().length > 0,
+    mode === "admin" && defaultStatus !== "ALL",
+    mode === "admin" && defaultFrom.length > 0,
+    mode === "admin" && defaultTo.length > 0,
+  ].filter(Boolean).length;
+
   return (
-    <form className="surface-card p-4">
+    <form className="surface-card space-y-4 p-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm font-medium text-navy-950">
+          Filtros {activeFilters > 0 ? `(${activeFilters} ativo(s))` : ""}
+        </p>
+        {activeFilters > 0 ? (
+          <Button asChild variant="outline" size="sm">
+            <Link href="?">Limpar filtros</Link>
+          </Button>
+        ) : null}
+      </div>
       <div className={mode === "admin" ? "grid gap-4 md:grid-cols-2 lg:grid-cols-[1fr_180px_160px_160px_auto]" : "grid gap-4 sm:grid-cols-[1fr_auto]"}>
         <label className="space-y-2">
           <span className="field-label">

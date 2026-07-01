@@ -10,6 +10,10 @@ import {
 type PorterPackagesPageProps = {
   searchParams: Promise<{
     error?: string;
+    packagesDir?: string;
+    packagesPage?: string;
+    packagesPageSize?: string;
+    packagesSort?: string;
     q?: string;
     success?: string;
   }>;
@@ -20,7 +24,8 @@ export const dynamic = "force-dynamic";
 export default async function PorterPackagesPage({
   searchParams,
 }: PorterPackagesPageProps) {
-  const { error, q = "", success } = await searchParams;
+  const params = await searchParams;
+  const { error, q = "", success } = params;
   const [units, packages] = await Promise.all([
     searchUnitsForPackage(q),
     getPorterPackages(),
@@ -50,7 +55,7 @@ export default async function PorterPackagesPage({
             Ultimos registros cadastrados pela portaria.
           </p>
         </div>
-        <PackageTable mode="porter" packages={packages} />
+        <PackageTable mode="porter" packages={packages} searchParams={params} />
       </section>
     </div>
   );

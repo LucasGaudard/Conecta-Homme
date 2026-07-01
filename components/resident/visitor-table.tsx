@@ -3,6 +3,19 @@ import { Ban, QrCode } from "lucide-react";
 import { QrTokenResult } from "@/components/qrcode/qr-token-result";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { SubmitButton } from "@/components/ui/submit-button";
+import {
+  clampPage,
+  getSearchParam,
+  normalizePage,
+  normalizePageSize,
+  normalizeSortDirection,
+  pageCount,
+  pageSlice,
+  tableParamKeys,
+  type SearchParamRecord,
+} from "@/components/ui/data-table-params";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
+import { SortableHeader } from "@/components/ui/sortable-header";
 import { cancelVisitorAuthorizationAction } from "@/lib/resident/actions";
 import { generateVisitorQrCodeAction } from "@/lib/qrcode/actions";
 import { formatDateTime, formatVisitorStatus } from "@/components/resident/resident-format";
@@ -14,18 +27,57 @@ type VisitorAuthorizationRow = VisitAuthorization & {
 type VisitorTableProps = {
   authorizations: VisitorAuthorizationRow[];
   qrCodes?: QRCodeToken[];
+  searchParams?: SearchParamRecord;
+  tableKey?: string;
   title: string;
 };
 
-export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTableProps) {
+function visitorSortValue(item: VisitorAuthorizationRow, sort: string) {
+  if (sort === "name") return item.visitor.name;
+  if (sort === "phone") return item.visitor.phone ?? "";
+  if (sort === "status") return item.status;
+  if (sort === "endsAt") return item.endsAt;
+  return item.startsAt;
+}
+
+export function VisitorTable({
+  authorizations,
+  qrCodes = [],
+  searchParams,
+  tableKey = "visitors",
+  title,
+}: VisitorTableProps) {
   if (authorizations.length === 0) {
     return <EmptyState message={`Nenhum visitante em ${title.toLowerCase()}.`} />;
   }
 
+  const keys = tableParamKeys(tableKey);
+  const pageSize = normalizePageSize(getSearchParam(searchParams, keys.pageSize));
+  const totalPages = pageCount(authorizations.length, pageSize);
+  const page = clampPage(normalizePage(getSearchParam(searchParams, keys.page)), totalPages);
+  const sort = getSearchParam(searchParams, keys.sort) ?? "startsAt";
+  const direction = normalizeSortDirection(getSearchParam(searchParams, keys.direction));
+  const sortedAuthorizations = [...authorizations].sort((a, b) => {
+    const first = visitorSortValue(a, sort);
+    const second = visitorSortValue(b, sort);
+    const result =
+      first instanceof Date && second instanceof Date
+        ? first.getTime() - second.getTime()
+        : String(first).localeCompare(String(second), "pt-BR", { numeric: true });
+
+    return direction === "asc" ? result : -result;
+  });
+  const visibleAuthorizations = pageSlice(sortedAuthorizations, page, pageSize);
+
   return (
-    <>
+    <div className="space-y-4">
+    <div className="surface-card p-4">
+      <p className="text-sm font-medium text-navy-950">
+        {authorizations.length} visitante(s)
+      </p>
+    </div>
     <div className="mobile-list">
-      {authorizations.map((authorization) => {
+      {visibleAuthorizations.map((authorization) => {
         const cancel = cancelVisitorAuthorizationAction.bind(null, authorization.id);
         const generateQr = generateVisitorQrCodeAction.bind(null, authorization.id);
         const isCancelable =
@@ -97,17 +149,17 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
       <table className="data-table min-w-[760px]">
         <thead>
           <tr>
-            <th className="px-4 py-3 font-medium">Visitante</th>
-            <th className="px-4 py-3 font-medium">Telefone</th>
-            <th className="px-4 py-3 font-medium">Inicio</th>
-            <th className="px-4 py-3 font-medium">Fim</th>
-            <th className="px-4 py-3 font-medium">Status</th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="name" sortParam={keys.sort}>Visitante</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="phone" sortParam={keys.sort}>Telefone</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="startsAt" sortParam={keys.sort}>Inicio</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="endsAt" sortParam={keys.sort}>Fim</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="status" sortParam={keys.sort}>Status</SortableHeader></th>
             <th className="px-4 py-3 font-medium">QR Code</th>
             <th className="px-4 py-3 font-medium">Acoes</th>
           </tr>
         </thead>
         <tbody>
-          {authorizations.map((authorization) => {
+          {visibleAuthorizations.map((authorization) => {
             const cancel = cancelVisitorAuthorizationAction.bind(null, authorization.id);
             const generateQr = generateVisitorQrCodeAction.bind(null, authorization.id);
             const isCancelable =
@@ -163,6 +215,7 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
         </tbody>
       </table>
     </div>
-    </>
+    <DataTablePagination page={page} pageParam={keys.page} pageSize={pageSize} pageSizeParam={keys.pageSize} searchParams={searchParams} totalItems={authorizations.length} totalPages={totalPages} />
+    </div>
   );
 }

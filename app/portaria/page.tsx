@@ -14,6 +14,10 @@ type PorterDashboardPageProps = {
   searchParams: Promise<{
     error?: string;
     q?: string;
+    recentAccessDir?: string;
+    recentAccessPage?: string;
+    recentAccessPageSize?: string;
+    recentAccessSort?: string;
     success?: string;
   }>;
 };
@@ -23,7 +27,8 @@ export const dynamic = "force-dynamic";
 export default async function PorterDashboardPage({
   searchParams,
 }: PorterDashboardPageProps) {
-  const { error, q = "", success } = await searchParams;
+  const params = await searchParams;
+  const { error, q = "", success } = params;
   const [dashboardData, units] = await Promise.all([
     getPorterDashboardData(),
     searchPorterUnits(q),
@@ -106,7 +111,7 @@ export default async function PorterDashboardPage({
             Registros recentes de entrada e saida.
           </p>
         </div>
-        <RecentAccessList accesses={dashboardData.recentAccessLogs} />
+        <RecentAccessList accesses={dashboardData.recentAccessLogs} searchParams={params} />
       </section>
     </div>
   );

@@ -1,6 +1,19 @@
 import { PackageStatusBadge } from "@/components/packages/package-status-badge";
 import { ReportEmptyState } from "@/components/reports/report-empty-state";
 import {
+  clampPage,
+  getSearchParam,
+  normalizePage,
+  normalizePageSize,
+  normalizeSortDirection,
+  pageCount,
+  pageSlice,
+  tableParamKeys,
+  type SearchParamRecord,
+} from "@/components/ui/data-table-params";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
+import { SortableHeader } from "@/components/ui/sortable-header";
+import {
   formatAccessMethod,
   formatAccessType,
   formatReportDate,
@@ -9,6 +22,8 @@ import {
 
 type ReportTableProps = {
   rows: Array<Record<string, unknown>>;
+  searchParams?: SearchParamRecord;
+  tableKey?: string;
   type: "access" | "package" | "visitor";
 };
 
@@ -21,7 +36,47 @@ function unitLabel(unit: unknown) {
   return `${data.block ?? "-"}-${data.apartment ?? "-"} / ${data.responsibleName ?? "Responsavel nao informado"}`;
 }
 
-export function ReportTable({ rows, type }: ReportTableProps) {
+function reportSortValue(row: Record<string, unknown>, sort: string) {
+  if (sort === "unit") {
+    return unitLabel(row.unit);
+  }
+
+  if (sort === "visitor") {
+    return (row.visitor as { name?: string } | null)?.name ?? "";
+  }
+
+  return row[sort];
+}
+
+export function ReportTable({
+  rows,
+  searchParams,
+  tableKey,
+  type,
+}: ReportTableProps) {
+  const resolvedTableKey = tableKey ?? type;
+  const keys = tableParamKeys(resolvedTableKey);
+  const pageSize = normalizePageSize(getSearchParam(searchParams, keys.pageSize));
+  const totalPages = pageCount(rows.length, pageSize);
+  const page = clampPage(normalizePage(getSearchParam(searchParams, keys.page)), totalPages);
+  const defaultSort =
+    type === "access" ? "occurredAt" : type === "package" ? "receivedAt" : "startsAt";
+  const sort = getSearchParam(searchParams, keys.sort) ?? defaultSort;
+  const direction = normalizeSortDirection(getSearchParam(searchParams, keys.direction));
+  const sortedRows = [...rows].sort((a, b) => {
+    const first = reportSortValue(a, sort);
+    const second = reportSortValue(b, sort);
+    const result =
+      first instanceof Date && second instanceof Date
+        ? first.getTime() - second.getTime()
+        : String(first ?? "").localeCompare(String(second ?? ""), "pt-BR", {
+            numeric: true,
+          });
+
+    return direction === "asc" ? result : -result;
+  });
+  const visibleRows = pageSlice(sortedRows, page, pageSize);
+
   if (rows.length === 0) {
     return <ReportEmptyState message="Nenhum registro encontrado para os filtros atuais." />;
   }
@@ -30,7 +85,7 @@ export function ReportTable({ rows, type }: ReportTableProps) {
     return (
       <>
       <div className="mobile-list">
-        {rows.map((row) => (
+        {visibleRows.map((row) => (
           <article key={String(row.id)} className="mobile-card">
             <p className="text-base font-semibold text-navy-950">{unitLabel(row.unit)}</p>
             <dl className="mobile-field-grid">
@@ -59,15 +114,23 @@ export function ReportTable({ rows, type }: ReportTableProps) {
         <table className="data-table min-w-[760px]">
           <thead>
             <tr>
-              <th className="px-4 py-3 font-medium">Unidade</th>
-              <th className="px-4 py-3 font-medium">Tipo</th>
-              <th className="px-4 py-3 font-medium">Metodo</th>
-              <th className="px-4 py-3 font-medium">Horario</th>
+              <th className="px-4 py-3 font-medium">
+                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="unit" sortParam={keys.sort}>Unidade</SortableHeader>
+              </th>
+              <th className="px-4 py-3 font-medium">
+                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="accessType" sortParam={keys.sort}>Tipo</SortableHeader>
+              </th>
+              <th className="px-4 py-3 font-medium">
+                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="accessMethod" sortParam={keys.sort}>Metodo</SortableHeader>
+              </th>
+              <th className="px-4 py-3 font-medium">
+                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="occurredAt" sortParam={keys.sort}>Horario</SortableHeader>
+              </th>
               <th className="px-4 py-3 font-medium">Porteiro</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {visibleRows.map((row) => (
               <tr key={String(row.id)}>
                 <td className="font-medium text-navy-950">{unitLabel(row.unit)}</td>
                 <td>{formatAccessType(row.accessType as never)}</td>
@@ -79,6 +142,7 @@ export function ReportTable({ rows, type }: ReportTableProps) {
           </tbody>
         </table>
       </div>
+      <DataTablePagination page={page} pageParam={keys.page} pageSize={pageSize} pageSizeParam={keys.pageSize} searchParams={searchParams} totalItems={rows.length} totalPages={totalPages} />
       </>
     );
   }
@@ -87,7 +151,7 @@ export function ReportTable({ rows, type }: ReportTableProps) {
     return (
       <>
       <div className="mobile-list">
-        {rows.map((row) => (
+        {visibleRows.map((row) => (
           <article key={String(row.id)} className="mobile-card">
             <div className="mobile-card-header">
               <p className="text-base font-semibold text-navy-950">{unitLabel(row.unit)}</p>
@@ -127,18 +191,28 @@ export function ReportTable({ rows, type }: ReportTableProps) {
         <table className="data-table min-w-[980px]">
           <thead>
             <tr>
-              <th className="px-4 py-3 font-medium">Unidade</th>
-              <th className="px-4 py-3 font-medium">Transportadora</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Chegada</th>
-              <th className="px-4 py-3 font-medium">Entrega</th>
+              <th className="px-4 py-3 font-medium">
+                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="unit" sortParam={keys.sort}>Unidade</SortableHeader>
+              </th>
+              <th className="px-4 py-3 font-medium">
+                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="carrier" sortParam={keys.sort}>Transportadora</SortableHeader>
+              </th>
+              <th className="px-4 py-3 font-medium">
+                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="status" sortParam={keys.sort}>Status</SortableHeader>
+              </th>
+              <th className="px-4 py-3 font-medium">
+                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="receivedAt" sortParam={keys.sort}>Chegada</SortableHeader>
+              </th>
+              <th className="px-4 py-3 font-medium">
+                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="deliveredAt" sortParam={keys.sort}>Entrega</SortableHeader>
+              </th>
               <th className="px-4 py-3 font-medium">Recebido por</th>
               <th className="px-4 py-3 font-medium">Entregue por</th>
               <th className="px-4 py-3 font-medium">Retirado por</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {visibleRows.map((row) => (
               <tr key={String(row.id)}>
                 <td className="font-medium text-navy-950">{unitLabel(row.unit)}</td>
                 <td>{String(row.carrier ?? "Nao informado")}</td>
@@ -153,6 +227,7 @@ export function ReportTable({ rows, type }: ReportTableProps) {
           </tbody>
         </table>
       </div>
+      <DataTablePagination page={page} pageParam={keys.page} pageSize={pageSize} pageSizeParam={keys.pageSize} searchParams={searchParams} totalItems={rows.length} totalPages={totalPages} />
       </>
     );
   }
@@ -160,7 +235,7 @@ export function ReportTable({ rows, type }: ReportTableProps) {
   return (
     <>
     <div className="mobile-list">
-      {rows.map((row) => (
+      {visibleRows.map((row) => (
         <article key={String(row.id)} className="mobile-card">
           <div className="mobile-card-header">
             <p className="text-base font-semibold text-navy-950">
@@ -194,16 +269,26 @@ export function ReportTable({ rows, type }: ReportTableProps) {
       <table className="data-table min-w-[860px]">
         <thead>
           <tr>
-            <th className="px-4 py-3 font-medium">Visitante</th>
-            <th className="px-4 py-3 font-medium">Unidade</th>
-            <th className="px-4 py-3 font-medium">Status</th>
-            <th className="px-4 py-3 font-medium">Inicio</th>
-            <th className="px-4 py-3 font-medium">Fim</th>
+            <th className="px-4 py-3 font-medium">
+              <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="visitor" sortParam={keys.sort}>Visitante</SortableHeader>
+            </th>
+            <th className="px-4 py-3 font-medium">
+              <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="unit" sortParam={keys.sort}>Unidade</SortableHeader>
+            </th>
+            <th className="px-4 py-3 font-medium">
+              <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="status" sortParam={keys.sort}>Status</SortableHeader>
+            </th>
+            <th className="px-4 py-3 font-medium">
+              <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="startsAt" sortParam={keys.sort}>Inicio</SortableHeader>
+            </th>
+            <th className="px-4 py-3 font-medium">
+              <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="endsAt" sortParam={keys.sort}>Fim</SortableHeader>
+            </th>
             <th className="px-4 py-3 font-medium">Autorizado por</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
+          {visibleRows.map((row) => (
             <tr key={String(row.id)}>
               <td className="font-medium text-navy-950">{(row.visitor as { name?: string } | null)?.name ?? "Nao informado"}</td>
               <td>{unitLabel(row.unit)}</td>
@@ -216,6 +301,7 @@ export function ReportTable({ rows, type }: ReportTableProps) {
       </tbody>
     </table>
   </div>
+  <DataTablePagination page={page} pageParam={keys.page} pageSize={pageSize} pageSizeParam={keys.pageSize} searchParams={searchParams} totalItems={rows.length} totalPages={totalPages} />
   </>
   );
 }

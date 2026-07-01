@@ -1,9 +1,21 @@
 import { AccessHistory } from "@/components/resident/access-history";
 import { getResidentAccesses } from "@/lib/resident/queries";
 
+type ResidentAccessesPageProps = {
+  searchParams: Promise<{
+    accessHistoryDir?: string;
+    accessHistoryPage?: string;
+    accessHistoryPageSize?: string;
+    accessHistorySort?: string;
+  }>;
+};
+
 export const dynamic = "force-dynamic";
 
-export default async function ResidentAccessesPage() {
+export default async function ResidentAccessesPage({
+  searchParams,
+}: ResidentAccessesPageProps) {
+  const params = await searchParams;
   const accesses = await getResidentAccesses();
 
   return (
@@ -17,7 +29,7 @@ export default async function ResidentAccessesPage() {
         </p>
       </div>
 
-      <AccessHistory accesses={accesses} />
+      <AccessHistory accesses={accesses} searchParams={params} />
     </div>
   );
 }

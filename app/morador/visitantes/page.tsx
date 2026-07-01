@@ -5,7 +5,19 @@ import { getResidentVisitors } from "@/lib/resident/queries";
 
 type ResidentVisitorsPageProps = {
   searchParams: Promise<{
+    activeVisitorsDir?: string;
+    activeVisitorsPage?: string;
+    activeVisitorsPageSize?: string;
+    activeVisitorsSort?: string;
+    canceledVisitorsDir?: string;
+    canceledVisitorsPage?: string;
+    canceledVisitorsPageSize?: string;
+    canceledVisitorsSort?: string;
     error?: string;
+    expiredVisitorsDir?: string;
+    expiredVisitorsPage?: string;
+    expiredVisitorsPageSize?: string;
+    expiredVisitorsSort?: string;
     success?: string;
   }>;
 };
@@ -15,8 +27,9 @@ export const dynamic = "force-dynamic";
 export default async function ResidentVisitorsPage({
   searchParams,
 }: ResidentVisitorsPageProps) {
-  const [{ error, success }, authorizations, qrCodes] = await Promise.all([
-    searchParams,
+  const params = await searchParams;
+  const { error, success } = params;
+  const [authorizations, qrCodes] = await Promise.all([
     getResidentVisitors(),
     getVisitorQrCodesForResident(),
   ]);
@@ -44,15 +57,33 @@ export default async function ResidentVisitorsPage({
 
       <section className="space-y-4">
         <h3 className="text-lg font-semibold text-navy-950">Visitantes ativos</h3>
-        <VisitorTable title="Visitantes ativos" authorizations={active} qrCodes={qrCodes} />
+        <VisitorTable
+          title="Visitantes ativos"
+          authorizations={active}
+          qrCodes={qrCodes}
+          searchParams={params}
+          tableKey="activeVisitors"
+        />
       </section>
       <section className="space-y-4">
         <h3 className="text-lg font-semibold text-navy-950">Visitantes expirados</h3>
-        <VisitorTable title="Visitantes expirados" authorizations={expired} qrCodes={qrCodes} />
+        <VisitorTable
+          title="Visitantes expirados"
+          authorizations={expired}
+          qrCodes={qrCodes}
+          searchParams={params}
+          tableKey="expiredVisitors"
+        />
       </section>
       <section className="space-y-4">
         <h3 className="text-lg font-semibold text-navy-950">Visitantes cancelados</h3>
-        <VisitorTable title="Visitantes cancelados" authorizations={canceled} qrCodes={qrCodes} />
+        <VisitorTable
+          title="Visitantes cancelados"
+          authorizations={canceled}
+          qrCodes={qrCodes}
+          searchParams={params}
+          tableKey="canceledVisitors"
+        />
       </section>
     </div>
   );
