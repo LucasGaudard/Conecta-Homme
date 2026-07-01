@@ -38,14 +38,11 @@ function parseDateEnd(value?: string) {
   return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
-export async function getAuditLogs(filters: AuditFiltersInput) {
-  await requireAdmin();
-
-  const pageSize = normalizePageSize(filters.pageSize);
-  const requestedPage = normalizePage(filters.page);
+function getAuditWhere(filters: AuditFiltersInput) {
   const from = parseDateStart(filters.from);
   const to = parseDateEnd(filters.to);
-  const where: Prisma.AuditLogWhereInput = {
+
+  return {
     ...(filters.action ? { action: filters.action } : {}),
     ...(filters.module ? { module: filters.module } : {}),
     ...(filters.role ? { userRole: filters.role as UserRole } : {}),
@@ -75,7 +72,15 @@ export async function getAuditLogs(filters: AuditFiltersInput) {
           },
         }
       : {}),
-  };
+  } satisfies Prisma.AuditLogWhereInput;
+}
+
+export async function getAuditLogs(filters: AuditFiltersInput) {
+  await requireAdmin();
+
+  const pageSize = normalizePageSize(filters.pageSize);
+  const requestedPage = normalizePage(filters.page);
+  const where = getAuditWhere(filters);
 
   const totalItems = await prisma.auditLog.count({ where });
   const totalPages = pageCount(totalItems, pageSize);
@@ -98,4 +103,15 @@ export async function getAuditLogs(filters: AuditFiltersInput) {
       totalPages,
     },
   };
+}
+
+export async function getAuditLogsForExport(filters: AuditFiltersInput) {
+  await requireAdmin();
+
+  return prisma.auditLog.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    where: getAuditWhere(filters),
+  });
 }

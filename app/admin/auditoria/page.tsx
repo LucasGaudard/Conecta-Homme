@@ -2,6 +2,7 @@ import { FileClock } from "lucide-react";
 import { AuditFilters } from "@/components/audit/audit-filters";
 import { AuditLogList } from "@/components/audit/audit-log-list";
 import { MetricCard } from "@/components/dashboard/metric-card";
+import { ExportButtons } from "@/components/export/export-buttons";
 import type { SearchParamRecord } from "@/components/ui/data-table-params";
 import { getAuditLogs } from "@/lib/audit/queries";
 import { parseAuditFilters } from "@/lib/audit/validation";
@@ -51,6 +52,12 @@ export default async function AdminAuditPage({
       </section>
 
       <AuditFilters filters={filters} />
+      <div className="flex justify-end">
+        <ExportButtons
+          basePath="/admin/auditoria/export"
+          searchParams={params as SearchParamRecord}
+        />
+      </div>
       <AuditLogList
         logs={logs}
         pagination={pagination}

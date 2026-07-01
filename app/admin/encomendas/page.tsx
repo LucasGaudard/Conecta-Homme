@@ -1,5 +1,6 @@
 import { PackageFilters } from "@/components/packages/package-filters";
 import { PackageTable } from "@/components/packages/package-table";
+import { ExportButtons } from "@/components/export/export-buttons";
 import { getAdminPackages } from "@/lib/packages/queries";
 
 type AdminPackagesPageProps = {
@@ -41,6 +42,12 @@ export default async function AdminPackagesPage({
         defaultFrom={filters.from}
         defaultTo={filters.to}
       />
+      <div className="flex justify-end">
+        <ExportButtons
+          basePath="/admin/encomendas/export"
+          searchParams={filters}
+        />
+      </div>
       <PackageTable mode="admin" packages={packages} searchParams={filters} />
     </div>
   );
