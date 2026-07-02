@@ -1,9 +1,7 @@
 import Link from "next/link";
 import type { Notification } from "@prisma/client";
-import { ArrowRight, CheckCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { NotificationEmptyState } from "@/components/notifications/notification-empty-state";
-import { SubmitButton } from "@/components/ui/submit-button";
-import { markAllNotificationsAsReadAction } from "@/lib/notifications/actions";
 import {
   formatNotificationDate,
   getNotificationIcon,
@@ -31,15 +29,6 @@ export function NotificationDropdown({
             {unreadCount} nao lida(s)
           </p>
         </div>
-        {unreadCount > 0 ? (
-          <form action={markAllNotificationsAsReadAction}>
-            <input type="hidden" name="redirectTo" value={route} />
-            <SubmitButton variant="ghost" size="sm" pendingLabel="Marcando...">
-              <CheckCheck className="h-4 w-4" />
-              Todas
-            </SubmitButton>
-          </form>
-        ) : null}
       </div>
 
       <div className="max-h-80 overflow-y-auto py-2">
