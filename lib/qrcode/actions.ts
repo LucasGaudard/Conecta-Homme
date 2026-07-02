@@ -7,8 +7,12 @@ import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/prisma";
+import { createUniqueAccessCode, normalizeQrAccessCode } from "@/lib/qrcode/access-code";
 import { getQrValidationResult } from "@/lib/qrcode/queries";
-import { registerQrAccessSchema } from "@/lib/qrcode/validation";
+import {
+  generateVisitorQrCodeSchema,
+  registerQrAccessSchema,
+} from "@/lib/qrcode/validation";
 
 async function requireResidentUnit() {
   const currentUser = await getCurrentUser();
@@ -76,6 +80,7 @@ export async function generateResidentQrCodeAction() {
     const token = await prisma.qRCodeToken.create({
       data: {
         status: QRCodeStatus.ACTIVE,
+        accessCode: await createUniqueAccessCode(QRCodeType.RESIDENT),
         token: tokenValue(),
         type: QRCodeType.RESIDENT,
         unitId,
@@ -117,12 +122,24 @@ export async function generateResidentQrCodeAction() {
   });
 }
 
-export async function generateVisitorQrCodeAction(authorizationId: string) {
+export async function generateVisitorQrCodeAction(formData: FormData) {
   const resident = await requireResidentUnit();
   const { unitId } = resident;
+  const parsed = generateVisitorQrCodeSchema.safeParse({
+    authorizationId: getStringValue(formData, "authorizationId"),
+    expiresAt: getStringValue(formData, "expiresAt"),
+  });
+
+  if (!parsed.success) {
+    redirectWith("/morador/visitantes", {
+      error: parsed.error.issues[0]?.message ?? "Dados invalidos.",
+    });
+  }
+
+  const requestedExpiresAt = new Date(parsed.data.expiresAt);
   const authorization = await prisma.visitAuthorization.findFirst({
     where: {
-      id: authorizationId,
+      id: parsed.data.authorizationId,
       status: "AUTHORIZED",
       unitId,
     },
@@ -134,6 +151,12 @@ export async function generateVisitorQrCodeAction(authorizationId: string) {
   if (!authorization || authorization.endsAt < new Date()) {
     redirectWith("/morador/visitantes", {
       error: "Visitante nao autorizado para gerar QR Code.",
+    });
+  }
+
+  if (requestedExpiresAt > authorization.endsAt) {
+    redirectWith("/morador/visitantes", {
+      error: "A validade do QR Code nao pode ultrapassar a autorizacao do visitante.",
     });
   }
 
@@ -150,12 +173,10 @@ export async function generateVisitorQrCodeAction(authorizationId: string) {
   });
 
   if (!existing) {
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 12);
-
     const token = await prisma.qRCodeToken.create({
       data: {
-        expiresAt,
+        accessCode: await createUniqueAccessCode(QRCodeType.VISITOR),
+        expiresAt: requestedExpiresAt,
         status: QRCodeStatus.ACTIVE,
         token: tokenValue(),
         type: QRCodeType.VISITOR,
@@ -178,10 +199,18 @@ export async function generateVisitorQrCodeAction(authorizationId: string) {
       },
     });
   } else {
+    const updated = await prisma.qRCodeToken.update({
+      where: {
+        id: existing.id,
+      },
+      data: {
+        expiresAt: requestedExpiresAt,
+      },
+    });
     await createAuditLog({
       action: "GENERATE",
       description: `QR Code temporario reutilizado para visitante ${authorization.visitor.name}.`,
-      entityId: existing.id,
+      entityId: updated.id,
       entityType: "QRCodeToken",
       module: "QRCODE",
       user: {
@@ -212,20 +241,21 @@ export async function registerQrAccessAction(formData: FormData) {
     });
   }
 
+  const submittedCode = normalizeQrAccessCode(parsed.data.token);
   const result = await getQrValidationResult(parsed.data.token);
 
   if (!result?.allowed || !("unit" in result) || !result.unit) {
     await createAuditLog({
       action: "VALIDATE",
       description: `Tentativa de validacao de QR Code recusada: ${result?.reason ?? "QR Code invalido"}.`,
-      entityId: parsed.data.token,
+      entityId: submittedCode,
       entityType: "QRCodeToken",
       module: "QRCODE",
       user: porter,
     });
     redirectWith("/portaria/validar-qr", {
       error: result?.reason ?? "QR Code invalido",
-      token: parsed.data.token,
+      token: submittedCode,
     });
   }
 
@@ -260,6 +290,6 @@ export async function registerQrAccessAction(formData: FormData) {
       parsed.data.accessType === "ENTRY"
         ? "Entrada via QR Code registrada."
         : "Saida via QR Code registrada.",
-    token: parsed.data.token,
+      token: submittedCode,
   });
 }

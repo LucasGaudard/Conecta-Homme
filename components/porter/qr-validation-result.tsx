@@ -2,6 +2,7 @@ import { CheckCircle2, XCircle } from "lucide-react";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { registerQrAccessAction } from "@/lib/qrcode/actions";
+import { formatQrDateTime } from "@/lib/qrcode/format";
 import type { getQrValidationResult } from "@/lib/qrcode/queries";
 
 type QrValidationResultProps = {
@@ -32,6 +33,12 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
       </div>
       <div className="grid gap-3 rounded-lg border border-emerald-100 bg-white p-4 shadow-sm sm:grid-cols-2">
         <div>
+          <p className="text-xs font-medium uppercase text-slate-400">Codigo</p>
+          <p className="mt-1 text-xl font-semibold tracking-normal text-navy-950">
+            {result.qrCode.accessCode}
+          </p>
+        </div>
+        <div>
           <p className="text-xs font-medium uppercase text-slate-400">Tipo</p>
           <p className="mt-1 text-sm text-navy-950">
             {result.qrCode.type === "RESIDENT" ? "Morador" : "Visitante"}
@@ -41,6 +48,16 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
           <p className="text-xs font-medium uppercase text-slate-400">Unidade</p>
           <p className="mt-1 text-sm text-navy-950">
             {result.unit.block}-{result.unit.apartment}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs font-medium uppercase text-slate-400">Status</p>
+          <p className="mt-1 text-sm text-navy-950">{result.qrCode.status}</p>
+        </div>
+        <div>
+          <p className="text-xs font-medium uppercase text-slate-400">Validade</p>
+          <p className="mt-1 text-sm text-navy-950">
+            {formatQrDateTime(result.qrCode.expiresAt)}
           </p>
         </div>
         <div>
@@ -63,7 +80,7 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <form action={registerQrAccessAction} className="flex-1">
-          <input type="hidden" name="token" value={result.token} />
+          <input type="hidden" name="token" value={result.qrCode.accessCode} />
           <SubmitButton
             name="accessType"
             value="ENTRY"
@@ -74,7 +91,7 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
           </SubmitButton>
         </form>
         <form action={registerQrAccessAction} className="flex-1">
-          <input type="hidden" name="token" value={result.token} />
+          <input type="hidden" name="token" value={result.qrCode.accessCode} />
           <SubmitButton
             name="accessType"
             value="EXIT"

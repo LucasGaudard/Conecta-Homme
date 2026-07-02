@@ -2,6 +2,7 @@ import type { QRCodeToken } from "@prisma/client";
 import { QrCode } from "lucide-react";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { QrCodeDisplay } from "@/components/qrcode/qr-code-display";
+import { QrShareActions } from "@/components/qrcode/qr-share-actions";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { generateResidentQrCodeAction } from "@/lib/qrcode/actions";
 import { formatDateTime } from "@/components/resident/resident-format";
@@ -13,11 +14,14 @@ type QrCodeCardProps = {
 };
 
 export function QrCodeCard({ qrCode, unit }: QrCodeCardProps) {
+  const unitLabel = `${unit.block}-${unit.apartment}`;
+  const qrDownloadId = qrCode ? `qr-${qrCode.accessCode}` : undefined;
+
   return (
     <section className="grid gap-4 lg:grid-cols-[320px_1fr]">
       <div className="surface-card p-4 text-center sm:p-6">
         {qrCode ? (
-          <QrCodeDisplay token={qrCode.token} />
+          <QrCodeDisplay id={qrDownloadId} value={qrCode.accessCode} />
         ) : (
           <div className="flex min-h-56 flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50/80">
             <QrCode className="h-8 w-8 text-slate-400" />
@@ -29,6 +33,16 @@ export function QrCodeCard({ qrCode, unit }: QrCodeCardProps) {
             {qrCode ? "Reutilizar QR Code" : "Gerar QR Code"}
           </SubmitButton>
         </form>
+        {qrCode && qrDownloadId ? (
+          <div className="mt-4">
+            <QrShareActions
+              accessCode={qrCode.accessCode}
+              downloadId={qrDownloadId}
+              unitLabel={unitLabel}
+              validityLabel="Permanente"
+            />
+          </div>
+        ) : null}
       </div>
 
       <div className="surface-card p-4 sm:p-6">
@@ -49,9 +63,9 @@ export function QrCodeCard({ qrCode, unit }: QrCodeCardProps) {
             <dd className="mt-1 text-sm text-navy-950">Permanente</dd>
           </div>
           <div className="info-tile sm:col-span-2">
-            <dt className="text-xs font-medium uppercase text-slate-400">Token</dt>
-            <dd className="mt-1 break-all text-sm text-navy-950">
-              {qrCode?.token ?? "Gere o QR Code para exibir o token."}
+            <dt className="text-xs font-medium uppercase text-slate-400">Codigo</dt>
+            <dd className="mt-2 text-3xl font-semibold tracking-normal text-navy-950">
+              {qrCode?.accessCode ?? "Gere o QR Code para exibir o codigo."}
             </dd>
           </div>
           {qrCode ? (

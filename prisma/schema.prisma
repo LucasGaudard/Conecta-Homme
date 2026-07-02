@@ -261,6 +261,7 @@ model AuditLog {
 model QRCodeToken {
   id                   String       @id @default(cuid())
   token                String       @unique
+  accessCode           String       @unique
   type                 QRCodeType
   status               QRCodeStatus @default(ACTIVE)
   unitId               String?
@@ -277,4 +278,5 @@ model QRCodeToken {
   @@index([unitId])
   @@index([visitorId])
   @@index([visitAuthorizationId])
+  @@index([accessCode])
 }

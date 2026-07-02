@@ -18,9 +18,17 @@ import { DataTablePagination } from "@/components/ui/data-table-pagination";
 import { SortableHeader } from "@/components/ui/sortable-header";
 import { cancelVisitorAuthorizationAction } from "@/lib/resident/actions";
 import { generateVisitorQrCodeAction } from "@/lib/qrcode/actions";
+import {
+  defaultVisitorQrExpiresAt,
+  toDateTimeLocalValue,
+} from "@/lib/qrcode/format";
 import { formatDateTime, formatVisitorStatus } from "@/components/resident/resident-format";
 
 type VisitorAuthorizationRow = VisitAuthorization & {
+  unit: {
+    apartment: string;
+    block: string;
+  };
   visitor: Visitor;
 };
 
@@ -79,9 +87,9 @@ export function VisitorTable({
     <div className="mobile-list">
       {visibleAuthorizations.map((authorization) => {
         const cancel = cancelVisitorAuthorizationAction.bind(null, authorization.id);
-        const generateQr = generateVisitorQrCodeAction.bind(null, authorization.id);
         const isCancelable =
           authorization.status === "AUTHORIZED" && authorization.endsAt >= new Date();
+        const unitLabel = `${authorization.unit.block}-${authorization.unit.apartment}`;
         const qrCode = qrCodes.find(
           (item) =>
             item.visitAuthorizationId === authorization.id &&
@@ -120,9 +128,22 @@ export function VisitorTable({
             <div className="mt-4 space-y-3">
               {isCancelable ? (
                 <>
-                  <QrTokenResult qrCode={qrCode} />
+                  <QrTokenResult
+                    qrCode={qrCode}
+                    unitLabel={unitLabel}
+                    visitorName={authorization.visitor.name}
+                  />
                   <div className="grid gap-2 sm:grid-cols-2">
-                    <form action={generateQr}>
+                    <form action={generateVisitorQrCodeAction} className="space-y-2">
+                      <input type="hidden" name="authorizationId" value={authorization.id} />
+                      <input
+                        type="datetime-local"
+                        name="expiresAt"
+                        defaultValue={toDateTimeLocalValue(defaultVisitorQrExpiresAt(authorization.endsAt))}
+                        min={toDateTimeLocalValue(new Date())}
+                        max={toDateTimeLocalValue(authorization.endsAt)}
+                        className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15"
+                      />
                       <SubmitButton size="sm" variant="outline" className="h-10 w-full" pendingLabel="Gerando...">
                         <QrCode className="h-4 w-4" />
                         {qrCode ? "Reutilizar QR" : "Gerar QR"}
@@ -161,9 +182,9 @@ export function VisitorTable({
         <tbody>
           {visibleAuthorizations.map((authorization) => {
             const cancel = cancelVisitorAuthorizationAction.bind(null, authorization.id);
-            const generateQr = generateVisitorQrCodeAction.bind(null, authorization.id);
             const isCancelable =
               authorization.status === "AUTHORIZED" && authorization.endsAt >= new Date();
+            const unitLabel = `${authorization.unit.block}-${authorization.unit.apartment}`;
             const qrCode = qrCodes.find(
               (item) =>
                 item.visitAuthorizationId === authorization.id &&
@@ -185,8 +206,21 @@ export function VisitorTable({
                 <td>
                   {isCancelable ? (
                     <div className="space-y-3">
-                      <QrTokenResult qrCode={qrCode} />
-                      <form action={generateQr}>
+                      <QrTokenResult
+                        qrCode={qrCode}
+                        unitLabel={unitLabel}
+                        visitorName={authorization.visitor.name}
+                      />
+                      <form action={generateVisitorQrCodeAction} className="space-y-2">
+                        <input type="hidden" name="authorizationId" value={authorization.id} />
+                        <input
+                          type="datetime-local"
+                          name="expiresAt"
+                          defaultValue={toDateTimeLocalValue(defaultVisitorQrExpiresAt(authorization.endsAt))}
+                          min={toDateTimeLocalValue(new Date())}
+                          max={toDateTimeLocalValue(authorization.endsAt)}
+                          className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15"
+                        />
                         <SubmitButton size="sm" variant="outline" pendingLabel="Gerando...">
                           <QrCode className="h-4 w-4" />
                           {qrCode ? "Reutilizar QR" : "Gerar QR"}

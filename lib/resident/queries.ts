@@ -157,6 +157,12 @@ export async function getResidentVisitors() {
       unitId: unit.id,
     },
     include: {
+      unit: {
+        select: {
+          apartment: true,
+          block: true,
+        },
+      },
       visitor: true,
     },
     orderBy: {
