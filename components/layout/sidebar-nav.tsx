@@ -2,6 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  BarChart3,
+  Bell,
+  Building2,
+  FileClock,
+  Home,
+  Package,
+  QrCode,
+  Settings,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 import type { NavigationItem } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +29,19 @@ function isActivePath(pathname: string, href: string) {
 
   return pathname === href || pathname.startsWith(`${href}/`);
 }
+
+const navigationIcons = {
+  audit: FileClock,
+  bell: Bell,
+  building: Building2,
+  chart: BarChart3,
+  home: Home,
+  package: Package,
+  qrcode: QrCode,
+  settings: Settings,
+  shield: ShieldCheck,
+  users: Users,
+};
 
 export function SidebarNav({ layout = "desktop", navigation }: SidebarNavProps) {
   const pathname = usePathname();
@@ -34,6 +59,7 @@ export function SidebarNav({ layout = "desktop", navigation }: SidebarNavProps) 
     >
       {navigation.map((item, index) => {
         const active = index === activeIndex;
+        const Icon = navigationIcons[item.icon];
 
         return (
           <Link
@@ -56,7 +82,7 @@ export function SidebarNav({ layout = "desktop", navigation }: SidebarNavProps) 
                   : "bg-white/5 text-blue-100 group-hover:bg-white/10 group-hover:text-white",
               )}
             >
-              <item.icon className="h-4 w-4" />
+              <Icon className="h-4 w-4" />
             </span>
             <span className="truncate">{item.title}</span>
           </Link>
