@@ -38,7 +38,7 @@ export default async function EditUnitPage({
             Atualize dados administrativos, status da unidade e presenca.
           </p>
         </div>
-        <Button asChild variant="outline">
+        <Button asChild variant="outline" className="w-full sm:w-auto">
           <Link href={`/admin/unidades/${unit.id}`}>
             <ArrowLeft className="h-4 w-4" />
             Voltar

@@ -9,7 +9,7 @@ type SectionCardProps = {
 
 export function SectionCard({ children, icon, title }: SectionCardProps) {
   return (
-    <Card className="border-slate-200 bg-white shadow-sm">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-base text-navy-950">{title}</CardTitle>
         {icon ? <span className="text-navy-700">{icon}</span> : null}

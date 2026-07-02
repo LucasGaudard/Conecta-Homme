@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
+import { Button } from "@/components/ui/button";
 
 type PackageFiltersProps = {
   defaultFrom?: string;
@@ -17,11 +19,28 @@ export function PackageFilters({
   defaultTo = "",
   mode,
 }: PackageFiltersProps) {
+  const activeFilters = [
+    defaultQuery.trim().length > 0,
+    mode === "admin" && defaultStatus !== "ALL",
+    mode === "admin" && defaultFrom.length > 0,
+    mode === "admin" && defaultTo.length > 0,
+  ].filter(Boolean).length;
+
   return (
-    <form className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <div className={mode === "admin" ? "grid gap-4 lg:grid-cols-[1fr_180px_160px_160px_auto]" : "grid gap-4 lg:grid-cols-[1fr_auto]"}>
+    <form className="surface-card space-y-4 p-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm font-medium text-navy-950">
+          Filtros {activeFilters > 0 ? `(${activeFilters} ativo(s))` : ""}
+        </p>
+        {activeFilters > 0 ? (
+          <Button asChild variant="outline" size="sm">
+            <Link href="?">Limpar filtros</Link>
+          </Button>
+        ) : null}
+      </div>
+      <div className={mode === "admin" ? "grid gap-4 md:grid-cols-2 lg:grid-cols-[1fr_180px_160px_160px_auto]" : "grid gap-4 sm:grid-cols-[1fr_auto]"}>
         <label className="space-y-2">
-          <span className="text-sm font-medium text-navy-950">
+          <span className="field-label">
             {mode === "porter" ? "Buscar unidade" : "Unidade ou responsavel"}
           </span>
           <div className="relative">
@@ -37,11 +56,11 @@ export function PackageFilters({
         {mode === "admin" ? (
           <>
             <label className="space-y-2">
-              <span className="text-sm font-medium text-navy-950">Status</span>
+              <span className="field-label">Status</span>
               <select
                 name="status"
                 defaultValue={defaultStatus}
-                className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15"
               >
                 <option value="ALL">Todos</option>
                 <option value="WAITING_PICKUP">Aguardando</option>
@@ -49,17 +68,19 @@ export function PackageFilters({
               </select>
             </label>
             <label className="space-y-2">
-              <span className="text-sm font-medium text-navy-950">De</span>
+              <span className="field-label">De</span>
               <Input name="from" type="date" defaultValue={defaultFrom} />
             </label>
             <label className="space-y-2">
-              <span className="text-sm font-medium text-navy-950">Ate</span>
+              <span className="field-label">Ate</span>
               <Input name="to" type="date" defaultValue={defaultTo} />
             </label>
           </>
         ) : null}
-        <div className="flex items-end">
-          <Button type="submit" className="w-full">Filtrar</Button>
+        <div className="flex items-end md:col-span-2 lg:col-span-1">
+          <SubmitButton className="w-full" pendingLabel="Filtrando...">
+            Filtrar
+          </SubmitButton>
         </div>
       </div>
     </form>

@@ -1,0 +1,35 @@
+import { AccountSettingsForm } from "@/components/account/account-settings-form";
+import { getAccountSettingsData } from "@/lib/account/queries";
+
+type PorterAccountSettingsPageProps = {
+  searchParams: Promise<{
+    error?: string;
+    success?: string;
+  }>;
+};
+
+export const dynamic = "force-dynamic";
+
+export default async function PorterAccountSettingsPage({
+  searchParams,
+}: PorterAccountSettingsPageProps) {
+  const [{ error, success }, user] = await Promise.all([
+    searchParams,
+    getAccountSettingsData(),
+  ]);
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h2 className="text-2xl font-semibold tracking-normal text-navy-950">
+          Configuracoes da conta
+        </h2>
+        <p className="max-w-2xl text-sm leading-6 text-slate-500">
+          Atualize seus dados de acesso e contato usados na rotina da portaria.
+        </p>
+      </div>
+
+      <AccountSettingsForm error={error} success={success} user={user} />
+    </div>
+  );
+}

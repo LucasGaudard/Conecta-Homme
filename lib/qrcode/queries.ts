@@ -2,6 +2,7 @@ import { QRCodeStatus, QRCodeType, UnitStatus, VisitorStatus } from "@prisma/cli
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/prisma";
+import { normalizeQrAccessCode } from "@/lib/qrcode/access-code";
 
 export async function getResidentQrCodeData() {
   const currentUser = await getCurrentUser();
@@ -69,14 +70,19 @@ export async function getVisitorQrCodesForResident() {
 }
 
 export async function getQrValidationResult(token: string) {
-  const normalizedToken = token.trim();
+  const normalizedToken = normalizeQrAccessCode(token);
 
   if (!normalizedToken) {
     return null;
   }
 
-  const qrCode = await prisma.qRCodeToken.findUnique({
-    where: { token: normalizedToken },
+  const qrCode = await prisma.qRCodeToken.findFirst({
+    where: {
+      OR: [
+        { accessCode: normalizedToken },
+        { token: token.trim() },
+      ],
+    },
     include: {
       unit: true,
       visitor: true,

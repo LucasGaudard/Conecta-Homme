@@ -1,7 +1,8 @@
 import { CheckCircle2, XCircle } from "lucide-react";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { registerQrAccessAction } from "@/lib/qrcode/actions";
+import { formatQrDateTime } from "@/lib/qrcode/format";
 import type { getQrValidationResult } from "@/lib/qrcode/queries";
 
 type QrValidationResultProps = {
@@ -15,7 +16,7 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
 
   if (!result.allowed || !("unit" in result) || !result.unit) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-5 text-red-700">
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 shadow-sm sm:p-5">
         <div className="flex items-center gap-2 font-semibold">
           <XCircle className="h-5 w-5" />
           {result.reason}
@@ -25,12 +26,18 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
   }
 
   return (
-    <div className="space-y-4 rounded-lg border border-emerald-200 bg-emerald-50 p-5">
+    <div className="space-y-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 shadow-sm sm:p-5">
       <div className="flex items-center gap-2 font-semibold text-emerald-700">
         <CheckCircle2 className="h-5 w-5" />
         Acesso autorizado
       </div>
-      <div className="grid gap-3 rounded-md bg-white p-4 sm:grid-cols-2">
+      <div className="grid gap-3 rounded-lg border border-emerald-100 bg-white p-4 shadow-sm sm:grid-cols-2">
+        <div>
+          <p className="text-xs font-medium uppercase text-slate-400">Codigo</p>
+          <p className="mt-1 text-xl font-semibold tracking-normal text-navy-950">
+            {result.qrCode.accessCode}
+          </p>
+        </div>
         <div>
           <p className="text-xs font-medium uppercase text-slate-400">Tipo</p>
           <p className="mt-1 text-sm text-navy-950">
@@ -41,6 +48,16 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
           <p className="text-xs font-medium uppercase text-slate-400">Unidade</p>
           <p className="mt-1 text-sm text-navy-950">
             {result.unit.block}-{result.unit.apartment}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs font-medium uppercase text-slate-400">Status</p>
+          <p className="mt-1 text-sm text-navy-950">{result.qrCode.status}</p>
+        </div>
+        <div>
+          <p className="text-xs font-medium uppercase text-slate-400">Validade</p>
+          <p className="mt-1 text-sm text-navy-950">
+            {formatQrDateTime(result.qrCode.expiresAt)}
           </p>
         </div>
         <div>
@@ -63,16 +80,27 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <form action={registerQrAccessAction} className="flex-1">
-          <input type="hidden" name="token" value={result.token} />
-          <Button type="submit" name="accessType" value="ENTRY" className="w-full">
+          <input type="hidden" name="token" value={result.qrCode.accessCode} />
+          <SubmitButton
+            name="accessType"
+            value="ENTRY"
+            className="w-full"
+            pendingLabel="Registrando..."
+          >
             Registrar entrada
-          </Button>
+          </SubmitButton>
         </form>
         <form action={registerQrAccessAction} className="flex-1">
-          <input type="hidden" name="token" value={result.token} />
-          <Button type="submit" name="accessType" value="EXIT" variant="outline" className="w-full bg-white">
+          <input type="hidden" name="token" value={result.qrCode.accessCode} />
+          <SubmitButton
+            name="accessType"
+            value="EXIT"
+            variant="outline"
+            className="w-full bg-white"
+            pendingLabel="Registrando..."
+          >
             Registrar saida
-          </Button>
+          </SubmitButton>
         </form>
       </div>
     </div>

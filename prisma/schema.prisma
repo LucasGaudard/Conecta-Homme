@@ -94,6 +94,7 @@ model User {
   receivedPackages  Package[]            @relation("PackageReceivedBy")
   deliveredPackages Package[]            @relation("PackageDeliveredBy")
   notifications     Notification[]
+  auditLogs         AuditLog[]
 
   @@index([unitId])
 }
@@ -222,9 +223,45 @@ model Notification {
   @@index([unitId])
 }
 
+model CondominiumSettings {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String?
+  email       String?
+  address     String?
+  porterHours String?
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  userName    String?
+  userEmail   String?
+  userRole    UserRole
+  action      String
+  module      String
+  description String
+  entityType  String?
+  entityId    String?
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([userRole])
+  @@index([action])
+  @@index([module])
+  @@index([createdAt])
+  @@index([entityType, entityId])
+}
+
 model QRCodeToken {
   id                   String       @id @default(cuid())
   token                String       @unique
+  accessCode           String       @unique
   type                 QRCodeType
   status               QRCodeStatus @default(ACTIVE)
   unitId               String?
@@ -241,4 +278,5 @@ model QRCodeToken {
   @@index([unitId])
   @@index([visitorId])
   @@index([visitAuthorizationId])
+  @@index([accessCode])
 }

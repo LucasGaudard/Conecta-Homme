@@ -3,6 +3,7 @@
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type ConfirmationDialogProps = {
   action: () => void | Promise<void>;
@@ -56,7 +57,9 @@ export function ConfirmationDialog({
                 Cancelar
               </Button>
               <form action={action}>
-                <Button type="submit">{confirmLabel}</Button>
+                <SubmitButton pendingLabel="Confirmando...">
+                  {confirmLabel}
+                </SubmitButton>
               </form>
             </div>
           </div>

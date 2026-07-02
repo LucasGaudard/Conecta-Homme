@@ -24,7 +24,7 @@ export default async function NewUnitPage({ searchParams }: NewUnitPageProps) {
             operacao.
           </p>
         </div>
-        <Button asChild variant="outline">
+        <Button asChild variant="outline" className="w-full sm:w-auto">
           <Link href="/admin/unidades">
             <ArrowLeft className="h-4 w-4" />
             Voltar

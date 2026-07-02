@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type UnitSearchProps = {
   defaultValue?: string;
@@ -8,8 +8,8 @@ type UnitSearchProps = {
 
 export function UnitSearch({ defaultValue = "" }: UnitSearchProps) {
   return (
-    <form className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <label className="text-sm font-medium text-navy-950" htmlFor="q">
+    <form className="surface-card p-4">
+      <label className="field-label" htmlFor="q">
         Busca rapida de unidade
       </label>
       <div className="mt-3 flex flex-col gap-3 sm:flex-row">
@@ -23,7 +23,7 @@ export function UnitSearch({ defaultValue = "" }: UnitSearchProps) {
             placeholder="Bloco, apartamento, responsavel, telefone ou e-mail"
           />
         </div>
-        <Button type="submit">Buscar</Button>
+        <SubmitButton pendingLabel="Buscando...">Buscar</SubmitButton>
       </div>
     </form>
   );

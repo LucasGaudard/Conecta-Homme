@@ -4,22 +4,22 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    --background: 210 45% 98%;
     --foreground: 213 88% 13%;
     --card: 0 0% 100%;
     --card-foreground: 213 88% 13%;
     --primary: 213 88% 13%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 94%;
+    --secondary: 210 35% 95%;
     --secondary-foreground: 213 88% 13%;
-    --muted: 210 40% 94%;
+    --muted: 210 32% 95%;
     --muted-foreground: 215 20% 45%;
     --accent: 210 100% 96%;
     --accent-foreground: 213 88% 13%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 88%;
-    --input: 214 32% 88%;
+    --border: 214 28% 90%;
+    --input: 214 28% 88%;
     --ring: 213 88% 20%;
     --radius: 0.5rem;
   }
@@ -30,5 +30,130 @@
 
   body {
     @apply min-h-screen bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  html,
+  body {
+    @apply overflow-x-hidden;
+  }
+
+  ::selection {
+    @apply bg-navy-100 text-navy-950;
+  }
+}
+
+@layer components {
+  .animate-enter {
+    animation: enter 220ms ease-out both;
+  }
+
+  .animate-toast-in {
+    animation: toast-in 240ms ease-out both;
+  }
+
+  .surface-card {
+    @apply rounded-lg border border-slate-200/80 bg-white shadow-soft transition duration-200;
+  }
+
+  .surface-card-hover {
+    @apply hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-elevated;
+  }
+
+  .field-label {
+    @apply text-sm font-medium text-navy-950;
+  }
+
+  .helper-text {
+    @apply text-xs leading-5 text-slate-500;
+  }
+
+  .table-shell {
+    @apply max-w-full overflow-x-auto rounded-lg border border-slate-200/80 bg-white shadow-soft;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .data-table {
+    @apply w-full border-collapse text-left text-sm;
+  }
+
+  .data-table thead {
+    @apply border-b border-slate-200 bg-slate-50/80 text-xs uppercase text-slate-500;
+  }
+
+  .data-table th {
+    @apply px-4 py-3 font-semibold tracking-normal;
+  }
+
+  .data-table tbody {
+    @apply divide-y divide-slate-100;
+  }
+
+  .data-table tr {
+    @apply transition-colors;
+  }
+
+  .data-table tbody tr {
+    @apply text-slate-600 hover:bg-slate-50/70;
+  }
+
+  .data-table td {
+    @apply px-4 py-3 align-middle;
+  }
+
+  .info-tile {
+    @apply rounded-md border border-slate-200/70 bg-slate-50/70 p-3;
+  }
+
+  .mobile-list {
+    @apply grid gap-3 md:hidden;
+  }
+
+  .mobile-card {
+    @apply rounded-lg border border-slate-200/80 bg-white p-4 shadow-soft;
+  }
+
+  .mobile-card-header {
+    @apply flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between;
+  }
+
+  .mobile-field-grid {
+    @apply mt-4 grid gap-3 text-sm;
+  }
+
+  .mobile-field {
+    @apply rounded-md border border-slate-200/70 bg-slate-50/70 p-3;
+  }
+
+  .mobile-field-label {
+    @apply text-xs font-medium uppercase text-slate-400;
+  }
+
+  .mobile-field-value {
+    @apply mt-1 break-words text-sm text-slate-700;
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }

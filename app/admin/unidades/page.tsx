@@ -29,7 +29,7 @@ export default async function AdminUnitsPage({ searchParams }: AdminUnitsPagePro
             historico operacional.
           </p>
         </div>
-        <Button asChild>
+        <Button asChild className="w-full sm:w-auto">
           <Link href="/admin/unidades/nova">
             <Plus className="h-4 w-4" />
             Nova unidade

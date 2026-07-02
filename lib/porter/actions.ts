@@ -3,6 +3,7 @@
 import { AccessMethod, UnitStatus, UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createAuditLog } from "@/lib/audit/logger";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/prisma";
 import { registerManualAccessSchema } from "@/lib/porter/validation";
@@ -64,7 +65,7 @@ export async function registerManualAccessAction(formData: FormData) {
     });
   }
 
-  await prisma.accessLog.create({
+  const accessLog = await prisma.accessLog.create({
     data: {
       accessMethod: AccessMethod.MANUAL,
       accessType: data.accessType,
@@ -73,6 +74,18 @@ export async function registerManualAccessAction(formData: FormData) {
       porterId: porter.id,
       unitId: data.unitId,
     },
+  });
+
+  await createAuditLog({
+    action: "REGISTER",
+    description:
+      data.accessType === "ENTRY"
+        ? "Entrada manual registrada pela portaria."
+        : "Saida manual registrada pela portaria.",
+    entityId: accessLog.id,
+    entityType: "AccessLog",
+    module: "ACCESS",
+    user: porter,
   });
 
   revalidatePath("/admin");

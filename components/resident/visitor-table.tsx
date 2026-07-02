@@ -1,47 +1,190 @@
 import type { QRCodeToken, Visitor, VisitAuthorization } from "@prisma/client";
 import { Ban, QrCode } from "lucide-react";
 import { QrTokenResult } from "@/components/qrcode/qr-token-result";
-import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/dashboard/empty-state";
+import { SubmitButton } from "@/components/ui/submit-button";
+import {
+  clampPage,
+  getSearchParam,
+  normalizePage,
+  normalizePageSize,
+  normalizeSortDirection,
+  pageCount,
+  pageSlice,
+  tableParamKeys,
+  type SearchParamRecord,
+} from "@/components/ui/data-table-params";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
+import { SortableHeader } from "@/components/ui/sortable-header";
 import { cancelVisitorAuthorizationAction } from "@/lib/resident/actions";
 import { generateVisitorQrCodeAction } from "@/lib/qrcode/actions";
+import {
+  defaultVisitorQrExpiresAt,
+  toDateTimeLocalValue,
+} from "@/lib/qrcode/format";
 import { formatDateTime, formatVisitorStatus } from "@/components/resident/resident-format";
 
 type VisitorAuthorizationRow = VisitAuthorization & {
+  unit: {
+    apartment: string;
+    block: string;
+  };
   visitor: Visitor;
 };
 
 type VisitorTableProps = {
   authorizations: VisitorAuthorizationRow[];
   qrCodes?: QRCodeToken[];
+  searchParams?: SearchParamRecord;
+  tableKey?: string;
   title: string;
 };
 
-export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTableProps) {
+function visitorSortValue(item: VisitorAuthorizationRow, sort: string) {
+  if (sort === "name") return item.visitor.name;
+  if (sort === "phone") return item.visitor.phone ?? "";
+  if (sort === "status") return item.status;
+  if (sort === "endsAt") return item.endsAt;
+  return item.startsAt;
+}
+
+export function VisitorTable({
+  authorizations,
+  qrCodes = [],
+  searchParams,
+  tableKey = "visitors",
+  title,
+}: VisitorTableProps) {
   if (authorizations.length === 0) {
     return <EmptyState message={`Nenhum visitante em ${title.toLowerCase()}.`} />;
   }
 
+  const keys = tableParamKeys(tableKey);
+  const pageSize = normalizePageSize(getSearchParam(searchParams, keys.pageSize));
+  const totalPages = pageCount(authorizations.length, pageSize);
+  const page = clampPage(normalizePage(getSearchParam(searchParams, keys.page)), totalPages);
+  const sort = getSearchParam(searchParams, keys.sort) ?? "startsAt";
+  const direction = normalizeSortDirection(getSearchParam(searchParams, keys.direction));
+  const sortedAuthorizations = [...authorizations].sort((a, b) => {
+    const first = visitorSortValue(a, sort);
+    const second = visitorSortValue(b, sort);
+    const result =
+      first instanceof Date && second instanceof Date
+        ? first.getTime() - second.getTime()
+        : String(first).localeCompare(String(second), "pt-BR", { numeric: true });
+
+    return direction === "asc" ? result : -result;
+  });
+  const visibleAuthorizations = pageSlice(sortedAuthorizations, page, pageSize);
+
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+    <div className="space-y-4">
+    <div className="surface-card p-4">
+      <p className="text-sm font-medium text-navy-950">
+        {authorizations.length} visitante(s)
+      </p>
+    </div>
+    <div className="mobile-list">
+      {visibleAuthorizations.map((authorization) => {
+        const cancel = cancelVisitorAuthorizationAction.bind(null, authorization.id);
+        const isCancelable =
+          authorization.status === "AUTHORIZED" && authorization.endsAt >= new Date();
+        const unitLabel = `${authorization.unit.block}-${authorization.unit.apartment}`;
+        const qrCode = qrCodes.find(
+          (item) =>
+            item.visitAuthorizationId === authorization.id &&
+            (!item.expiresAt || item.expiresAt >= new Date()),
+        );
+
+        return (
+          <article key={authorization.id} className="mobile-card">
+            <div className="mobile-card-header">
+              <div className="min-w-0">
+                <p className="text-base font-semibold text-navy-950">
+                  {authorization.visitor.name}
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                  {authorization.visitor.document ?? "Documento nao informado"}
+                </p>
+              </div>
+              <div className="text-right">
+                {formatVisitorStatus(authorization.status, authorization.endsAt)}
+              </div>
+            </div>
+            <dl className="mobile-field-grid">
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Telefone</dt>
+                <dd className="mobile-field-value">{authorization.visitor.phone ?? "Nao informado"}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Inicio</dt>
+                <dd className="mobile-field-value">{formatDateTime(authorization.startsAt)}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Fim</dt>
+                <dd className="mobile-field-value">{formatDateTime(authorization.endsAt)}</dd>
+              </div>
+            </dl>
+            <div className="mt-4 space-y-3">
+              {isCancelable ? (
+                <>
+                  <QrTokenResult
+                    qrCode={qrCode}
+                    unitLabel={unitLabel}
+                    visitorName={authorization.visitor.name}
+                  />
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <form action={generateVisitorQrCodeAction} className="space-y-2">
+                      <input type="hidden" name="authorizationId" value={authorization.id} />
+                      <input
+                        type="datetime-local"
+                        name="expiresAt"
+                        defaultValue={toDateTimeLocalValue(defaultVisitorQrExpiresAt(authorization.endsAt))}
+                        min={toDateTimeLocalValue(new Date())}
+                        max={toDateTimeLocalValue(authorization.endsAt)}
+                        className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15"
+                      />
+                      <SubmitButton size="sm" variant="outline" className="h-10 w-full" pendingLabel="Gerando...">
+                        <QrCode className="h-4 w-4" />
+                        {qrCode ? "Reutilizar QR" : "Gerar QR"}
+                      </SubmitButton>
+                    </form>
+                    <form action={cancel}>
+                      <SubmitButton size="sm" variant="outline" className="h-10 w-full" pendingLabel="Cancelando...">
+                        <Ban className="h-4 w-4" />
+                        Cancelar
+                      </SubmitButton>
+                    </form>
+                  </div>
+                </>
+              ) : (
+                <span className="text-sm text-slate-400">QR Code indisponivel. Sem acao.</span>
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <div className="table-shell hidden md:block">
+      <table className="data-table min-w-[760px]">
+        <thead>
           <tr>
-            <th className="px-4 py-3 font-medium">Visitante</th>
-            <th className="px-4 py-3 font-medium">Telefone</th>
-            <th className="px-4 py-3 font-medium">Inicio</th>
-            <th className="px-4 py-3 font-medium">Fim</th>
-            <th className="px-4 py-3 font-medium">Status</th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="name" sortParam={keys.sort}>Visitante</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="phone" sortParam={keys.sort}>Telefone</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="startsAt" sortParam={keys.sort}>Inicio</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="endsAt" sortParam={keys.sort}>Fim</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="status" sortParam={keys.sort}>Status</SortableHeader></th>
             <th className="px-4 py-3 font-medium">QR Code</th>
             <th className="px-4 py-3 font-medium">Acoes</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
-          {authorizations.map((authorization) => {
+        <tbody>
+          {visibleAuthorizations.map((authorization) => {
             const cancel = cancelVisitorAuthorizationAction.bind(null, authorization.id);
-            const generateQr = generateVisitorQrCodeAction.bind(null, authorization.id);
             const isCancelable =
               authorization.status === "AUTHORIZED" && authorization.endsAt >= new Date();
+            const unitLabel = `${authorization.unit.block}-${authorization.unit.apartment}`;
             const qrCode = qrCodes.find(
               (item) =>
                 item.visitAuthorizationId === authorization.id &&
@@ -49,39 +192,52 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
             );
 
             return (
-              <tr key={authorization.id} className="text-slate-600">
-                <td className="px-4 py-3">
+              <tr key={authorization.id}>
+                <td>
                   <p className="font-medium text-navy-950">{authorization.visitor.name}</p>
                   <p className="text-xs text-slate-400">
                     {authorization.visitor.document ?? "Documento nao informado"}
                   </p>
                 </td>
-                <td className="px-4 py-3">{authorization.visitor.phone ?? "Nao informado"}</td>
-                <td className="px-4 py-3">{formatDateTime(authorization.startsAt)}</td>
-                <td className="px-4 py-3">{formatDateTime(authorization.endsAt)}</td>
-                <td className="px-4 py-3">{formatVisitorStatus(authorization.status, authorization.endsAt)}</td>
-                <td className="px-4 py-3">
+                <td>{authorization.visitor.phone ?? "Nao informado"}</td>
+                <td>{formatDateTime(authorization.startsAt)}</td>
+                <td>{formatDateTime(authorization.endsAt)}</td>
+                <td>{formatVisitorStatus(authorization.status, authorization.endsAt)}</td>
+                <td>
                   {isCancelable ? (
                     <div className="space-y-3">
-                      <QrTokenResult qrCode={qrCode} />
-                      <form action={generateQr}>
-                        <Button type="submit" size="sm" variant="outline">
+                      <QrTokenResult
+                        qrCode={qrCode}
+                        unitLabel={unitLabel}
+                        visitorName={authorization.visitor.name}
+                      />
+                      <form action={generateVisitorQrCodeAction} className="space-y-2">
+                        <input type="hidden" name="authorizationId" value={authorization.id} />
+                        <input
+                          type="datetime-local"
+                          name="expiresAt"
+                          defaultValue={toDateTimeLocalValue(defaultVisitorQrExpiresAt(authorization.endsAt))}
+                          min={toDateTimeLocalValue(new Date())}
+                          max={toDateTimeLocalValue(authorization.endsAt)}
+                          className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15"
+                        />
+                        <SubmitButton size="sm" variant="outline" pendingLabel="Gerando...">
                           <QrCode className="h-4 w-4" />
                           {qrCode ? "Reutilizar QR" : "Gerar QR"}
-                        </Button>
+                        </SubmitButton>
                       </form>
                     </div>
                   ) : (
                     <span className="text-xs text-slate-400">Indisponivel</span>
                   )}
                 </td>
-                <td className="px-4 py-3">
+                <td>
                   {isCancelable ? (
                     <form action={cancel}>
-                      <Button type="submit" size="sm" variant="outline">
+                      <SubmitButton size="sm" variant="outline" pendingLabel="Cancelando...">
                         <Ban className="h-4 w-4" />
                         Cancelar
-                      </Button>
+                      </SubmitButton>
                     </form>
                   ) : (
                     <span className="text-xs text-slate-400">Sem acao</span>
@@ -92,6 +248,8 @@ export function VisitorTable({ authorizations, qrCodes = [], title }: VisitorTab
           })}
         </tbody>
       </table>
+    </div>
+    <DataTablePagination page={page} pageParam={keys.page} pageSize={pageSize} pageSizeParam={keys.pageSize} searchParams={searchParams} totalItems={authorizations.length} totalPages={totalPages} />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import {
   Users,
 } from "lucide-react";
 import { ReportChart } from "@/components/reports/report-chart";
+import { ExportButtons } from "@/components/export/export-buttons";
 import { ReportFilters } from "@/components/reports/report-filters";
 import { ReportStatCard } from "@/components/reports/report-stat-card";
 import { ReportTable } from "@/components/reports/report-table";
@@ -18,11 +19,23 @@ import { reportFiltersSchema } from "@/lib/reports/validation";
 type AdminReportsPageProps = {
   searchParams: Promise<{
     accessMethod?: string;
+    accessDir?: string;
+    accessPage?: string;
+    accessPageSize?: string;
+    accessSort?: string;
     accessType?: string;
     from?: string;
+    reportPackagesDir?: string;
+    reportPackagesPage?: string;
+    reportPackagesPageSize?: string;
+    reportPackagesSort?: string;
     packageStatus?: string;
     q?: string;
     to?: string;
+    visitorsDir?: string;
+    visitorsPage?: string;
+    visitorsPageSize?: string;
+    visitorsSort?: string;
     visitorStatus?: string;
   }>;
 };
@@ -50,6 +63,12 @@ export default async function AdminReportsPage({
       </div>
 
       <ReportFilters filters={filters} />
+      <div className="flex justify-end">
+        <ExportButtons
+          basePath="/admin/relatorios/export"
+          searchParams={rawFilters}
+        />
+      </div>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <ReportStatCard
@@ -117,7 +136,12 @@ export default async function AdminReportsPage({
             Entradas e saidas por periodo, unidade, tipo e metodo.
           </p>
         </div>
-        <ReportTable type="access" rows={data.accessLogs} />
+        <ReportTable
+          type="access"
+          rows={data.accessLogs}
+          searchParams={rawFilters}
+          tableKey="access"
+        />
       </section>
 
       <section className="space-y-4">
@@ -129,7 +153,12 @@ export default async function AdminReportsPage({
             Total aguardando retirada: {data.packageTotals.waitingPackagesTotal} · Total entregues: {data.packageTotals.deliveredPackagesTotal}
           </p>
         </div>
-        <ReportTable type="package" rows={data.packages} />
+        <ReportTable
+          type="package"
+          rows={data.packages}
+          searchParams={rawFilters}
+          tableKey="reportPackages"
+        />
       </section>
 
       <section className="space-y-4">
@@ -141,7 +170,12 @@ export default async function AdminReportsPage({
             Visitantes autorizados por periodo, status e unidade.
           </p>
         </div>
-        <ReportTable type="visitor" rows={data.visitors} />
+        <ReportTable
+          type="visitor"
+          rows={data.visitors}
+          searchParams={rawFilters}
+          tableKey="visitors"
+        />
       </section>
     </div>
   );

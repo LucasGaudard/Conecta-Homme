@@ -1,6 +1,6 @@
 import { SearchCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type QrValidationFormProps = {
   defaultToken?: string;
@@ -8,21 +8,22 @@ type QrValidationFormProps = {
 
 export function QrValidationForm({ defaultToken = "" }: QrValidationFormProps) {
   return (
-    <form className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <label className="text-sm font-medium text-navy-950" htmlFor="token">
-        Token do QR Code
+    <form className="surface-card p-4">
+      <label className="field-label" htmlFor="token">
+        Codigo do QR
       </label>
       <div className="mt-3 flex flex-col gap-3 sm:flex-row">
         <Input
           id="token"
           name="token"
           defaultValue={defaultToken}
-          placeholder="Cole ou digite o token"
+          placeholder="MR-82PKA ou VT-X9M4Q"
+          className="uppercase"
         />
-        <Button type="submit">
+        <SubmitButton pendingLabel="Validando...">
           <SearchCheck className="h-4 w-4" />
           Validar
-        </Button>
+        </SubmitButton>
       </div>
     </form>
   );

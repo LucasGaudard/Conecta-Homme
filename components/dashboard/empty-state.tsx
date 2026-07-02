@@ -6,9 +6,11 @@ type EmptyStateProps = {
 
 export function EmptyState({ message }: EmptyStateProps) {
   return (
-    <div className="flex min-h-28 flex-col items-center justify-center rounded-md border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center">
-      <Inbox className="h-5 w-5 text-slate-400" />
-      <p className="mt-2 text-sm text-slate-500">{message}</p>
+    <div className="flex min-h-32 flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50/80 px-4 py-7 text-center">
+      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm">
+        <Inbox className="h-5 w-5" />
+      </span>
+      <p className="mt-3 text-sm text-slate-500">{message}</p>
     </div>
   );
 }
