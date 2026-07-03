@@ -24,9 +24,9 @@ export function NotificationDropdown({
     <div className="absolute right-0 top-12 z-50 w-[calc(100vw-2rem)] max-w-sm rounded-lg border border-slate-200 bg-white p-3 shadow-elevated">
       <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
         <div>
-          <p className="text-sm font-semibold text-navy-950">Notificacoes</p>
+          <p className="text-sm font-semibold text-navy-950">Notificações</p>
           <p className="mt-0.5 text-xs text-slate-500">
-            {unreadCount} nao lida(s)
+            {unreadCount} não lida(s)
           </p>
         </div>
       </div>

@@ -2,7 +2,7 @@ import type { AccessMethod, AccessType, PackageStatus, VisitorStatus } from "@pr
 
 export function formatReportDate(date?: Date | null) {
   if (!date) {
-    return "Nao informado";
+    return "Não informado";
   }
 
   return new Intl.DateTimeFormat("pt-BR", {
@@ -22,7 +22,7 @@ export function formatDayKey(date: Date) {
 }
 
 export function formatAccessType(type: AccessType) {
-  return type === "ENTRY" ? "Entrada" : "Saida";
+  return type === "ENTRY" ? "Entrada" : "Saída";
 }
 
 export function formatAccessMethod(method: AccessMethod) {

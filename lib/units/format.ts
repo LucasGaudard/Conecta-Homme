@@ -4,7 +4,7 @@ export function maskCpf(cpf?: string | null) {
   const digits = cpf?.replace(/\D/g, "");
 
   if (!digits) {
-    return "Nao informado";
+    return "Não informado";
   }
 
   if (digits.length < 4) {
@@ -36,7 +36,7 @@ export function formatUnitStatus(status: UnitStatus | UserStatus) {
 export function formatPresenceStatus(status: PresenceStatus) {
   const labels = {
     AWAY: "Ausente",
-    DO_NOT_DISTURB: "Nao perturbe",
+    DO_NOT_DISTURB: "Não perturbe",
     HOME: "Em casa",
   };
 

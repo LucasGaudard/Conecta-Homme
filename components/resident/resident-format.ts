@@ -2,8 +2,8 @@ import type { AccessMethod, AccessType, PackageStatus, PresenceStatus, VisitorSt
 
 export function formatResidentPresenceStatus(status: PresenceStatus) {
   const labels = {
-    AWAY: "Nao estou em casa",
-    DO_NOT_DISTURB: "Nao quero receber visitas",
+    AWAY: "Não estou em casa",
+    DO_NOT_DISTURB: "Não quero receber visitas",
     HOME: "Estou em casa",
   };
 
@@ -30,7 +30,7 @@ export function formatPackageStatus(status: PackageStatus) {
 }
 
 export function formatAccessType(status: AccessType) {
-  return status === "ENTRY" ? "Entrada" : "Saida";
+  return status === "ENTRY" ? "Entrada" : "Saída";
 }
 
 export function formatAccessMethod(method: AccessMethod) {
@@ -39,7 +39,7 @@ export function formatAccessMethod(method: AccessMethod) {
 
 export function formatDateTime(date?: Date | null) {
   if (!date) {
-    return "Nao informado";
+    return "Não informado";
   }
 
   return new Intl.DateTimeFormat("pt-BR", {

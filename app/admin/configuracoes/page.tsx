@@ -22,10 +22,10 @@ export default async function AdminAccountSettingsPage({
     <div className="space-y-6">
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-normal text-navy-950">
-          Configuracoes da conta
+          Configurações da conta
         </h2>
         <p className="max-w-2xl text-sm leading-6 text-slate-500">
-          Gerencie dados pessoais, contato, senha e identificacao do seu acesso
+          Gerencie dados pessoais, contato, senha e identificação do seu acesso
           administrativo.
         </p>
       </div>

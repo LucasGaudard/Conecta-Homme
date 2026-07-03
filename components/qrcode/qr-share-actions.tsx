@@ -20,9 +20,9 @@ function getWhatsAppText({
   return [
     "Ola!",
     "",
-    "Voce foi autorizado a acessar o condominio.",
+    "Você foi autorizado a acessar o condomínio.",
     "",
-    "Apresente este QR Code ou informe o codigo:",
+    "Apresente este QR Code ou informe o código:",
     "",
     accessCode,
     "",
@@ -32,7 +32,7 @@ function getWhatsAppText({
     "Validade:",
     validityLabel,
     "",
-    "Caso tenha duvidas, procure a portaria.",
+    "Caso tenha dúvidas, procure a portaria.",
   ].join("\n");
 }
 
@@ -76,7 +76,7 @@ export function QrShareActions({
     <div className="grid gap-2 sm:grid-cols-3">
       <Button type="button" variant="outline" size="sm" onClick={copyCode}>
         {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-        {copied ? "Codigo copiado" : "Copiar codigo"}
+        {copied ? "Código copiado" : "Copiar código"}
       </Button>
       <Button asChild variant="outline" size="sm">
         <a href={whatsappHref} target="_blank" rel="noreferrer">

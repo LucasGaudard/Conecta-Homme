@@ -19,7 +19,7 @@ export async function getResidentQrCodeData() {
   });
 
   if (!user?.unit) {
-    redirect("/morador?error=Usuario sem unidade vinculada.");
+    redirect("/morador?error=Usuário sem unidade vinculada.");
   }
 
   const qrCode = await prisma.qRCodeToken.findFirst({
@@ -52,7 +52,7 @@ export async function getVisitorQrCodesForResident() {
   });
 
   if (!user?.unitId) {
-    redirect("/morador?error=Usuario sem unidade vinculada.");
+    redirect("/morador?error=Usuário sem unidade vinculada.");
   }
 
   return prisma.qRCodeToken.findMany({
@@ -98,7 +98,7 @@ export async function getQrValidationResult(token: string) {
   if (!qrCode) {
     return {
       allowed: false,
-      reason: "QR Code invalido",
+      reason: "QR Code inválido",
       token: normalizedToken,
     };
   }
@@ -138,7 +138,7 @@ export async function getQrValidationResult(token: string) {
   if (!unit) {
     return {
       allowed: false,
-      reason: "QR Code invalido",
+      reason: "QR Code inválido",
       token: normalizedToken,
     };
   }
@@ -164,7 +164,7 @@ export async function getQrValidationResult(token: string) {
     ) {
       return {
         allowed: false,
-        reason: "Visitante nao autorizado",
+        reason: "Visitante não autorizado",
         token: normalizedToken,
         unit,
         visitor,

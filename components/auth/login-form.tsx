@@ -42,7 +42,7 @@ export function LoginForm() {
     } | null;
 
     if (!response.ok || !data?.redirectTo) {
-      setServerError(data?.message ?? "Nao foi possivel entrar.");
+      setServerError(data?.message ?? "Não foi possível entrar.");
       return;
     }
 
@@ -60,7 +60,7 @@ export function LoginForm() {
           <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
             id="identifier"
-            placeholder="admin@conectahomme.com"
+            placeholder="Digite seu e-mail ou usuário"
             className="pl-10"
             autoComplete="username"
             {...register("identifier")}
@@ -94,7 +94,7 @@ export function LoginForm() {
       {serverError ? (
         <ToastMessage
           type="error"
-          title="Login invalido"
+          title="Login inválido"
           description={serverError}
         />
       ) : null}

@@ -39,6 +39,8 @@ export async function createPackageAction(formData: FormData) {
   const parsed = createPackageSchema.safeParse({
     carrier: getStringValue(formData, "carrier"),
     description: getStringValue(formData, "description"),
+    photoUrl: getStringValue(formData, "photoUrl"),
+    pickupCode: getStringValue(formData, "pickupCode"),
     query: getStringValue(formData, "query"),
     trackingCode: getStringValue(formData, "trackingCode"),
     unitId: getStringValue(formData, "unitId"),
@@ -46,7 +48,7 @@ export async function createPackageAction(formData: FormData) {
 
   if (!parsed.success) {
     redirectToPorterPackages(getStringValue(formData, "query"), {
-      error: parsed.error.issues[0]?.message ?? "Dados invalidos.",
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
 
@@ -67,6 +69,8 @@ export async function createPackageAction(formData: FormData) {
       data: {
         carrier: data.carrier,
         description: data.description,
+        photoUrl: data.photoUrl,
+        pickupCode: data.pickupCode,
         receivedAt: new Date(),
         receivedById: porter.id,
         status: PackageStatus.WAITING_PICKUP,
@@ -118,7 +122,7 @@ export async function deliverPackageAction(formData: FormData) {
 
   if (!parsed.success) {
     redirectToPorterPackages(undefined, {
-      error: parsed.error.issues[0]?.message ?? "Dados invalidos.",
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
 
@@ -134,7 +138,7 @@ export async function deliverPackageAction(formData: FormData) {
 
   if (!packageRecord) {
     redirectToPorterPackages(undefined, {
-      error: "Encomenda inexistente ou ja entregue.",
+      error: "Encomenda inexistente ou já entregue.",
     });
   }
 
@@ -153,7 +157,7 @@ export async function deliverPackageAction(formData: FormData) {
 
   if (updated.count === 0) {
     redirectToPorterPackages(undefined, {
-      error: "Encomenda inexistente ou ja entregue.",
+      error: "Encomenda inexistente ou já entregue.",
     });
   }
 

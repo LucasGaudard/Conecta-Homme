@@ -1,8 +1,8 @@
 # Checklist Manual - Conecta Homme V1.1
 
-Use esta lista antes de deploy, demonstracao ou entrega. Execute os testes com usuarios de homologacao criados para o ambiente, sem registrar credenciais em documentacao publica.
+Use esta lista antes de deploy, demonstração ou entrega. Execute os testes com usuários de homologação criados para o ambiente, sem registrar credenciais em documentação pública.
 
-## 1. Login e Sessao
+## 1. Login e Sessão
 
 - Acesse `/login`.
 - Entre como Admin.
@@ -11,7 +11,7 @@ Use esta lista antes de deploy, demonstracao ou entrega. Execute os testes com u
 - Saia e repita como Morador.
 - Teste logout e tentativa de acesso a rota protegida.
 
-## 2. Permissoes por Perfil
+## 2. Permissões por Perfil
 
 - Logado como Admin, tente acessar rotas de Portaria e Morador.
 - Logado como Portaria, tente acessar rotas de Admin e Morador.
@@ -21,35 +21,35 @@ Use esta lista antes de deploy, demonstracao ou entrega. Execute os testes com u
 ## 3. Admin
 
 - Acesse `/admin`.
-- Verifique cards, graficos, alertas e atividades recentes.
+- Verifique cards, gráficos, alertas e atividades recentes.
 - Acesse `/admin/unidades`.
 - Busque, ordene, filtre e pagine unidades.
 - Cadastre uma unidade.
-- Edite responsavel, telefone, e-mail, status e presenca.
-- Inative uma unidade e confirme que moradores vinculados sao inativados.
+- Edite responsável, telefone, e-mail, status e presença.
+- Inative uma unidade e confirme que moradores vinculados são inativados.
 
 ## 4. Portaria
 
 - Acesse `/portaria`.
-- Busque unidade por bloco, apartamento, responsavel, telefone e e-mail.
-- Verifique status da unidade e presenca.
+- Busque unidade por bloco, apartamento, responsável, telefone e e-mail.
+- Verifique status da unidade e presença.
 - Registre entrada manual.
-- Registre saida manual.
-- Confirme os registros em ultimos acessos.
+- Registre saída manual.
+- Confirme os registros em últimos acessos.
 
 ## 5. Morador
 
 - Acesse `/morador`.
-- Altere status da residencia.
+- Altere status da residência.
 - Confira cards, atalhos e atividades recentes.
-- Acesse `/morador/acessos` e confirme historico da unidade.
+- Acesse `/morador/acessos` e confirme histórico da unidade.
 
 ## 6. Visitantes
 
 - Como Morador, acesse `/morador/visitantes`.
-- Cadastre visitante com nome, telefone, data e horarios.
-- Gere QR Code temporario para visitante ativo.
-- Cancele autorizacao e confirme mudanca de status.
+- Cadastre visitante com nome, telefone, data e horários.
+- Gere QR Code temporário para visitante ativo.
+- Cancele autorização e confirme mudança de status.
 
 ## 7. QR Code
 
@@ -58,60 +58,60 @@ Use esta lista antes de deploy, demonstracao ou entrega. Execute os testes com u
 - Como Portaria, acesse `/portaria/validar-qr`.
 - Valide token de morador.
 - Valide token de visitante.
-- Teste token invalido.
-- Registre entrada e saida via QR.
+- Teste token inválido.
+- Registre entrada e saída via QR.
 
 ## 8. Encomendas
 
 - Como Portaria, acesse `/portaria/encomendas`.
 - Busque unidade.
-- Cadastre encomenda com transportadora, codigo e descricao.
-- Confirme notificacao ao morador.
+- Cadastre encomenda com transportadora, código e descrição.
+- Confirme notificação ao morador.
 - Marque encomenda como entregue.
 - Como Morador, acesse `/morador/encomendas`.
 - Como Admin, acesse `/admin/encomendas`, filtre e confira a tabela.
 
-## 9. Notificacoes
+## 9. Notificações
 
 - Verifique sino no Header em Admin, Portaria e Morador.
 - Acesse `/admin/notificacoes`.
 - Acesse `/portaria/notificacoes`.
 - Acesse `/morador/notificacoes`.
 - Filtre por tipo e status.
-- Marque uma notificacao como lida.
+- Marque uma notificação como lida.
 - Marque todas como lidas.
 
-## 10. Configuracoes
+## 10. Configurações
 
-- Acesse configuracoes da conta em cada perfil.
+- Acesse configurações da conta em cada perfil.
 - Atualize nome, telefone e e-mail em ambiente de teste.
-- Teste alteracao de senha com valor valido.
+- Teste alteração de senha com valor válido.
 - Como Admin, acesse `/admin/condominio`.
-- Atualize nome do condominio, contato, endereco, horario da portaria e URL de logo.
+- Atualize nome do condomínio, contato, endereço, horário da portaria e URL de logo.
 
 ## 11. Auditoria
 
-- Execute acoes auditadas: unidade, condominio, encomenda, acesso, QR e conta.
+- Execute ações auditadas: unidade, condomínio, encomenda, acesso, QR e conta.
 - Acesse `/admin/auditoria`.
-- Filtre por usuario, perfil, acao, modulo e periodo.
-- Verifique data, usuario, descricao e entidade afetada.
+- Filtre por usuário, perfil, ação, módulo e período.
+- Verifique data, usuário, descrição e entidade afetada.
 
-## 12. Relatorios
+## 12. Relatórios
 
 - Acesse `/admin/relatorios`.
-- Filtre por periodo.
-- Filtre acessos por tipo e metodo.
+- Filtre por período.
+- Filtre acessos por tipo e método.
 - Filtre encomendas por status.
 - Filtre visitantes por status.
-- Confira cards, graficos e tabelas.
+- Confira cards, gráficos e tabelas.
 
-## 13. Exportacao CSV
+## 13. Exportação CSV
 
 - Em `/admin/relatorios`, aplique filtros e exporte CSV.
 - Em `/admin/encomendas`, aplique filtros e exporte CSV.
 - Em `/admin/auditoria`, aplique filtros e exporte CSV.
 - Abra os arquivos e confirme que respeitam os filtros.
-- Confirme que dados sensiveis nao aparecem na exportacao.
+- Confirme que dados sensíveis não aparecem na exportação.
 
 ## 14. Responsividade e UX
 
@@ -124,7 +124,7 @@ Use esta lista antes de deploy, demonstracao ou entrega. Execute os testes com u
 
 - `npm run lint` passando.
 - `npm run build` passando.
-- `.env` nao versionado.
+- `.env` não versionado.
 - Nenhuma credencial real em arquivos versionados.
 - Migrations aplicadas no ambiente de teste.
 - Fluxos principais validados.

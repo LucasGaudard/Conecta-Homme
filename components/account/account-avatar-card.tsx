@@ -26,7 +26,7 @@ export function AccountAvatarCard({ name }: AccountAvatarCardProps) {
             </h3>
           </div>
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            A estrutura visual do avatar ja esta preparada. Nesta etapa, o
+            A estrutura visual do avatar já está preparada. Nesta etapa, o
             perfil utiliza iniciais do nome enquanto o upload de imagem fica
             reservado para uma evolucao futura.
           </p>

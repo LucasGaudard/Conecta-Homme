@@ -11,7 +11,7 @@ export const createUnitSchema = z.object({
   apartment: z.string().trim().min(1, "Informe o apartamento."),
   block: z.string().trim().min(1, "Informe o bloco."),
   cpf: optionalText,
-  email: optionalText.pipe(z.string().email("Informe um e-mail valido.").optional()),
+  email: optionalText.pipe(z.string().email("Informe um e-mail válido.").optional()),
   phone: optionalText,
   residentEmail: z
     .string()
@@ -21,15 +21,15 @@ export const createUnitSchema = z.object({
   residentName: z.string().trim().min(1, "Informe o nome do morador."),
   residentPassword: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."),
   residentUsername: optionalText.transform((value) => value?.toLowerCase()),
-  responsibleName: z.string().trim().min(1, "Informe o responsavel."),
+  responsibleName: z.string().trim().min(1, "Informe o responsável."),
 });
 
 export const updateUnitSchema = z.object({
   cpf: optionalText,
-  email: optionalText.pipe(z.string().email("Informe um e-mail valido.").optional()),
+  email: optionalText.pipe(z.string().email("Informe um e-mail válido.").optional()),
   phone: optionalText,
   presenceStatus: z.nativeEnum(PresenceStatus),
-  responsibleName: z.string().trim().min(1, "Informe o responsavel."),
+  responsibleName: z.string().trim().min(1, "Informe o responsável."),
   status: z.nativeEnum(UnitStatus),
 });
 

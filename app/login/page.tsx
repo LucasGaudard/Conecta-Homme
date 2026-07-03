@@ -29,10 +29,10 @@ export default async function LoginPage() {
             Condominio conectado
           </p>
           <h1 className="text-4xl font-semibold tracking-normal">
-            Uma entrada unica para administrar rotinas do condominio.
+            Uma entrada única para administrar rotinas do condomínio.
           </h1>
           <p className="leading-7 text-blue-100">
-            Interface preparada para os perfis de administracao, portaria e
+            Interface preparada para os perfis de administração, portaria e
             moradores com acesso seguro por perfil.
           </p>
           <div className="grid gap-3 text-sm text-blue-100">

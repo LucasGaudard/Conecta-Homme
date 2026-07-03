@@ -18,7 +18,7 @@ export function VisitorForm({ error, success }: VisitorFormProps) {
       <div>
         <h3 className="text-base font-semibold text-navy-950">Cadastrar visitante</h3>
         <p className="mt-1 text-sm text-slate-500">
-          Autorize um visitante para sua propria unidade. QR Code sera adicionado em etapa futura.
+          Autorize um visitante para sua própria unidade. QR Code será adicionado em etapa futura.
         </p>
       </div>
       <FeedbackAlert error={error} success={success} />

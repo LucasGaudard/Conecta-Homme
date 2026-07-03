@@ -76,11 +76,11 @@ export function UnitResultCard({ query, unit }: UnitResultCardProps) {
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="info-tile">
             <p className="text-xs font-medium uppercase text-slate-400">Telefone</p>
-            <p className="mt-1 text-sm text-navy-950">{unit.phone ?? "Nao informado"}</p>
+            <p className="mt-1 text-sm text-navy-950">{unit.phone ?? "Não informado"}</p>
           </div>
           <div className="info-tile">
             <p className="text-xs font-medium uppercase text-slate-400">E-mail</p>
-            <p className="mt-1 break-words text-sm text-navy-950">{unit.email ?? "Nao informado"}</p>
+            <p className="mt-1 break-words text-sm text-navy-950">{unit.email ?? "Não informado"}</p>
           </div>
           <div className="info-tile">
             <p className="text-xs font-medium uppercase text-slate-400">Moradores</p>
@@ -108,7 +108,7 @@ export function UnitResultCard({ query, unit }: UnitResultCardProps) {
                   <li key={authorization.id} className="text-sm">
                     <p className="font-medium text-navy-950">{authorization.visitor.name}</p>
                     <p className="text-slate-500">
-                      {authorization.visitor.phone ?? "Telefone nao informado"}
+                      {authorization.visitor.phone ?? "Telefone não informado"}
                     </p>
                   </li>
                 ))}
@@ -128,7 +128,7 @@ export function UnitResultCard({ query, unit }: UnitResultCardProps) {
                 {unit.packages.map((item) => (
                   <li key={item.id} className="text-sm">
                     <p className="font-medium text-navy-950">{item.description ?? "Encomenda"}</p>
-                    <p className="text-slate-500">{item.carrier ?? "Transportadora nao informada"}</p>
+                    <p className="text-slate-500">{item.carrier ?? "Transportadora não informada"}</p>
                   </li>
                 ))}
               </ul>
@@ -138,7 +138,7 @@ export function UnitResultCard({ query, unit }: UnitResultCardProps) {
           <div className="rounded-lg border border-slate-200/80 bg-white p-4 shadow-sm">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-navy-950">
               <History className="h-4 w-4" />
-              Ultimos acessos
+              Últimos acessos
             </h3>
             {unit.accessLogs.length === 0 ? (
               <p className="mt-3 text-sm text-slate-500">Nenhum acesso registrado.</p>

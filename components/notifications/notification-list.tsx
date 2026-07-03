@@ -26,13 +26,13 @@ export function NotificationList({
     <div className="space-y-6">
       <section className="space-y-3">
         <div>
-          <h2 className="text-lg font-semibold text-navy-950">Nao lidas</h2>
+          <h2 className="text-lg font-semibold text-navy-950">Não lidas</h2>
           <p className="text-sm text-slate-500">
-            {unreadNotifications.length} notificacao(oes) aguardando leitura.
+            {unreadNotifications.length} notificação(ões) aguardando leitura.
           </p>
         </div>
         {unreadNotifications.length === 0 ? (
-          <NotificationEmptyState message="Voce nao possui notificacoes nao lidas." />
+          <NotificationEmptyState message="Você não possui notificações não lidas." />
         ) : (
           <div className="space-y-3">
             {unreadNotifications.map((notification) => (
@@ -50,7 +50,7 @@ export function NotificationList({
         <div>
           <h2 className="text-lg font-semibold text-navy-950">Lidas</h2>
           <p className="text-sm text-slate-500">
-            {readNotifications.length} notificacao(oes) ja visualizada(s).
+            {readNotifications.length} notificação(ões) já visualizada(s).
           </p>
         </div>
         {readNotifications.length === 0 ? (

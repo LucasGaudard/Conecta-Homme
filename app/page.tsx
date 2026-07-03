@@ -10,7 +10,7 @@ export default function HomePage() {
         <div className="space-y-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-navy-100 bg-navy-50 px-4 py-2 text-sm font-medium text-navy-900">
             <ShieldCheck className="h-4 w-4" />
-            Gestao condominial integrada
+            Gestão condominial integrada
           </div>
 
           <div className="space-y-5">
@@ -19,7 +19,7 @@ export default function HomePage() {
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-slate-600">
               Base inicial do sistema para moradores, portaria, visitantes,
-              encomendas, controle de acesso e relatorios.
+              encomendas, controle de acesso e relatórios.
             </p>
           </div>
 

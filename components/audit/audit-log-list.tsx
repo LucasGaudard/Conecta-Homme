@@ -49,7 +49,7 @@ export function AuditLogList({
           <thead>
             <tr>
               <th>Data</th>
-              <th>Usuario</th>
+              <th>Usuário</th>
               <th>Perfil</th>
               <th>Acao</th>
               <th>Modulo</th>
@@ -102,7 +102,7 @@ export function AuditLogList({
             </div>
             <div className="mobile-field-grid">
               <div className="mobile-field">
-                <p className="mobile-field-label">Usuario</p>
+                <p className="mobile-field-label">Usuário</p>
                 <p className="mobile-field-value">
                   {log.userName ?? "Sistema"} · {log.userEmail ?? "-"}
                 </p>

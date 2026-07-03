@@ -20,7 +20,7 @@ export function UnitSearch({ defaultValue = "" }: UnitSearchProps) {
             name="q"
             defaultValue={defaultValue}
             className="pl-10"
-            placeholder="Bloco, apartamento, responsavel, telefone ou e-mail"
+            placeholder="Bloco, apartamento, responsável, telefone ou e-mail"
           />
         </div>
         <SubmitButton pendingLabel="Buscando...">Buscar</SubmitButton>

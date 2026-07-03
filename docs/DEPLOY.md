@@ -1,27 +1,27 @@
 # Deploy - Conecta Homme
 
-Este guia resume a publicacao segura do Conecta Homme em um ambiente Next.js com PostgreSQL gerenciado.
+Este guia resume a publicação segura do Conecta Homme em um ambiente Next.js com PostgreSQL gerenciado.
 
-## 1. Pre-requisitos
+## 1. Pré-requisitos
 
-- Repositorio versionado sem arquivos `.env`.
+- Repositório versionado sem arquivos `.env`.
 - Banco PostgreSQL provisionado.
-- Variaveis de ambiente configuradas no provedor de hospedagem.
+- Variáveis de ambiente configuradas no provedor de hospedagem.
 - Migrations revisadas.
 - `npm run lint` e `npm run build` passando localmente.
 
-## 2. Variaveis de Ambiente
+## 2. Variáveis de Ambiente
 
-Configure as variaveis exigidas pelo projeto diretamente no provedor de hospedagem e no ambiente local privado.
+Configure as variáveis exigidas pelo projeto diretamente no provedor de hospedagem e no ambiente local privado.
 
-Boas praticas:
+Boas práticas:
 
 - Nunca versionar valores reais.
 - Usar secrets diferentes por ambiente.
-- Rotacionar secrets antes de producao.
+- Rotacionar secrets antes de produção.
 - Restringir acesso ao painel do banco e da hospedagem.
 
-Consulte `.env.example` apenas como referencia de nomes esperados pelo projeto.
+Consulte `.env.example` apenas como referência de nomes esperados pelo projeto.
 
 ## 3. Banco de Dados
 
@@ -35,17 +35,17 @@ npm run prisma:generate
 npm run prisma:deploy
 ```
 
-Use seed apenas em homologacao, demonstracao controlada ou ambiente inicial de teste.
+Use seed apenas em homologação, demonstração controlada ou ambiente inicial de teste.
 
 ```bash
 npm run prisma:seed
 ```
 
-Em producao real, revise usuarios de seed imediatamente ou crie usuarios por processo operacional seguro.
+Em produção real, revise usuários de seed imediatamente ou crie usuários por processo operacional seguro.
 
 ## 4. Build
 
-Com variaveis configuradas:
+Com variáveis configuradas:
 
 ```bash
 npm run lint
@@ -54,17 +54,17 @@ npm run build
 
 O build deve compilar rotas, validar TypeScript e gerar traces sem erro.
 
-## 5. Publicacao
+## 5. Publicação
 
 No provedor de hospedagem:
 
 - Framework: Next.js.
 - Install command: `npm install`.
 - Build command: `npm run build`.
-- Configure as variaveis de ambiente no painel seguro do provedor.
+- Configure as variáveis de ambiente no painel seguro do provedor.
 - Aplique migrations antes de liberar acesso real.
 
-## 6. Validacao Pos-Deploy
+## 6. Validação Pós-Deploy
 
 Teste os fluxos abaixo em ambiente publicado:
 
@@ -77,12 +77,12 @@ Teste os fluxos abaixo em ambiente publicado:
 - Visitantes.
 - QR Code.
 - Encomendas.
-- Notificacoes.
-- Configuracoes da conta.
-- Configuracoes do condominio.
+- Notificações.
+- Configurações da conta.
+- Configurações do condomínio.
 - Auditoria.
-- Relatorios.
-- Exportacao CSV.
+- Relatórios.
+- Exportação CSV.
 
 Checklist detalhado:
 
@@ -90,27 +90,27 @@ Checklist detalhado:
 docs/TESTING.md
 ```
 
-## 7. Seguranca
+## 7. Segurança
 
-- Confirme que `.env` nao foi versionado.
-- Confirme que secrets reais nao aparecem em README, docs ou logs.
+- Confirme que `.env` não foi versionado.
+- Confirme que secrets reais não aparecem em README, docs ou logs.
 - Use HTTPS.
 - Use banco com SSL.
-- Limite acesso a variaveis e painel de producao.
-- Evite seed em producao aberta.
-- Troque credenciais temporarias antes de demonstracoes publicas.
+- Limite acesso a variáveis e painel de produção.
+- Evite seed em produção aberta.
+- Troque credenciais temporárias antes de demonstrações públicas.
 
 ## 8. Troubleshooting
 
-### Falha de conexao com banco
+### Falha de conexão com banco
 
-- Verifique se a variavel do banco foi cadastrada no ambiente correto.
-- Confirme usuario, host, database e parametros de SSL no painel privado.
+- Verifique se a variável do banco foi cadastrada no ambiente correto.
+- Confirme usuário, host, database e parâmetros de SSL no painel privado.
 - Rode migrations novamente se o schema estiver incompleto.
 
-### Falha de sessao em producao
+### Falha de sessão em produção
 
-- Verifique se o secret de autenticacao esta configurado.
+- Verifique se o secret de autenticação está configurado.
 - Confirme HTTPS e cookies no ambiente publicado.
 
 ### Prisma Client
@@ -142,10 +142,10 @@ Corrija erros antes de publicar novamente.
 
 ## 9. Status de Release
 
-O projeto esta pronto para deploy quando:
+O projeto está pronto para deploy quando:
 
 - Lint passou.
 - Build passou.
 - Migrations foram aplicadas.
 - Checklist manual foi executado.
-- Nenhuma credencial real esta versionada.
+- Nenhuma credencial real está versionada.

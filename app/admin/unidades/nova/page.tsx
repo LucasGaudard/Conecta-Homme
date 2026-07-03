@@ -20,8 +20,8 @@ export default async function NewUnitPage({ searchParams }: NewUnitPageProps) {
             Cadastrar unidade
           </h2>
           <p className="max-w-2xl text-sm leading-6 text-slate-500">
-            Cadastre a unidade e crie o primeiro morador vinculado em uma unica
-            operacao.
+            Cadastre a unidade e crie o primeiro morador vinculado em uma única
+            operação.
           </p>
         </div>
         <Button asChild variant="outline" className="w-full sm:w-auto">

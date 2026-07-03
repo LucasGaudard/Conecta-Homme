@@ -24,7 +24,7 @@ async function requireResident() {
   });
 
   if (!user?.unitId) {
-    redirect("/morador?error=Usuario sem unidade vinculada.");
+    redirect("/morador?error=Usuário sem unidade vinculada.");
   }
 
   return {
@@ -42,7 +42,7 @@ export async function getResidentContext() {
   });
 
   if (!unit) {
-    redirect("/morador?error=Unidade nao encontrada.");
+    redirect("/morador?error=Unidade não encontrada.");
   }
 
   return { resident, unit };

@@ -26,7 +26,7 @@ export default async function ResidentQrCodePage({
           Meu QR Code
         </h2>
         <p className="max-w-2xl text-sm leading-6 text-slate-500">
-          QR Code permanente da sua unidade para validacao pela portaria.
+          QR Code permanente da sua unidade para validação pela portaria.
         </p>
       </div>
 

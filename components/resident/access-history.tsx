@@ -77,12 +77,12 @@ export function AccessHistory({ accesses, searchParams }: AccessHistoryProps) {
               <dd className="mobile-field-value">{formatDateTime(access.occurredAt)}</dd>
             </div>
             <div className="mobile-field">
-              <dt className="mobile-field-label">Metodo</dt>
+              <dt className="mobile-field-label">Método</dt>
               <dd className="mobile-field-value">{formatAccessMethod(access.accessMethod)}</dd>
             </div>
             <div className="mobile-field">
               <dt className="mobile-field-label">Porteiro</dt>
-              <dd className="mobile-field-value">{access.porter?.name ?? "Nao informado"}</dd>
+              <dd className="mobile-field-value">{access.porter?.name ?? "Não informado"}</dd>
             </div>
             <div className="mobile-field">
               <dt className="mobile-field-label">Observacao</dt>
@@ -99,7 +99,7 @@ export function AccessHistory({ accesses, searchParams }: AccessHistoryProps) {
           <tr>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="type" sortParam={keys.sort}>Tipo</SortableHeader></th>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="occurredAt" sortParam={keys.sort}>Horario</SortableHeader></th>
-            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="method" sortParam={keys.sort}>Metodo</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="method" sortParam={keys.sort}>Método</SortableHeader></th>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="porter" sortParam={keys.sort}>Porteiro</SortableHeader></th>
             <th className="px-4 py-3 font-medium">Observacao</th>
           </tr>
@@ -112,7 +112,7 @@ export function AccessHistory({ accesses, searchParams }: AccessHistoryProps) {
               </td>
               <td>{formatDateTime(access.occurredAt)}</td>
               <td>{formatAccessMethod(access.accessMethod)}</td>
-              <td>{access.porter?.name ?? "Nao informado"}</td>
+              <td>{access.porter?.name ?? "Não informado"}</td>
               <td>{access.notes ?? "Sem observacao"}</td>
             </tr>
           ))}

@@ -52,7 +52,7 @@ export default async function PorterPackagesPage({
             Encomendas recentes
           </h3>
           <p className="text-sm text-slate-500">
-            Ultimos registros cadastrados pela portaria.
+            Últimos registros cadastrados pela portaria.
           </p>
         </div>
         <PackageTable mode="porter" packages={packages} searchParams={params} />

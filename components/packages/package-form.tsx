@@ -40,11 +40,19 @@ export function PackageForm({ query, units }: PackageFormProps) {
           <Input name="carrier" placeholder="Opcional" />
         </label>
         <label className="space-y-2">
-          <span className="field-label">Codigo de rastreio</span>
+          <span className="field-label">Código de rastreio</span>
           <Input name="trackingCode" placeholder="Opcional" />
         </label>
+        <label className="space-y-2">
+          <span className="field-label">Código de retirada</span>
+          <Input name="pickupCode" placeholder="Opcional" />
+        </label>
+        <label className="space-y-2">
+          <span className="field-label">URL da foto</span>
+          <Input name="photoUrl" placeholder="https://exemplo.com/foto.jpg" type="url" />
+        </label>
         <label className="space-y-2 sm:col-span-2">
-          <span className="field-label">Descricao</span>
+          <span className="field-label">Descrição</span>
           <Input name="description" placeholder="Opcional" />
         </label>
       </div>

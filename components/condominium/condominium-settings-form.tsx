@@ -35,13 +35,13 @@ export function CondominiumSettingsForm({
           </h3>
           <p className="mt-1 text-sm leading-6 text-slate-500">
             Configure as informacoes institucionais usadas como base
-            administrativa do condominio.
+            administrativa do condomínio.
           </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label className={`${fieldClass} sm:col-span-2`}>
-            <span className={labelClass}>Nome do condominio</span>
+            <span className={labelClass}>Nome do condomínio</span>
             <div className="relative">
               <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
@@ -81,7 +81,7 @@ export function CondominiumSettingsForm({
           </label>
 
           <label className="space-y-2 sm:col-span-2">
-            <span className={labelClass}>Endereco</span>
+            <span className={labelClass}>Endereço</span>
             <div className="relative">
               <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
               <textarea
@@ -94,7 +94,7 @@ export function CondominiumSettingsForm({
           </label>
 
           <label className={fieldClass}>
-            <span className={labelClass}>Horario da portaria</span>
+            <span className={labelClass}>Horário da portaria</span>
             <div className="relative">
               <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
@@ -118,7 +118,7 @@ export function CondominiumSettingsForm({
 
         <div className="flex justify-end">
           <SubmitButton className="w-full sm:w-auto" pendingLabel="Salvando...">
-            Salvar condominio
+            Salvar condomínio
           </SubmitButton>
         </div>
       </form>

@@ -26,7 +26,7 @@ export default async function AdminUnitsPage({ searchParams }: AdminUnitsPagePro
           </h2>
           <p className="max-w-2xl text-sm leading-6 text-slate-500">
             Gerencie casas, apartamentos e moradores vinculados sem remover
-            historico operacional.
+            histórico operacional.
           </p>
         </div>
         <Button asChild className="w-full sm:w-auto">

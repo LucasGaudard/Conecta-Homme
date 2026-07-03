@@ -66,7 +66,7 @@ function accessByDay(items: Array<{ occurredAt: Date }>, days: number) {
 }
 
 function formatAccessType(accessType: AccessType) {
-  return accessType === AccessType.ENTRY ? "Entrada" : "Saida";
+  return accessType === AccessType.ENTRY ? "Entrada" : "Saída";
 }
 
 function formatAccessMethod(accessMethod: AccessMethod) {
@@ -252,7 +252,7 @@ export async function getAdminDashboardData() {
   return {
     alerts: [
       ...doNotDisturbUnits.map((unit) => ({
-        description: `${unit.responsibleName} marcou a unidade como nao perturbe.`,
+        description: `${unit.responsibleName} marcou a unidade como não perturbe.`,
         id: unit.id,
         title: `Unidade ${unit.block}-${unit.apartment}`,
         tone: "warning" as const,
@@ -295,7 +295,7 @@ export async function getAdminDashboardData() {
       description: [
         accessLog.unit
           ? `Unidade ${accessLog.unit.block}-${accessLog.unit.apartment}`
-          : "Unidade nao informada",
+          : "Unidade não informada",
         formatAccessMethod(accessLog.accessMethod),
         accessLog.porter?.name ? `Portaria: ${accessLog.porter.name}` : null,
       ]
@@ -304,20 +304,20 @@ export async function getAdminDashboardData() {
       id: accessLog.id,
       meta: formatDateTime(accessLog.occurredAt),
       title: `${formatAccessType(accessLog.accessType)} - ${
-        accessLog.user?.name ?? accessLog.visitor?.name ?? "Pessoa nao identificada"
+        accessLog.user?.name ?? accessLog.visitor?.name ?? "Pessoa não identificada"
       }`,
     })),
     recentPackages: recentPackages.map((item) => ({
       description: [
         item.unit ? `Unidade ${item.unit.block}-${item.unit.apartment}` : null,
         item.carrier ? `Transportadora: ${item.carrier}` : null,
-        item.trackingCode ? `Codigo: ${item.trackingCode}` : null,
+        item.trackingCode ? `Código: ${item.trackingCode}` : null,
       ]
         .filter(Boolean)
         .join(" · "),
       id: item.id,
       meta: formatDateTime(item.createdAt),
-      title: item.description ?? "Encomenda sem descricao",
+      title: item.description ?? "Encomenda sem descrição",
     })),
     recentVisitAuthorizations: recentVisitAuthorizations.map((authorization) => ({
       description: [

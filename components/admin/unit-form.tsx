@@ -46,13 +46,13 @@ export function UnitForm({ error, mode, unit }: UnitFormProps) {
             </>
           ) : null}
           <div className={fieldClass}>
-            <label className={labelClass} htmlFor="responsibleName">Responsavel</label>
+            <label className={labelClass} htmlFor="responsibleName">Responsável</label>
             <Input
               id="responsibleName"
               name="responsibleName"
               required
               defaultValue={unit?.responsibleName}
-              placeholder="Nome do responsavel"
+              placeholder="Nome do responsável"
             />
           </div>
           <div className={fieldClass}>
@@ -129,7 +129,7 @@ export function UnitForm({ error, mode, unit }: UnitFormProps) {
           className="w-full sm:w-auto"
           pendingLabel={mode === "create" ? "Cadastrando..." : "Salvando..."}
         >
-          {mode === "create" ? "Cadastrar unidade" : "Salvar alteracoes"}
+          {mode === "create" ? "Cadastrar unidade" : "Salvar alterações"}
         </SubmitButton>
       </div>
     </form>

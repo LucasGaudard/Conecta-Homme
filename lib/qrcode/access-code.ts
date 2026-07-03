@@ -37,5 +37,5 @@ export async function createUniqueAccessCode(type: QRCodeType) {
     }
   }
 
-  throw new Error("Nao foi possivel gerar um codigo de acesso unico.");
+  throw new Error("Não foi possível gerar um código de acesso único.");
 }

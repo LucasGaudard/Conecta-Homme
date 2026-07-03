@@ -24,7 +24,7 @@ export const auditActionLabels: Record<string, string> = {
   INACTIVATE: "Inativacao",
   REGISTER: "Registro",
   UPDATE: "Atualizacao",
-  VALIDATE: "Validacao",
+  VALIDATE: "Validação",
 };
 
 export const auditModuleLabels: Record<string, string> = {

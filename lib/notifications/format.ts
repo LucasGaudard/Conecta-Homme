@@ -17,7 +17,7 @@ export const notificationTypeLabels: Record<NotificationType, string> = {
 
 export const notificationStatusLabels: Record<NotificationStatus, string> = {
   READ: "Lida",
-  UNREAD: "Nao lida",
+  UNREAD: "Não lida",
 };
 
 export const notificationRouteByRole: Record<UserRole, string> = {
@@ -64,14 +64,14 @@ export function formatNotificationDateTime(date: Date) {
 
 export function getNotificationBellLabel(unreadCount: number) {
   if (unreadCount === 0) {
-    return "Nenhuma notificacao nao lida";
+    return "Nenhuma notificação não lida";
   }
 
   if (unreadCount === 1) {
-    return "1 notificacao nao lida";
+    return "1 notificação não lida";
   }
 
-  return `${unreadCount} notificacoes nao lidas`;
+  return `${unreadCount} notificações não lidas`;
 }
 
 export function getNotificationBellIcon(unreadCount: number) {

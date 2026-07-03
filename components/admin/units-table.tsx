@@ -137,7 +137,7 @@ export function UnitsTable({ units }: UnitsTableProps) {
   }
 
   if (units.length === 0) {
-    return <EmptyState message="Nenhuma unidade cadastrada ate o momento." />;
+    return <EmptyState message="Nenhuma unidade cadastrada até o momento." />;
   }
 
   return (
@@ -148,7 +148,7 @@ export function UnitsTable({ units }: UnitsTableProps) {
             activeFilters={activeFilters}
             onClear={clearFilters}
             onSearchChange={updateQuery}
-            placeholder="Buscar por bloco, apartamento, responsavel, telefone ou e-mail"
+            placeholder="Buscar por bloco, apartamento, responsável, telefone ou e-mail"
             resultLabel={`${filteredUnits.length} de ${units.length} unidade(s)`}
             searchValue={query}
           />
@@ -171,7 +171,7 @@ export function UnitsTable({ units }: UnitsTableProps) {
               { label: "Todas", value: "ALL" },
               { label: "Em casa", value: "HOME" },
               { label: "Ausente", value: "AWAY" },
-              { label: "Nao perturbe", value: "DO_NOT_DISTURB" },
+              { label: "Não perturbe", value: "DO_NOT_DISTURB" },
             ]}
           />
           <div className="flex items-end">
@@ -226,11 +226,11 @@ export function UnitsTable({ units }: UnitsTableProps) {
                 </div>
                 <div className="mobile-field">
                   <dt className="mobile-field-label">Telefone</dt>
-                  <dd className="mobile-field-value">{unit.phone ?? "Nao informado"}</dd>
+                  <dd className="mobile-field-value">{unit.phone ?? "Não informado"}</dd>
                 </div>
                 <div className="mobile-field">
                   <dt className="mobile-field-label">E-mail</dt>
-                  <dd className="mobile-field-value">{unit.email ?? "Nao informado"}</dd>
+                  <dd className="mobile-field-value">{unit.email ?? "Não informado"}</dd>
                 </div>
                 <div className="mobile-field">
                   <dt className="mobile-field-label">Moradores</dt>
@@ -247,7 +247,7 @@ export function UnitsTable({ units }: UnitsTableProps) {
               <tr>
                 <th className="px-4 py-3 font-medium"><SortButton column="block">Bloco</SortButton></th>
                 <th className="px-4 py-3 font-medium"><SortButton column="apartment">Apartamento</SortButton></th>
-                <th className="px-4 py-3 font-medium"><SortButton column="responsibleName">Responsavel</SortButton></th>
+                <th className="px-4 py-3 font-medium"><SortButton column="responsibleName">Responsável</SortButton></th>
                 <th className="px-4 py-3 font-medium">CPF</th>
                 <th className="px-4 py-3 font-medium">Telefone</th>
                 <th className="px-4 py-3 font-medium">E-mail</th>
@@ -264,8 +264,8 @@ export function UnitsTable({ units }: UnitsTableProps) {
                   <td>{unit.apartment}</td>
                   <td>{unit.responsibleName}</td>
                   <td>{maskCpf(unit.cpf)}</td>
-                  <td>{unit.phone ?? "Nao informado"}</td>
-                  <td>{unit.email ?? "Nao informado"}</td>
+                  <td>{unit.phone ?? "Não informado"}</td>
+                  <td>{unit.email ?? "Não informado"}</td>
                   <td>
                     <StatusBadge status={unit.status as UnitStatus} type="unit" />
                   </td>
@@ -283,7 +283,7 @@ export function UnitsTable({ units }: UnitsTableProps) {
         </div>
         <div className="surface-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-slate-500">
-            Pagina {currentPage} de {totalPages} · {filteredUnits.length} registro(s)
+            Página {currentPage} de {totalPages} · {filteredUnits.length} registro(s)
           </p>
           <div className="grid grid-cols-2 gap-2 sm:flex">
             <button

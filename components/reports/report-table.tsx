@@ -29,11 +29,11 @@ type ReportTableProps = {
 
 function unitLabel(unit: unknown) {
   if (!unit || typeof unit !== "object") {
-    return "Nao informada";
+    return "Não informada";
   }
 
   const data = unit as { apartment?: string; block?: string; responsibleName?: string };
-  return `${data.block ?? "-"}-${data.apartment ?? "-"} / ${data.responsibleName ?? "Responsavel nao informado"}`;
+  return `${data.block ?? "-"}-${data.apartment ?? "-"} / ${data.responsibleName ?? "Responsável não informado"}`;
 }
 
 function reportSortValue(row: Record<string, unknown>, sort: string) {
@@ -94,7 +94,7 @@ export function ReportTable({
                 <dd className="mobile-field-value">{formatAccessType(row.accessType as never)}</dd>
               </div>
               <div className="mobile-field">
-                <dt className="mobile-field-label">Metodo</dt>
+                <dt className="mobile-field-label">Método</dt>
                 <dd className="mobile-field-value">{formatAccessMethod(row.accessMethod as never)}</dd>
               </div>
               <div className="mobile-field">
@@ -103,7 +103,7 @@ export function ReportTable({
               </div>
               <div className="mobile-field">
                 <dt className="mobile-field-label">Porteiro</dt>
-                <dd className="mobile-field-value">{(row.porter as { name?: string } | null)?.name ?? "Nao informado"}</dd>
+                <dd className="mobile-field-value">{(row.porter as { name?: string } | null)?.name ?? "Não informado"}</dd>
               </div>
             </dl>
           </article>
@@ -121,7 +121,7 @@ export function ReportTable({
                 <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="accessType" sortParam={keys.sort}>Tipo</SortableHeader>
               </th>
               <th className="px-4 py-3 font-medium">
-                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="accessMethod" sortParam={keys.sort}>Metodo</SortableHeader>
+                <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="accessMethod" sortParam={keys.sort}>Método</SortableHeader>
               </th>
               <th className="px-4 py-3 font-medium">
                 <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="occurredAt" sortParam={keys.sort}>Horario</SortableHeader>
@@ -136,7 +136,7 @@ export function ReportTable({
                 <td>{formatAccessType(row.accessType as never)}</td>
                 <td>{formatAccessMethod(row.accessMethod as never)}</td>
                 <td>{formatReportDate(row.occurredAt as Date)}</td>
-                <td>{(row.porter as { name?: string } | null)?.name ?? "Nao informado"}</td>
+                <td>{(row.porter as { name?: string } | null)?.name ?? "Não informado"}</td>
               </tr>
             ))}
           </tbody>
@@ -160,7 +160,23 @@ export function ReportTable({
             <dl className="mobile-field-grid">
               <div className="mobile-field">
                 <dt className="mobile-field-label">Transportadora</dt>
-                <dd className="mobile-field-value">{String(row.carrier ?? "Nao informado")}</dd>
+                <dd className="mobile-field-value">{String(row.carrier ?? "Não informado")}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Código de retirada</dt>
+                <dd className="mobile-field-value">{String(row.pickupCode ?? "Não informado")}</dd>
+              </div>
+              <div className="mobile-field">
+                <dt className="mobile-field-label">Foto</dt>
+                <dd className="mobile-field-value">
+                  {row.photoUrl ? (
+                    <a className="font-medium text-navy-700 underline-offset-4 hover:underline" href={String(row.photoUrl)} rel="noreferrer" target="_blank">
+                      Ver foto
+                    </a>
+                  ) : (
+                    "Não informado"
+                  )}
+                </dd>
               </div>
               <div className="mobile-field">
                 <dt className="mobile-field-label">Chegada</dt>
@@ -172,15 +188,15 @@ export function ReportTable({
               </div>
               <div className="mobile-field">
                 <dt className="mobile-field-label">Recebido por</dt>
-                <dd className="mobile-field-value">{(row.receivedBy as { name?: string } | null)?.name ?? "Nao informado"}</dd>
+                <dd className="mobile-field-value">{(row.receivedBy as { name?: string } | null)?.name ?? "Não informado"}</dd>
               </div>
               <div className="mobile-field">
                 <dt className="mobile-field-label">Entregue por</dt>
-                <dd className="mobile-field-value">{(row.deliveredBy as { name?: string } | null)?.name ?? "Nao informado"}</dd>
+                <dd className="mobile-field-value">{(row.deliveredBy as { name?: string } | null)?.name ?? "Não informado"}</dd>
               </div>
               <div className="mobile-field">
                 <dt className="mobile-field-label">Retirado por</dt>
-                <dd className="mobile-field-value">{String(row.pickedUpByName ?? "Nao informado")}</dd>
+                <dd className="mobile-field-value">{String(row.pickedUpByName ?? "Não informado")}</dd>
               </div>
             </dl>
           </article>
@@ -188,7 +204,7 @@ export function ReportTable({
       </div>
 
       <div className="table-shell hidden md:block">
-        <table className="data-table min-w-[980px]">
+        <table className="data-table min-w-[1160px]">
           <thead>
             <tr>
               <th className="px-4 py-3 font-medium">
@@ -197,6 +213,8 @@ export function ReportTable({
               <th className="px-4 py-3 font-medium">
                 <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="carrier" sortParam={keys.sort}>Transportadora</SortableHeader>
               </th>
+              <th className="px-4 py-3 font-medium">Código de retirada</th>
+              <th className="px-4 py-3 font-medium">Foto</th>
               <th className="px-4 py-3 font-medium">
                 <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="status" sortParam={keys.sort}>Status</SortableHeader>
               </th>
@@ -215,13 +233,23 @@ export function ReportTable({
             {visibleRows.map((row) => (
               <tr key={String(row.id)}>
                 <td className="font-medium text-navy-950">{unitLabel(row.unit)}</td>
-                <td>{String(row.carrier ?? "Nao informado")}</td>
+                <td>{String(row.carrier ?? "Não informado")}</td>
+                <td>{String(row.pickupCode ?? "Não informado")}</td>
+                <td>
+                  {row.photoUrl ? (
+                    <a className="font-medium text-navy-700 underline-offset-4 hover:underline" href={String(row.photoUrl)} rel="noreferrer" target="_blank">
+                      Ver foto
+                    </a>
+                  ) : (
+                    "Não informado"
+                  )}
+                </td>
                 <td><PackageStatusBadge status={row.status as never} /></td>
                 <td>{formatReportDate(row.receivedAt as Date)}</td>
                 <td>{formatReportDate(row.deliveredAt as Date | null)}</td>
-                <td>{(row.receivedBy as { name?: string } | null)?.name ?? "Nao informado"}</td>
-                <td>{(row.deliveredBy as { name?: string } | null)?.name ?? "Nao informado"}</td>
-                <td>{String(row.pickedUpByName ?? "Nao informado")}</td>
+                <td>{(row.receivedBy as { name?: string } | null)?.name ?? "Não informado"}</td>
+                <td>{(row.deliveredBy as { name?: string } | null)?.name ?? "Não informado"}</td>
+                <td>{String(row.pickedUpByName ?? "Não informado")}</td>
               </tr>
             ))}
           </tbody>
@@ -239,7 +267,7 @@ export function ReportTable({
         <article key={String(row.id)} className="mobile-card">
           <div className="mobile-card-header">
             <p className="text-base font-semibold text-navy-950">
-              {(row.visitor as { name?: string } | null)?.name ?? "Nao informado"}
+              {(row.visitor as { name?: string } | null)?.name ?? "Não informado"}
             </p>
             <span className="text-sm text-slate-600">{formatVisitorStatus(row.status as never)}</span>
           </div>
@@ -249,7 +277,7 @@ export function ReportTable({
               <dd className="mobile-field-value">{unitLabel(row.unit)}</dd>
             </div>
             <div className="mobile-field">
-              <dt className="mobile-field-label">Inicio</dt>
+              <dt className="mobile-field-label">Início</dt>
               <dd className="mobile-field-value">{formatReportDate(row.startsAt as Date)}</dd>
             </div>
             <div className="mobile-field">
@@ -258,7 +286,7 @@ export function ReportTable({
             </div>
             <div className="mobile-field">
               <dt className="mobile-field-label">Autorizado por</dt>
-              <dd className="mobile-field-value">{(row.authorizedBy as { name?: string } | null)?.name ?? "Nao informado"}</dd>
+              <dd className="mobile-field-value">{(row.authorizedBy as { name?: string } | null)?.name ?? "Não informado"}</dd>
             </div>
           </dl>
         </article>
@@ -279,7 +307,7 @@ export function ReportTable({
               <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="status" sortParam={keys.sort}>Status</SortableHeader>
             </th>
             <th className="px-4 py-3 font-medium">
-              <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="startsAt" sortParam={keys.sort}>Inicio</SortableHeader>
+              <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="startsAt" sortParam={keys.sort}>Início</SortableHeader>
             </th>
             <th className="px-4 py-3 font-medium">
               <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="endsAt" sortParam={keys.sort}>Fim</SortableHeader>
@@ -290,12 +318,12 @@ export function ReportTable({
         <tbody>
           {visibleRows.map((row) => (
             <tr key={String(row.id)}>
-              <td className="font-medium text-navy-950">{(row.visitor as { name?: string } | null)?.name ?? "Nao informado"}</td>
+              <td className="font-medium text-navy-950">{(row.visitor as { name?: string } | null)?.name ?? "Não informado"}</td>
               <td>{unitLabel(row.unit)}</td>
               <td>{formatVisitorStatus(row.status as never)}</td>
               <td>{formatReportDate(row.startsAt as Date)}</td>
               <td>{formatReportDate(row.endsAt as Date)}</td>
-              <td>{(row.authorizedBy as { name?: string } | null)?.name ?? "Nao informado"}</td>
+              <td>{(row.authorizedBy as { name?: string } | null)?.name ?? "Não informado"}</td>
             </tr>
           ))}
       </tbody>

@@ -27,7 +27,7 @@ async function requireResidentUnit() {
   });
 
   if (!user?.unitId) {
-    redirect("/morador?error=Usuario sem unidade vinculada.");
+    redirect("/morador?error=Usuário sem unidade vinculada.");
   }
 
   return {
@@ -132,7 +132,7 @@ export async function generateVisitorQrCodeAction(formData: FormData) {
 
   if (!parsed.success) {
     redirectWith("/morador/visitantes", {
-      error: parsed.error.issues[0]?.message ?? "Dados invalidos.",
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
 
@@ -150,13 +150,13 @@ export async function generateVisitorQrCodeAction(formData: FormData) {
 
   if (!authorization || authorization.endsAt < new Date()) {
     redirectWith("/morador/visitantes", {
-      error: "Visitante nao autorizado para gerar QR Code.",
+      error: "Visitante não autorizado para gerar QR Code.",
     });
   }
 
   if (requestedExpiresAt > authorization.endsAt) {
     redirectWith("/morador/visitantes", {
-      error: "A validade do QR Code nao pode ultrapassar a autorizacao do visitante.",
+      error: "A validade do QR Code não pode ultrapassar a autorização do visitante.",
     });
   }
 
@@ -187,7 +187,7 @@ export async function generateVisitorQrCodeAction(formData: FormData) {
     });
     await createAuditLog({
       action: "GENERATE",
-      description: `QR Code temporario gerado para visitante ${authorization.visitor.name}.`,
+      description: `QR Code temporário gerado para visitante ${authorization.visitor.name}.`,
       entityId: token.id,
       entityType: "QRCodeToken",
       module: "QRCODE",
@@ -209,7 +209,7 @@ export async function generateVisitorQrCodeAction(formData: FormData) {
     });
     await createAuditLog({
       action: "GENERATE",
-      description: `QR Code temporario reutilizado para visitante ${authorization.visitor.name}.`,
+      description: `QR Code temporário reutilizado para visitante ${authorization.visitor.name}.`,
       entityId: updated.id,
       entityType: "QRCodeToken",
       module: "QRCODE",
@@ -224,7 +224,7 @@ export async function generateVisitorQrCodeAction(formData: FormData) {
 
   revalidatePath("/morador/visitantes");
   redirectWith("/morador/visitantes", {
-    success: "QR Code temporario gerado.",
+    success: "QR Code temporário gerado.",
   });
 }
 
@@ -237,7 +237,7 @@ export async function registerQrAccessAction(formData: FormData) {
 
   if (!parsed.success) {
     redirectWith("/portaria/validar-qr", {
-      error: parsed.error.issues[0]?.message ?? "Dados invalidos.",
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
 
@@ -247,14 +247,14 @@ export async function registerQrAccessAction(formData: FormData) {
   if (!result?.allowed || !("unit" in result) || !result.unit) {
     await createAuditLog({
       action: "VALIDATE",
-      description: `Tentativa de validacao de QR Code recusada: ${result?.reason ?? "QR Code invalido"}.`,
+      description: `Tentativa de validação de QR Code recusada: ${result?.reason ?? "QR Code inválido"}.`,
       entityId: submittedCode,
       entityType: "QRCodeToken",
       module: "QRCODE",
       user: porter,
     });
     redirectWith("/portaria/validar-qr", {
-      error: result?.reason ?? "QR Code invalido",
+      error: result?.reason ?? "QR Code inválido",
       token: submittedCode,
     });
   }
@@ -275,7 +275,7 @@ export async function registerQrAccessAction(formData: FormData) {
     description:
       parsed.data.accessType === "ENTRY"
         ? "Entrada via QR Code validada pela portaria."
-        : "Saida via QR Code validada pela portaria.",
+        : "Saída via QR Code validada pela portaria.",
     entityId: accessLog.id,
     entityType: "AccessLog",
     module: "QRCODE",
@@ -289,7 +289,7 @@ export async function registerQrAccessAction(formData: FormData) {
     success:
       parsed.data.accessType === "ENTRY"
         ? "Entrada via QR Code registrada."
-        : "Saida via QR Code registrada.",
+        : "Saída via QR Code registrada.",
       token: submittedCode,
   });
 }

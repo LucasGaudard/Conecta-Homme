@@ -55,7 +55,7 @@ export function QrCodeCard({ qrCode, unit }: QrCodeCardProps) {
         </div>
         <dl className="mt-5 grid gap-4 sm:grid-cols-2">
           <div className="info-tile">
-            <dt className="text-xs font-medium uppercase text-slate-400">Responsavel</dt>
+            <dt className="text-xs font-medium uppercase text-slate-400">Responsável</dt>
             <dd className="mt-1 text-sm text-navy-950">{unit.responsibleName}</dd>
           </div>
           <div className="info-tile">
@@ -63,9 +63,9 @@ export function QrCodeCard({ qrCode, unit }: QrCodeCardProps) {
             <dd className="mt-1 text-sm text-navy-950">Permanente</dd>
           </div>
           <div className="info-tile sm:col-span-2">
-            <dt className="text-xs font-medium uppercase text-slate-400">Codigo</dt>
+            <dt className="text-xs font-medium uppercase text-slate-400">Código</dt>
             <dd className="mt-2 text-3xl font-semibold tracking-normal text-navy-950">
-              {qrCode?.accessCode ?? "Gere o QR Code para exibir o codigo."}
+              {qrCode?.accessCode ?? "Gere o QR Code para exibir o código."}
             </dd>
           </div>
           {qrCode ? (

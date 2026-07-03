@@ -31,7 +31,7 @@ export default async function AdminPackagesPage({
           Encomendas
         </h2>
         <p className="max-w-2xl text-sm leading-6 text-slate-500">
-          Visao administrativa de todas as encomendas registradas no condominio.
+          Visão administrativa de todas as encomendas registradas no condomínio.
         </p>
       </div>
 

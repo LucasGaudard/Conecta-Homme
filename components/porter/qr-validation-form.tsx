@@ -10,7 +10,7 @@ export function QrValidationForm({ defaultToken = "" }: QrValidationFormProps) {
   return (
     <form className="surface-card p-4">
       <label className="field-label" htmlFor="token">
-        Codigo do QR
+        Código do QR
       </label>
       <div className="mt-3 flex flex-col gap-3 sm:flex-row">
         <Input

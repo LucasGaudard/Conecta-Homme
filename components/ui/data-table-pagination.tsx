@@ -59,7 +59,7 @@ export function DataTablePagination({
           {totalItems} registro(s)
         </p>
         <p className="text-xs text-slate-500">
-          Exibindo {firstItem}-{lastItem} de {totalItems} · Pagina {page} de{" "}
+          Exibindo {firstItem}-{lastItem} de {totalItems} · Página {page} de{" "}
           {totalPages}
         </p>
       </div>

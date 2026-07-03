@@ -7,7 +7,7 @@ const optionalText = z
   .optional();
 
 export const updateAccountSchema = z.object({
-  email: z.string().trim().email("Informe um e-mail valido."),
+  email: z.string().trim().email("Informe um e-mail válido."),
   name: z.string().trim().min(1, "Informe seu nome."),
   password: z
     .string()

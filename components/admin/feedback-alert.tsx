@@ -15,7 +15,7 @@ export function FeedbackAlert({ error, success }: FeedbackAlertProps) {
   return (
     <ToastMessage
       type={isError ? "error" : "success"}
-      title={isError ? "Nao foi possivel concluir" : "Tudo certo"}
+      title={isError ? "Não foi possível concluir" : "Tudo certo"}
       description={error ?? success}
     />
   );

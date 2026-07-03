@@ -8,9 +8,9 @@ const optionalText = z
 
 export const updateCondominiumSettingsSchema = z.object({
   address: optionalText,
-  email: optionalText.pipe(z.string().email("Informe um e-mail valido.").optional()),
+  email: optionalText.pipe(z.string().email("Informe um e-mail válido.").optional()),
   logoUrl: optionalText,
-  name: z.string().trim().min(1, "Informe o nome do condominio."),
+  name: z.string().trim().min(1, "Informe o nome do condomínio."),
   phone: optionalText,
   porterHours: optionalText,
 });

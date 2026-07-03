@@ -49,7 +49,7 @@ export async function registerManualAccessAction(formData: FormData) {
 
   if (!parsed.success) {
     redirectToPorter(getStringValue(formData, "query"), {
-      error: parsed.error.issues[0]?.message ?? "Dados invalidos.",
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
 
@@ -81,7 +81,7 @@ export async function registerManualAccessAction(formData: FormData) {
     description:
       data.accessType === "ENTRY"
         ? "Entrada manual registrada pela portaria."
-        : "Saida manual registrada pela portaria.",
+        : "Saída manual registrada pela portaria.",
     entityId: accessLog.id,
     entityType: "AccessLog",
     module: "ACCESS",
@@ -94,6 +94,6 @@ export async function registerManualAccessAction(formData: FormData) {
     success:
       data.accessType === "ENTRY"
         ? "Entrada registrada com sucesso."
-        : "Saida registrada com sucesso.",
+        : "Saída registrada com sucesso.",
   });
 }

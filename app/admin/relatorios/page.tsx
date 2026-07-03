@@ -54,10 +54,10 @@ export default async function AdminReportsPage({
     <div className="space-y-6">
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-normal text-navy-950">
-          Relatorios
+          Relatórios
         </h2>
         <p className="max-w-3xl text-sm leading-6 text-slate-500">
-          Acompanhe movimentacoes do condominio com filtros por periodo,
+          Acompanhe movimentações do condomínio com filtros por período,
           unidade, acessos, encomendas e visitantes.
         </p>
       </div>
@@ -86,19 +86,19 @@ export default async function AdminReportsPage({
         <ReportStatCard
           title="Moradores ativos"
           value={data.summary.activeResidents}
-          description="Usuarios residentes ativos."
+          description="Usuários residentes ativos."
           icon={Users}
         />
         <ReportStatCard
           title="Porteiros ativos"
           value={data.summary.activePorters}
-          description="Usuarios da portaria ativos."
+          description="Usuários da portaria ativos."
           icon={ShieldCheck}
         />
         <ReportStatCard
           title="Visitantes autorizados"
           value={data.summary.authorizedVisitors}
-          description="Autorizacoes ativas no sistema."
+          description="Autorizações ativas no sistema."
           icon={UserCheck}
         />
         <ReportStatCard
@@ -108,9 +108,9 @@ export default async function AdminReportsPage({
           icon={Package}
         />
         <ReportStatCard
-          title="Acessos no periodo"
+          title="Acessos no período"
           value={data.summary.accessLogsInPeriod}
-          description="Entradas e saidas filtradas."
+          description="Entradas e saídas filtradas."
           icon={DoorOpen}
         />
         <ReportStatCard
@@ -130,10 +130,10 @@ export default async function AdminReportsPage({
       <section className="space-y-4">
         <div>
           <h3 className="text-lg font-semibold text-navy-950">
-            Relatorio de acessos
+            Relatório de acessos
           </h3>
           <p className="text-sm text-slate-500">
-            Entradas e saidas por periodo, unidade, tipo e metodo.
+            Entradas e saídas por período, unidade, tipo e método.
           </p>
         </div>
         <ReportTable
@@ -147,7 +147,7 @@ export default async function AdminReportsPage({
       <section className="space-y-4">
         <div>
           <h3 className="text-lg font-semibold text-navy-950">
-            Relatorio de encomendas
+            Relatório de encomendas
           </h3>
           <p className="text-sm text-slate-500">
             Total aguardando retirada: {data.packageTotals.waitingPackagesTotal} · Total entregues: {data.packageTotals.deliveredPackagesTotal}
@@ -164,10 +164,10 @@ export default async function AdminReportsPage({
       <section className="space-y-4">
         <div>
           <h3 className="text-lg font-semibold text-navy-950">
-            Relatorio de visitantes
+            Relatório de visitantes
           </h3>
           <p className="text-sm text-slate-500">
-            Visitantes autorizados por periodo, status e unidade.
+            Visitantes autorizados por período, status e unidade.
           </p>
         </div>
         <ReportTable

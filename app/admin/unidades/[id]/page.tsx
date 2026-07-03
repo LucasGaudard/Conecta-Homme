@@ -48,7 +48,7 @@ export default async function UnitDetailPage({
 
   const accessItems = unit.accessLogs.map((access) => ({
     description: [
-      access.user?.name ?? access.visitor?.name ?? "Pessoa nao identificada",
+      access.user?.name ?? access.visitor?.name ?? "Pessoa não identificada",
       access.porter?.name ? `Portaria: ${access.porter.name}` : null,
       access.accessMethod === "QR_CODE" ? "QR Code" : "Manual",
     ]
@@ -56,19 +56,19 @@ export default async function UnitDetailPage({
       .join(" - "),
     id: access.id,
     meta: formatDateTime(access.occurredAt),
-    title: access.accessType === "ENTRY" ? "Entrada registrada" : "Saida registrada",
+    title: access.accessType === "ENTRY" ? "Entrada registrada" : "Saída registrada",
   }));
   const packageItems = unit.packages.map((item) => ({
     description: [
       item.carrier ? `Transportadora: ${item.carrier}` : null,
-      item.trackingCode ? `Codigo: ${item.trackingCode}` : null,
+      item.trackingCode ? `Código: ${item.trackingCode}` : null,
       `Status: ${item.status === "WAITING_PICKUP" ? "Aguardando retirada" : "Entregue"}`,
     ]
       .filter(Boolean)
       .join(" - "),
     id: item.id,
     meta: formatDateTime(item.createdAt),
-    title: item.description ?? "Encomenda sem descricao",
+    title: item.description ?? "Encomenda sem descrição",
   }));
   const visitorItems = unit.visitAuthorizations.map((authorization) => ({
     description: [
@@ -118,13 +118,13 @@ export default async function UnitDetailPage({
         <InfoCard
           title="Moradores"
           value={unit._count.users}
-          description="Usuarios residentes vinculados."
+          description="Usuários residentes vinculados."
           icon={Users}
         />
         <InfoCard
           title="Visitantes recentes"
           value={unit.visitAuthorizations.length}
-          description="Ultimas autorizacoes exibidas."
+          description="Últimas autorizações exibidas."
           icon={UserCheck}
         />
         <InfoCard
@@ -136,7 +136,7 @@ export default async function UnitDetailPage({
         <InfoCard
           title="Acessos recentes"
           value={unit.accessLogs.length}
-          description="Ultimos registros exibidos."
+          description="Últimos registros exibidos."
           icon={History}
         />
       </section>
@@ -153,7 +153,7 @@ export default async function UnitDetailPage({
               <dd className="mt-1 text-sm font-medium text-navy-950">{unit.apartment}</dd>
             </div>
             <div className="info-tile">
-              <dt className="text-xs font-medium uppercase text-slate-400">Responsavel</dt>
+              <dt className="text-xs font-medium uppercase text-slate-400">Responsável</dt>
               <dd className="mt-1 text-sm text-navy-950">{unit.responsibleName}</dd>
             </div>
             <div className="info-tile">
@@ -165,14 +165,14 @@ export default async function UnitDetailPage({
                 <Phone className="h-3.5 w-3.5" />
                 Telefone
               </dt>
-              <dd className="mt-1 text-sm text-navy-950">{unit.phone ?? "Nao informado"}</dd>
+              <dd className="mt-1 text-sm text-navy-950">{unit.phone ?? "Não informado"}</dd>
             </div>
             <div className="info-tile">
               <dt className="flex items-center gap-2 text-xs font-medium uppercase text-slate-400">
                 <Mail className="h-3.5 w-3.5" />
                 E-mail
               </dt>
-              <dd className="mt-1 break-words text-sm text-navy-950">{unit.email ?? "Nao informado"}</dd>
+              <dd className="mt-1 break-words text-sm text-navy-950">{unit.email ?? "Não informado"}</dd>
             </div>
           </dl>
         </SectionCard>
@@ -216,7 +216,7 @@ export default async function UnitDetailPage({
           icon={<Package className="h-4 w-4" />}
         />
         <RecentList
-          title="Ultimos acessos"
+          title="Últimos acessos"
           emptyMessage="Nenhum acesso registrado para esta unidade."
           items={accessItems}
           icon={<History className="h-4 w-4" />}

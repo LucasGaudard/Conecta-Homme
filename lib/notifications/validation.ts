@@ -15,7 +15,7 @@ export const notificationProfileSchema = z.enum([
   UserRole.RESIDENT,
 ]);
 
-export const notificationIdSchema = z.string().min(1, "Notificacao invalida.");
+export const notificationIdSchema = z.string().min(1, "Notificação inválida.");
 
 export type NotificationStatusFilter = z.infer<typeof notificationStatusFilterSchema>;
 export type NotificationTypeFilter = z.infer<typeof notificationTypeFilterSchema>;

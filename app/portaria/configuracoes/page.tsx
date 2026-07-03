@@ -22,7 +22,7 @@ export default async function PorterAccountSettingsPage({
     <div className="space-y-6">
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-normal text-navy-950">
-          Configuracoes da conta
+          Configurações da conta
         </h2>
         <p className="max-w-2xl text-sm leading-6 text-slate-500">
           Atualize seus dados de acesso e contato usados na rotina da portaria.

@@ -27,7 +27,7 @@ export function SettingsForm({ error, success, unit }: SettingsFormProps) {
           <Input id="apartment" value={unit.apartment} disabled />
         </div>
         <div className={fieldClass}>
-          <label className={labelClass} htmlFor="responsibleName">Nome responsavel</label>
+          <label className={labelClass} htmlFor="responsibleName">Nome responsável</label>
           <Input id="responsibleName" name="responsibleName" defaultValue={unit.responsibleName} required />
         </div>
         <div className={fieldClass}>
@@ -45,7 +45,7 @@ export function SettingsForm({ error, success, unit }: SettingsFormProps) {
       </div>
       <div className="flex justify-end">
         <SubmitButton className="w-full sm:w-auto" pendingLabel="Salvando...">
-          Salvar configuracoes
+          Salvar configurações
         </SubmitButton>
       </div>
     </form>

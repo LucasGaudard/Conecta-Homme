@@ -6,7 +6,7 @@ export function formatPackageStatus(status: PackageStatus) {
 
 export function formatPackageDate(date?: Date | null) {
   if (!date) {
-    return "Nao informado";
+    return "Não informado";
   }
 
   return new Intl.DateTimeFormat("pt-BR", {

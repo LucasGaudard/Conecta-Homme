@@ -62,19 +62,19 @@ function handlePrismaError(error: unknown, path: string): never {
       : String(error.meta?.target ?? "");
 
     if (target.includes("block") || target.includes("apartment")) {
-      redirectWithError(path, "Ja existe uma unidade com este bloco e apartamento.");
+      redirectWithError(path, "Já existe uma unidade com este bloco e apartamento.");
     }
 
     if (target.includes("email")) {
-      redirectWithError(path, "Ja existe um usuario com este e-mail.");
+      redirectWithError(path, "Já existe um usuário com este e-mail.");
     }
 
     if (target.includes("username")) {
-      redirectWithError(path, "Ja existe um usuario com este username.");
+      redirectWithError(path, "Já existe um usuário com este username.");
     }
   }
 
-  redirectWithError(path, "Nao foi possivel salvar os dados. Tente novamente.");
+  redirectWithError(path, "Não foi possível salvar os dados. Tente novamente.");
 }
 
 export async function createUnitAction(formData: FormData) {
@@ -83,7 +83,7 @@ export async function createUnitAction(formData: FormData) {
   const parsed = createUnitSchema.safeParse(getCreatePayload(formData));
 
   if (!parsed.success) {
-    redirectWithError("/admin/unidades/nova", parsed.error.issues[0]?.message ?? "Dados invalidos.");
+    redirectWithError("/admin/unidades/nova", parsed.error.issues[0]?.message ?? "Dados inválidos.");
   }
 
   const data = parsed.data;
@@ -149,7 +149,7 @@ export async function updateUnitAction(unitId: string, formData: FormData) {
   let updatedUnitLabel = "";
 
   if (!parsed.success) {
-    redirectWithError(errorPath, parsed.error.issues[0]?.message ?? "Dados invalidos.");
+    redirectWithError(errorPath, parsed.error.issues[0]?.message ?? "Dados inválidos.");
   }
 
   try {

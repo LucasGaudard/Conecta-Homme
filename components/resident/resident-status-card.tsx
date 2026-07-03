@@ -20,15 +20,15 @@ const options = [
     value: "HOME",
   },
   {
-    description: "Nao estou em casa",
+    description: "Não estou em casa",
     icon: Car,
-    label: "Nao estou em casa",
+    label: "Não estou em casa",
     value: "AWAY",
   },
   {
-    description: "Nao quero receber visitas",
+    description: "Não quero receber visitas",
     icon: Ban,
-    label: "Nao quero receber visitas",
+    label: "Não quero receber visitas",
     value: "DO_NOT_DISTURB",
   },
 ] satisfies Array<{
@@ -46,7 +46,7 @@ export function ResidentStatusCard({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-base text-navy-950">Status da residencia</CardTitle>
+        <CardTitle className="text-base text-navy-950">Status da residência</CardTitle>
         <StatusBadge status={presenceStatus} type="presence" />
       </CardHeader>
       <CardContent className="space-y-4">

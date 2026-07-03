@@ -2,8 +2,8 @@ import type { AccessMethod, AccessType, PresenceStatus } from "@prisma/client";
 
 export function formatPorterPresenceStatus(status: PresenceStatus) {
   const labels = {
-    AWAY: "Nao estou em casa",
-    DO_NOT_DISTURB: "Nao quero receber visitas",
+    AWAY: "Não estou em casa",
+    DO_NOT_DISTURB: "Não quero receber visitas",
     HOME: "Estou em casa",
   };
 
@@ -11,7 +11,7 @@ export function formatPorterPresenceStatus(status: PresenceStatus) {
 }
 
 export function formatAccessType(accessType: AccessType) {
-  return accessType === "ENTRY" ? "Entrada" : "Saida";
+  return accessType === "ENTRY" ? "Entrada" : "Saída";
 }
 
 export function formatAccessMethod(accessMethod: AccessMethod) {

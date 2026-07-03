@@ -11,7 +11,7 @@ type QrTokenResultProps = {
 
 export function QrTokenResult({ qrCode, unitLabel, visitorName }: QrTokenResultProps) {
   if (!qrCode) {
-    return <span className="text-xs text-slate-400">QR Code ainda nao gerado.</span>;
+    return <span className="text-xs text-slate-400">QR Code ainda não gerado.</span>;
   }
 
   const downloadId = `qr-${qrCode.accessCode}`;
@@ -21,13 +21,13 @@ export function QrTokenResult({ qrCode, unitLabel, visitorName }: QrTokenResultP
     <div className="space-y-3">
       <QrCodeDisplay id={downloadId} value={qrCode.accessCode} />
       <div className="rounded-md border border-navy-100 bg-navy-50 p-3 text-center">
-        <p className="text-xs font-semibold uppercase text-slate-500">Codigo</p>
+        <p className="text-xs font-semibold uppercase text-slate-500">Código</p>
         <p className="mt-1 text-2xl font-semibold tracking-normal text-navy-950">
           {qrCode.accessCode}
         </p>
       </div>
       <p className="text-xs font-medium text-amber-700">
-        Valido ate: {validityLabel}
+        Válido até: {validityLabel}
       </p>
       <QrShareActions
         accessCode={qrCode.accessCode}

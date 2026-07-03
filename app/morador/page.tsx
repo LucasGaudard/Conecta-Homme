@@ -36,12 +36,12 @@ export default async function ResidentDashboardPage({
     icon: <History className="h-4 w-4" />,
     id: item.id,
     meta: formatDateTime(item.occurredAt),
-    title: item.accessType === "ENTRY" ? "Entrada registrada" : "Saida registrada",
+    title: item.accessType === "ENTRY" ? "Entrada registrada" : "Saída registrada",
   }));
   const packageItems = data.waitingPackages.map((item) => ({
     description: [
       item.carrier ? `Transportadora: ${item.carrier}` : null,
-      item.trackingCode ? `Codigo: ${item.trackingCode}` : null,
+      item.trackingCode ? `Código: ${item.trackingCode}` : null,
     ]
       .filter(Boolean)
       .join(" · "),
@@ -69,7 +69,7 @@ export default async function ResidentDashboardPage({
     <DashboardShell
       eyebrow={`Unidade ${data.unit.block}-${data.unit.apartment}`}
       title="Dashboard do morador"
-      description="Acompanhe status da residencia, acessos, visitantes, encomendas e notificacoes da sua unidade."
+      description="Acompanhe status da residência, acessos, visitantes, encomendas e notificações da sua unidade."
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
@@ -82,21 +82,21 @@ export default async function ResidentDashboardPage({
         <MetricCard
           title="Visitantes autorizados"
           value={data.stats.authorizedVisitors}
-          description="Autorizacoes ainda validas."
+          description="Autorizações ainda válidas."
           icon={UserCheck}
           tone="info"
         />
         <MetricCard
-          title="Ultimos acessos"
+          title="Últimos acessos"
           value={data.stats.recentAccesses}
           description="Registros recentes da sua unidade."
           icon={History}
           tone="info"
         />
         <MetricCard
-          title="Status da residencia"
+          title="Status da residência"
           value={formatResidentPresenceStatus(data.stats.residenceStatus)}
-          description="Visivel para a portaria."
+          description="Visível para a portaria."
           icon={Home}
           tone={data.stats.residenceStatus === "DO_NOT_DISTURB" ? "danger" : "success"}
         />
@@ -117,7 +117,7 @@ export default async function ResidentDashboardPage({
           />
           <QuickActionCard
             title="Visitantes"
-            description="Autorize entradas temporarias."
+            description="Autorize entradas temporárias."
             href="/morador/visitantes"
             icon={Users}
           />
@@ -129,7 +129,7 @@ export default async function ResidentDashboardPage({
           />
           <QuickActionCard
             title="Acessos"
-            description="Veja o historico da unidade."
+            description="Veja o histórico da unidade."
             href="/morador/acessos"
             icon={History}
           />
@@ -138,7 +138,7 @@ export default async function ResidentDashboardPage({
 
       <section className="grid gap-4 xl:grid-cols-3">
         <ActivityFeed
-          title="Ultimos acessos"
+          title="Últimos acessos"
           emptyMessage="Nenhum acesso registrado para sua unidade."
           items={accessItems}
         />
@@ -155,7 +155,7 @@ export default async function ResidentDashboardPage({
       </section>
 
       <ActivityFeed
-        title="Notificacoes recentes"
+        title="Notificações recentes"
         emptyMessage="Nenhuma notificacao recente."
         items={notificationItems}
       />

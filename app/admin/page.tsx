@@ -44,27 +44,27 @@ export default async function AdminDashboardPage() {
     <DashboardShell
       eyebrow="Painel executivo"
       title="Dashboard administrativo"
-      description="Visao estrategica do condominio com operacao, alertas, movimentacoes e indicadores atualizados em tempo real."
+      description="Visão estratégica do condomínio com operação, alertas, movimentações e indicadores atualizados em tempo real."
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <MetricCard
           title="Total de unidades"
           value={stats.totalUnits}
-          description="Unidades cadastradas no condominio."
+          description="Unidades cadastradas no condomínio."
           icon={Building2}
           tone="info"
         />
         <MetricCard
           title="Moradores ativos"
           value={stats.totalActiveResidents}
-          description="Usuarios residentes com status ativo."
+          description="Usuários residentes com status ativo."
           icon={Users}
           tone="success"
         />
         <MetricCard
           title="Porteiros ativos"
           value={stats.totalActivePorters}
-          description="Usuarios de portaria com status ativo."
+          description="Usuários de portaria com status ativo."
           icon={ShieldCheck}
           tone="info"
         />
@@ -78,21 +78,21 @@ export default async function AdminDashboardPage() {
         <MetricCard
           title="Visitantes hoje"
           value={stats.visitorsAuthorizedToday}
-          description="Autorizacoes validas para o dia atual."
+          description="Autorizações válidas para o dia atual."
           icon={UserCheck}
           tone="info"
         />
         <MetricCard
           title="Acessos hoje"
           value={stats.accessLogsToday}
-          description="Entradas e saidas registradas hoje."
+          description="Entradas e saídas registradas hoje."
           icon={Activity}
           tone="success"
         />
       </section>
 
       <section className="grid gap-4 xl:grid-cols-3">
-        <DashboardChart title="Acessos nos ultimos 7 dias" data={charts.accessByDay} />
+        <DashboardChart title="Acessos nos últimos 7 dias" data={charts.accessByDay} />
         <DashboardChart title="Encomendas por status" data={charts.packagesByStatus} />
         <DashboardChart title="Visitantes por status" data={charts.visitorsByStatus} />
       </section>

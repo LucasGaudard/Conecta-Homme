@@ -48,8 +48,8 @@ export function CondominiumIdentityCard({
               Logo
             </div>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              O campo de URL da logo ja deixa a estrutura preparada para imagem
-              do condominio, sem upload complexo nesta etapa.
+              O campo de URL da logo já deixa a estrutura preparada para imagem
+              do condomínio, sem upload complexo nesta etapa.
             </p>
           </div>
           <div className="info-tile">
@@ -65,10 +65,10 @@ export function CondominiumIdentityCard({
           <div className="info-tile">
             <div className="flex items-center gap-2 text-xs font-medium uppercase text-slate-400">
               <Building2 className="h-4 w-4" />
-              Registro unico
+              Registro único
             </div>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              As configuracoes funcionam como registro unico do condominio.
+              As configurações funcionam como registro único do condomínio.
             </p>
           </div>
         </div>

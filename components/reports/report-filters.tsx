@@ -41,7 +41,7 @@ export function ReportFilters({ filters }: ReportFiltersProps) {
               name="q"
               defaultValue={filters.q}
               className="pl-10"
-              placeholder="Bloco, apto ou responsavel"
+              placeholder="Bloco, apto ou responsável"
             />
           </div>
         </label>
@@ -58,11 +58,11 @@ export function ReportFilters({ filters }: ReportFiltersProps) {
           <select name="accessType" defaultValue={filters.accessType ?? "ALL"} className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15">
             <option value="ALL">Todos</option>
             <option value="ENTRY">Entrada</option>
-            <option value="EXIT">Saida</option>
+            <option value="EXIT">Saída</option>
           </select>
         </label>
         <label className="space-y-2">
-          <span className="field-label">Metodo</span>
+          <span className="field-label">Método</span>
           <select name="accessMethod" defaultValue={filters.accessMethod ?? "ALL"} className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15">
             <option value="ALL">Todos</option>
             <option value="MANUAL">Manual</option>

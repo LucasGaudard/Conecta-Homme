@@ -49,7 +49,7 @@ export async function Header({ profile, title, user }: HeaderProps) {
             />
             <div className="max-w-48 pr-2 text-right">
               <p className="text-sm font-medium text-navy-950">
-                {user?.name ?? "Usuario"}
+                {user?.name ?? "Usuário"}
               </p>
               <p className="truncate text-xs text-slate-500">
                 {user?.email ?? profileLabels[profile]}

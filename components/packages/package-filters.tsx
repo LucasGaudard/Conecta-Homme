@@ -41,7 +41,7 @@ export function PackageFilters({
       <div className={mode === "admin" ? "grid gap-4 md:grid-cols-2 lg:grid-cols-[1fr_180px_160px_160px_auto]" : "grid gap-4 sm:grid-cols-[1fr_auto]"}>
         <label className="space-y-2">
           <span className="field-label">
-            {mode === "porter" ? "Buscar unidade" : "Unidade ou responsavel"}
+            {mode === "porter" ? "Buscar unidade" : "Unidade ou responsável"}
           </span>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -49,7 +49,7 @@ export function PackageFilters({
               name="q"
               defaultValue={defaultQuery}
               className="pl-10"
-              placeholder="Bloco, apartamento, responsavel, telefone ou e-mail"
+              placeholder="Bloco, apartamento, responsável, telefone ou e-mail"
             />
           </div>
         </label>

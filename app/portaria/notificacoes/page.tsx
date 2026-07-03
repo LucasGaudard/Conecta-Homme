@@ -26,21 +26,21 @@ export default async function PorterNotificationsPage({
   return (
     <DashboardShell
       eyebrow="Central da portaria"
-      title="Notificacoes"
-      description="Visualize notificacoes operacionais vinculadas ao seu usuario de portaria."
+      title="Notificações"
+      description="Visualize notificações operacionais vinculadas ao seu usuário de portaria."
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard title="Total" value={data.stats.totalCount} description="Notificacoes disponiveis para a portaria." icon={Bell} tone="info" />
-        <MetricCard title="Nao lidas" value={data.stats.unreadCount} description="Pendencias de leitura." icon={BellRing} tone={data.stats.unreadCount > 0 ? "warning" : "success"} />
-        <MetricCard title="Lidas" value={data.stats.readCount} description="Notificacoes ja acompanhadas." icon={CheckCheck} tone="success" />
+        <MetricCard title="Total" value={data.stats.totalCount} description="Notificações disponíveis para a portaria." icon={Bell} tone="info" />
+        <MetricCard title="Não lidas" value={data.stats.unreadCount} description="Pendências de leitura." icon={BellRing} tone={data.stats.unreadCount > 0 ? "warning" : "success"} />
+        <MetricCard title="Lidas" value={data.stats.readCount} description="Notificações já acompanhadas." icon={CheckCheck} tone="success" />
         <MetricCard title="Sistema" value={data.stats.systemCount} description="Mensagens operacionais do sistema." icon={Settings} tone="info" />
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard title="Encomendas" value={data.stats.packageCount} description="Notificacoes do tipo PACKAGE." icon={Package} tone="info" />
-        <MetricCard title="Visitantes" value={data.stats.visitorCount} description="Notificacoes do tipo VISITOR." icon={UserCheck} tone="info" />
-        <MetricCard title="Acessos" value={data.stats.accessCount} description="Notificacoes do tipo ACCESS." icon={DoorOpen} tone="info" />
-        <MetricCard title="Sistema" value={data.stats.systemCount} description="Notificacoes do tipo SYSTEM." icon={Settings} tone="info" />
+        <MetricCard title="Encomendas" value={data.stats.packageCount} description="Notificações do tipo PACKAGE." icon={Package} tone="info" />
+        <MetricCard title="Visitantes" value={data.stats.visitorCount} description="Notificações do tipo VISITOR." icon={UserCheck} tone="info" />
+        <MetricCard title="Acessos" value={data.stats.accessCount} description="Notificações do tipo ACCESS." icon={DoorOpen} tone="info" />
+        <MetricCard title="Sistema" value={data.stats.systemCount} description="Notificações do tipo SYSTEM." icon={Settings} tone="info" />
       </section>
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

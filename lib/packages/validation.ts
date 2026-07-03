@@ -6,7 +6,7 @@ const optionalDate = z
   .trim()
   .optional()
   .refine((value) => !value || !Number.isNaN(new Date(`${value}T00:00:00`).getTime()), {
-    message: "Data invalida.",
+    message: "Data inválida.",
   });
 
 const optionalText = z
@@ -18,13 +18,15 @@ const optionalText = z
 export const createPackageSchema = z.object({
   carrier: optionalText,
   description: optionalText,
+  photoUrl: optionalText.pipe(z.string().url("Informe uma URL de foto válida.").optional()),
+  pickupCode: optionalText,
   query: z.string().optional(),
   trackingCode: optionalText,
   unitId: z.string().min(1, "Selecione uma unidade."),
 });
 
 export const deliverPackageSchema = z.object({
-  packageId: z.string().min(1, "Encomenda invalida."),
+  packageId: z.string().min(1, "Encomenda inválida."),
   pickedUpByName: z.string().trim().min(1, "Informe quem retirou a encomenda."),
 });
 

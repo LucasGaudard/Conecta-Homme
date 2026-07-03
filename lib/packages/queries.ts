@@ -59,7 +59,7 @@ export async function getResidentPackageList() {
   });
 
   if (!resident?.unitId) {
-    redirect("/morador?error=Usuario sem unidade vinculada.");
+    redirect("/morador?error=Usuário sem unidade vinculada.");
   }
 
   return prisma.package.findMany({

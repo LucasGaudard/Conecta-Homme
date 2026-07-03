@@ -36,8 +36,8 @@ export default async function AdminAuditPage({
           Auditoria
         </h2>
         <p className="max-w-2xl text-sm leading-6 text-slate-500">
-          Acompanhe acoes importantes realizadas no sistema, com usuario,
-          perfil, modulo, entidade afetada e data de execucao.
+          Acompanhe ações importantes realizadas no sistema, com usuário,
+          perfil, módulo, entidade afetada e data de execução.
         </p>
       </div>
 

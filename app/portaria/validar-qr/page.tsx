@@ -24,8 +24,8 @@ export default async function ValidateQrPage({ searchParams }: ValidateQrPagePro
           Validar QR Code
         </h2>
         <p className="max-w-2xl text-sm leading-6 text-slate-500">
-          Informe o codigo curto exibido no QR Code para validar o acesso e
-          registrar entrada ou saida.
+          Informe o código curto exibido no QR Code para validar o acesso e
+          registrar entrada ou saída.
         </p>
       </div>
 

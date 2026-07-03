@@ -79,7 +79,7 @@ export default async function PorterDashboardPage({
     <DashboardShell
       eyebrow="Operacao da portaria"
       title="Painel da portaria"
-      description="Busca rapida de unidades, movimentacoes recentes, visitantes do dia e pendencias que precisam de atencao."
+      description="Busca rápida de unidades, movimentações recentes, visitantes do dia e pendências que precisam de atenção."
     >
       <FeedbackAlert error={error} success={success} />
 
@@ -87,14 +87,14 @@ export default async function PorterDashboardPage({
         <MetricCard
           title="Unidades ativas"
           value={dashboardData.stats.totalActiveUnits}
-          description="Unidades liberadas para operacao."
+          description="Unidades liberadas para operação."
           icon={Building2}
           tone="info"
         />
         <MetricCard
           title="Visitantes hoje"
           value={dashboardData.stats.visitorsAuthorizedToday}
-          description="Autorizacoes validas para hoje."
+          description="Autorizações válidas para hoje."
           icon={UserCheck}
           tone="success"
         />
@@ -156,8 +156,8 @@ export default async function PorterDashboardPage({
           items={visitorItems}
         />
         <AlertCard
-          title="Nao perturbe"
-          emptyMessage="Nenhuma unidade em nao perturbe."
+          title="Não perturbe"
+          emptyMessage="Nenhuma unidade em não perturbe."
           items={alerts}
           icon={AlertTriangle}
         />
@@ -165,9 +165,9 @@ export default async function PorterDashboardPage({
 
       <section className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-navy-950">Ultimos acessos</h3>
+          <h3 className="text-lg font-semibold text-navy-950">Últimos acessos</h3>
           <p className="text-sm text-slate-500">
-            Registros recentes de entrada e saida.
+            Registros recentes de entrada e saída.
           </p>
         </div>
         <RecentAccessList accesses={dashboardData.recentAccessLogs} searchParams={params} />

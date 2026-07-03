@@ -26,45 +26,45 @@ export default async function AdminNotificationsPage({
   return (
     <DashboardShell
       eyebrow="Central administrativa"
-      title="Notificacoes"
-      description="Acompanhe notificacoes administrativas, globais e a visao geral das mensagens persistidas do sistema."
+      title="Notificações"
+      description="Acompanhe notificações administrativas, globais e a visão geral das mensagens persistidas do sistema."
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
-          title="Visiveis para admin"
+          title="Visíveis para admin"
           value={data.stats.totalCount}
-          description="Notificacoes administrativas ou globais disponiveis."
+          description="Notificações administrativas ou globais disponíveis."
           icon={Bell}
           tone="info"
         />
         <MetricCard
-          title="Nao lidas"
+          title="Não lidas"
           value={data.stats.unreadCount}
-          description="Pendencias de leitura no seu perfil."
+          description="Pendências de leitura no seu perfil."
           icon={BellRing}
           tone={data.stats.unreadCount > 0 ? "warning" : "success"}
         />
         <MetricCard
           title="Sistema geral"
           value={data.systemOverview?.totalCount ?? 0}
-          description="Total de notificacoes registradas no sistema."
+          description="Total de notificações registradas no sistema."
           icon={Settings}
           tone="info"
         />
         <MetricCard
-          title="Nao lidas no sistema"
+          title="Não lidas no sistema"
           value={data.systemOverview?.unreadCount ?? 0}
-          description="Volume geral ainda nao lido."
+          description="Volume geral ainda não lido."
           icon={CheckCheck}
           tone={(data.systemOverview?.unreadCount ?? 0) > 0 ? "warning" : "success"}
         />
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard title="Encomendas" value={data.stats.packageCount} description="Notificacoes do tipo PACKAGE." icon={Package} tone="info" />
-        <MetricCard title="Visitantes" value={data.stats.visitorCount} description="Notificacoes do tipo VISITOR." icon={UserCheck} tone="info" />
-        <MetricCard title="Acessos" value={data.stats.accessCount} description="Notificacoes do tipo ACCESS." icon={DoorOpen} tone="info" />
-        <MetricCard title="Sistema" value={data.stats.systemCount} description="Notificacoes do tipo SYSTEM." icon={Settings} tone="info" />
+        <MetricCard title="Encomendas" value={data.stats.packageCount} description="Notificações do tipo PACKAGE." icon={Package} tone="info" />
+        <MetricCard title="Visitantes" value={data.stats.visitorCount} description="Notificações do tipo VISITOR." icon={UserCheck} tone="info" />
+        <MetricCard title="Acessos" value={data.stats.accessCount} description="Notificações do tipo ACCESS." icon={DoorOpen} tone="info" />
+        <MetricCard title="Sistema" value={data.stats.systemCount} description="Notificações do tipo SYSTEM." icon={Settings} tone="info" />
       </section>
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

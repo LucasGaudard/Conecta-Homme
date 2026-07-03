@@ -26,7 +26,7 @@ export async function GET(request: Request) {
   const logs = await getAuditLogsForExport(filters);
   const csv = toCsv(logs, [
     { header: "Data", value: (item) => formatAuditDate(item.createdAt) },
-    { header: "Usuario", value: (item) => item.userName ?? "Sistema" },
+    { header: "Usuário", value: (item) => item.userName ?? "Sistema" },
     { header: "E-mail", value: (item) => item.userEmail },
     { header: "Perfil", value: (item) => getAuditRoleLabel(item.userRole) },
     { header: "Acao", value: (item) => getAuditActionLabel(item.action) },

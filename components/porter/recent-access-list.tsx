@@ -49,7 +49,7 @@ export function RecentAccessList({
   tableKey = "recentAccess",
 }: RecentAccessListProps) {
   if (accesses.length === 0) {
-    return <EmptyState message="Nenhum acesso registrado ate o momento." />;
+    return <EmptyState message="Nenhum acesso registrado até o momento." />;
   }
 
   const keys = tableParamKeys(tableKey);
@@ -83,7 +83,7 @@ export function RecentAccessList({
           <p className="text-base font-semibold text-navy-950">
             {access.unit
               ? `${access.unit.block}-${access.unit.apartment}`
-              : "Nao vinculada"}
+              : "Não vinculada"}
           </p>
           <dl className="mobile-field-grid">
             <div className="mobile-field">
@@ -91,7 +91,7 @@ export function RecentAccessList({
               <dd className="mobile-field-value">{formatAccessType(access.accessType)}</dd>
             </div>
             <div className="mobile-field">
-              <dt className="mobile-field-label">Metodo</dt>
+              <dt className="mobile-field-label">Método</dt>
               <dd className="mobile-field-value">{formatAccessMethod(access.accessMethod)}</dd>
             </div>
             <div className="mobile-field">
@@ -100,7 +100,7 @@ export function RecentAccessList({
             </div>
             <div className="mobile-field">
               <dt className="mobile-field-label">Porteiro</dt>
-              <dd className="mobile-field-value">{access.porter?.name ?? "Nao informado"}</dd>
+              <dd className="mobile-field-value">{access.porter?.name ?? "Não informado"}</dd>
             </div>
           </dl>
         </article>
@@ -113,7 +113,7 @@ export function RecentAccessList({
           <tr>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="unit" sortParam={keys.sort}>Unidade</SortableHeader></th>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="type" sortParam={keys.sort}>Tipo</SortableHeader></th>
-            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="method" sortParam={keys.sort}>Metodo</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="method" sortParam={keys.sort}>Método</SortableHeader></th>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="occurredAt" sortParam={keys.sort}>Horario</SortableHeader></th>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="porter" sortParam={keys.sort}>Porteiro</SortableHeader></th>
           </tr>
@@ -124,12 +124,12 @@ export function RecentAccessList({
               <td className="font-medium text-navy-950">
                 {access.unit
                   ? `${access.unit.block}-${access.unit.apartment}`
-                  : "Nao vinculada"}
+                  : "Não vinculada"}
               </td>
               <td>{formatAccessType(access.accessType)}</td>
               <td>{formatAccessMethod(access.accessMethod)}</td>
               <td>{formatShortDateTime(access.occurredAt)}</td>
-              <td>{access.porter?.name ?? "Nao informado"}</td>
+              <td>{access.porter?.name ?? "Não informado"}</td>
             </tr>
           ))}
         </tbody>

@@ -34,7 +34,7 @@ export async function GET(request: Request) {
         { indicador: "Porteiros ativos", valor: data.summary.activePorters },
         { indicador: "Visitantes autorizados", valor: data.summary.authorizedVisitors },
         { indicador: "Encomendas aguardando", valor: data.summary.waitingPackages },
-        { indicador: "Acessos no periodo", valor: data.summary.accessLogsInPeriod },
+        { indicador: "Acessos no período", valor: data.summary.accessLogsInPeriod },
         {
           indicador: "Encomendas entregues no filtro",
           valor: data.packageTotals.deliveredPackagesTotal,
@@ -52,17 +52,17 @@ export async function GET(request: Request) {
       {
         header: "Unidade",
         value: (item) =>
-          item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Nao informada",
+          item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Não informada",
       },
       {
-        header: "Responsavel",
-        value: (item) => item.unit?.responsibleName ?? "Nao informado",
+        header: "Responsável",
+        value: (item) => item.unit?.responsibleName ?? "Não informado",
       },
       { header: "Tipo", value: (item) => formatAccessType(item.accessType) },
-      { header: "Metodo", value: (item) => formatAccessMethod(item.accessMethod) },
+      { header: "Método", value: (item) => formatAccessMethod(item.accessMethod) },
       { header: "Data", value: (item) => formatReportDate(item.occurredAt) },
       { header: "Portaria", value: (item) => item.porter?.name },
-      { header: "Observacoes", value: (item) => item.notes },
+      { header: "Observações", value: (item) => item.notes },
     ], { bom: false }),
     "",
     "Encomendas",
@@ -70,15 +70,17 @@ export async function GET(request: Request) {
       {
         header: "Unidade",
         value: (item) =>
-          item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Nao informada",
+          item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Não informada",
       },
       {
-        header: "Responsavel",
-        value: (item) => item.unit?.responsibleName ?? "Nao informado",
+        header: "Responsável",
+        value: (item) => item.unit?.responsibleName ?? "Não informado",
       },
       { header: "Status", value: (item) => formatPackageStatus(item.status) },
       { header: "Transportadora", value: (item) => item.carrier },
-      { header: "Codigo", value: (item) => item.trackingCode },
+      { header: "Código", value: (item) => item.trackingCode },
+      { header: "Código de retirada", value: (item) => item.pickupCode },
+      { header: "URL da foto", value: (item) => item.photoUrl },
       { header: "Recebida em", value: (item) => formatReportDate(item.receivedAt) },
       { header: "Entregue em", value: (item) => formatReportDate(item.deliveredAt) },
       { header: "Recebido por", value: (item) => item.receivedBy?.name },
@@ -90,11 +92,11 @@ export async function GET(request: Request) {
       {
         header: "Unidade",
         value: (item) =>
-          item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Nao informada",
+          item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Não informada",
       },
       {
-        header: "Responsavel",
-        value: (item) => item.unit?.responsibleName ?? "Nao informado",
+        header: "Responsável",
+        value: (item) => item.unit?.responsibleName ?? "Não informado",
       },
       { header: "Visitante", value: (item) => item.visitor.name },
       { header: "Status", value: (item) => formatVisitorStatus(item.status) },

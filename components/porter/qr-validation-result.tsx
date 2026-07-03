@@ -33,7 +33,7 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
       </div>
       <div className="grid gap-3 rounded-lg border border-emerald-100 bg-white p-4 shadow-sm sm:grid-cols-2">
         <div>
-          <p className="text-xs font-medium uppercase text-slate-400">Codigo</p>
+          <p className="text-xs font-medium uppercase text-slate-400">Código</p>
           <p className="mt-1 text-xl font-semibold tracking-normal text-navy-950">
             {result.qrCode.accessCode}
           </p>
@@ -61,7 +61,7 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
           </p>
         </div>
         <div>
-          <p className="text-xs font-medium uppercase text-slate-400">Responsavel</p>
+          <p className="text-xs font-medium uppercase text-slate-400">Responsável</p>
           <p className="mt-1 text-sm text-navy-950">{result.unit.responsibleName}</p>
         </div>
         <div>
@@ -99,7 +99,7 @@ export function QrValidationResult({ result }: QrValidationResultProps) {
             className="w-full bg-white"
             pendingLabel="Registrando..."
           >
-            Registrar saida
+            Registrar saída
           </SubmitButton>
         </form>
       </div>

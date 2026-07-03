@@ -6,7 +6,7 @@ const optionalDate = z
   .trim()
   .optional()
   .refine((value) => !value || !Number.isNaN(new Date(`${value}T00:00:00`).getTime()), {
-    message: "Data invalida.",
+    message: "Data inválida.",
   });
 
 export const reportFiltersSchema = z.object({

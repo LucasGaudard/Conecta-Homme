@@ -37,7 +37,7 @@ export async function updateCondominiumSettingsAction(formData: FormData) {
 
   if (!parsed.success) {
     redirectWithMessage({
-      error: parsed.error.issues[0]?.message ?? "Dados invalidos.",
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
 
@@ -57,7 +57,7 @@ export async function updateCondominiumSettingsAction(formData: FormData) {
 
   await createAuditLog({
     action: "UPDATE",
-    description: `Configuracoes do condominio ${settings.name} atualizadas.`,
+    description: `Configurações do condomínio ${settings.name} atualizadas.`,
     entityId: settings.id,
     entityType: "CondominiumSettings",
     module: "CONDOMINIUM",
@@ -67,6 +67,6 @@ export async function updateCondominiumSettingsAction(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/condominio");
   redirectWithMessage({
-    success: "Configuracoes do condominio atualizadas.",
+    success: "Configurações do condomínio atualizadas.",
   });
 }

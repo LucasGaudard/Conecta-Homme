@@ -17,15 +17,17 @@ export async function GET(request: Request) {
     {
       header: "Unidade",
       value: (item) =>
-        item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Nao informada",
+        item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Não informada",
     },
     {
-      header: "Responsavel",
-      value: (item) => item.unit?.responsibleName ?? "Nao informado",
+      header: "Responsável",
+      value: (item) => item.unit?.responsibleName ?? "Não informado",
     },
     { header: "Transportadora", value: (item) => item.carrier },
-    { header: "Codigo", value: (item) => item.trackingCode },
-    { header: "Descricao", value: (item) => item.description },
+    { header: "Código", value: (item) => item.trackingCode },
+    { header: "Código de retirada", value: (item) => item.pickupCode },
+    { header: "URL da foto", value: (item) => item.photoUrl },
+    { header: "Descrição", value: (item) => item.description },
     { header: "Status", value: (item) => formatPackageStatus(item.status) },
     { header: "Recebida em", value: (item) => formatPackageDate(item.receivedAt) },
     { header: "Entregue em", value: (item) => formatPackageDate(item.deliveredAt) },

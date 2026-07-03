@@ -90,10 +90,10 @@ export function PackageTable({
           <div className="mobile-card-header">
             <div className="min-w-0">
               <p className="text-base font-semibold text-navy-950">
-                {item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Nao informada"}
+                {item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Não informada"}
               </p>
               <p className="mt-1 break-words text-sm text-slate-500">
-                {item.unit?.responsibleName ?? "Nao informado"}
+                {item.unit?.responsibleName ?? "Não informado"}
               </p>
             </div>
             <PackageStatusBadge status={item.status} />
@@ -101,11 +101,27 @@ export function PackageTable({
           <dl className="mobile-field-grid">
             <div className="mobile-field">
               <dt className="mobile-field-label">Transportadora</dt>
-              <dd className="mobile-field-value">{item.carrier ?? "Nao informado"}</dd>
+              <dd className="mobile-field-value">{item.carrier ?? "Não informado"}</dd>
             </div>
             <div className="mobile-field">
-              <dt className="mobile-field-label">Codigo</dt>
-              <dd className="mobile-field-value">{item.trackingCode ?? "Nao informado"}</dd>
+              <dt className="mobile-field-label">Código</dt>
+              <dd className="mobile-field-value">{item.trackingCode ?? "Não informado"}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Código de retirada</dt>
+              <dd className="mobile-field-value">{item.pickupCode ?? "Não informado"}</dd>
+            </div>
+            <div className="mobile-field">
+              <dt className="mobile-field-label">Foto</dt>
+              <dd className="mobile-field-value">
+                {item.photoUrl ? (
+                  <a className="font-medium text-navy-700 underline-offset-4 hover:underline" href={item.photoUrl} rel="noreferrer" target="_blank">
+                    Ver foto
+                  </a>
+                ) : (
+                  "Não informado"
+                )}
+              </dd>
             </div>
             <div className="mobile-field">
               <dt className="mobile-field-label">Chegada</dt>
@@ -117,15 +133,15 @@ export function PackageTable({
             </div>
             <div className="mobile-field">
               <dt className="mobile-field-label">Recebido por</dt>
-              <dd className="mobile-field-value">{item.receivedBy?.name ?? "Nao informado"}</dd>
+              <dd className="mobile-field-value">{item.receivedBy?.name ?? "Não informado"}</dd>
             </div>
             <div className="mobile-field">
               <dt className="mobile-field-label">Entregue por</dt>
-              <dd className="mobile-field-value">{item.deliveredBy?.name ?? "Nao informado"}</dd>
+              <dd className="mobile-field-value">{item.deliveredBy?.name ?? "Não informado"}</dd>
             </div>
             <div className="mobile-field">
               <dt className="mobile-field-label">Retirado por</dt>
-              <dd className="mobile-field-value">{item.pickedUpByName ?? "Nao informado"}</dd>
+              <dd className="mobile-field-value">{item.pickedUpByName ?? "Não informado"}</dd>
             </div>
           </dl>
           {mode === "porter" ? (
@@ -142,7 +158,7 @@ export function PackageTable({
     </div>
 
     <div className="table-shell hidden md:block">
-      <table className="data-table min-w-[1120px]">
+      <table className="data-table min-w-[1280px]">
         <thead>
           <tr>
             <th className="px-4 py-3 font-medium">
@@ -152,7 +168,7 @@ export function PackageTable({
             </th>
             <th className="px-4 py-3 font-medium">
               <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="responsibleName" sortParam={keys.sort}>
-                Responsavel
+                Responsável
               </SortableHeader>
             </th>
             <th className="px-4 py-3 font-medium">
@@ -160,7 +176,9 @@ export function PackageTable({
                 Transportadora
               </SortableHeader>
             </th>
-            <th className="px-4 py-3 font-medium">Codigo</th>
+            <th className="px-4 py-3 font-medium">Código</th>
+            <th className="px-4 py-3 font-medium">Código de retirada</th>
+            <th className="px-4 py-3 font-medium">Foto</th>
             <th className="px-4 py-3 font-medium">
               <SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="status" sortParam={keys.sort}>
                 Status
@@ -182,17 +200,27 @@ export function PackageTable({
           {visiblePackages.map((item) => (
             <tr key={item.id}>
               <td className="font-medium text-navy-950">
-                {item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Nao informada"}
+                {item.unit ? `${item.unit.block}-${item.unit.apartment}` : "Não informada"}
               </td>
-              <td>{item.unit?.responsibleName ?? "Nao informado"}</td>
-              <td>{item.carrier ?? "Nao informado"}</td>
-              <td>{item.trackingCode ?? "Nao informado"}</td>
+              <td>{item.unit?.responsibleName ?? "Não informado"}</td>
+              <td>{item.carrier ?? "Não informado"}</td>
+              <td>{item.trackingCode ?? "Não informado"}</td>
+              <td>{item.pickupCode ?? "Não informado"}</td>
+              <td>
+                {item.photoUrl ? (
+                  <a className="font-medium text-navy-700 underline-offset-4 hover:underline" href={item.photoUrl} rel="noreferrer" target="_blank">
+                    Ver foto
+                  </a>
+                ) : (
+                  "Não informado"
+                )}
+              </td>
               <td><PackageStatusBadge status={item.status} /></td>
               <td>{formatPackageDate(item.receivedAt)}</td>
               <td>{formatPackageDate(item.deliveredAt)}</td>
-              <td>{item.receivedBy?.name ?? "Nao informado"}</td>
-              <td>{item.deliveredBy?.name ?? "Nao informado"}</td>
-              <td>{item.pickedUpByName ?? "Nao informado"}</td>
+              <td>{item.receivedBy?.name ?? "Não informado"}</td>
+              <td>{item.deliveredBy?.name ?? "Não informado"}</td>
+              <td>{item.pickedUpByName ?? "Não informado"}</td>
               {mode === "porter" ? (
                 <td>
                   {item.status === "WAITING_PICKUP" ? (

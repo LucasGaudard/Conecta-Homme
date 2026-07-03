@@ -186,6 +186,8 @@ model Package {
   unitId         String
   carrier        String?
   trackingCode   String?
+  pickupCode     String?
+  photoUrl       String?
   description    String?
   status         PackageStatus @default(WAITING_PICKUP)
   receivedById   String?

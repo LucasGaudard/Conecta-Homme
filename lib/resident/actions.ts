@@ -30,7 +30,7 @@ async function requireResidentUnit() {
   });
 
   if (!user?.unitId) {
-    redirect("/morador?error=Usuario sem unidade vinculada.");
+    redirect("/morador?error=Usuário sem unidade vinculada.");
   }
 
   return {
@@ -59,7 +59,7 @@ export async function updateResidentPresenceAction(formData: FormData) {
 
   if (!parsed.success) {
     redirectWithMessage("/morador", {
-      error: parsed.error.issues[0]?.message ?? "Status invalido.",
+      error: parsed.error.issues[0]?.message ?? "Status inválido.",
     });
   }
 
@@ -75,7 +75,7 @@ export async function updateResidentPresenceAction(formData: FormData) {
   revalidatePath("/morador");
   revalidatePath("/portaria");
   redirectWithMessage("/morador", {
-    success: "Status da residencia atualizado.",
+    success: "Status da residência atualizado.",
   });
 }
 
@@ -93,7 +93,7 @@ export async function createVisitorAuthorizationAction(formData: FormData) {
 
   if (!parsed.success) {
     redirectWithMessage("/morador/visitantes", {
-      error: parsed.error.issues[0]?.message ?? "Dados invalidos.",
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
 
@@ -148,7 +148,7 @@ export async function cancelVisitorAuthorizationAction(authorizationId: string) 
   revalidatePath("/morador/visitantes");
   revalidatePath("/portaria");
   redirectWithMessage("/morador/visitantes", {
-    success: "Autorizacao cancelada.",
+    success: "Autorização cancelada.",
   });
 }
 
@@ -163,7 +163,7 @@ export async function updateResidentSettingsAction(formData: FormData) {
 
   if (!parsed.success) {
     redirectWithMessage("/morador/configuracoes", {
-      error: parsed.error.issues[0]?.message ?? "Dados invalidos.",
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
 
@@ -200,6 +200,6 @@ export async function updateResidentSettingsAction(formData: FormData) {
   revalidatePath("/morador/configuracoes");
   revalidatePath("/portaria");
   redirectWithMessage("/morador/configuracoes", {
-    success: "Configuracoes atualizadas.",
+    success: "Configurações atualizadas.",
   });
 }

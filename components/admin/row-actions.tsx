@@ -28,7 +28,7 @@ export function UnitRowActions({ unitId }: UnitRowActionsProps) {
       <ConfirmationDialog
         action={inactivate}
         title="Inativar unidade?"
-        description="Ao inativar esta unidade, todos os moradores vinculados tambem serao inativados."
+        description="Ao inativar esta unidade, todos os moradores vinculados também serão inativados."
         confirmLabel="Inativar"
       >
         <span className="inline-flex">

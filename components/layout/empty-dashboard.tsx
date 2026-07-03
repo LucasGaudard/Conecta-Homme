@@ -9,8 +9,8 @@ type EmptyDashboardProps = {
 const summaryCards = [
   { title: "Acessos", icon: Activity },
   { title: "Moradores", icon: Users },
-  { title: "Pendencias", icon: Clock },
-  { title: "Relatorios", icon: BarChart3 },
+  { title: "Pendências", icon: Clock },
+  { title: "Relatórios", icon: BarChart3 },
 ];
 
 export function EmptyDashboard({ description, title }: EmptyDashboardProps) {
@@ -49,7 +49,7 @@ export function EmptyDashboard({ description, title }: EmptyDashboardProps) {
           Dashboard vazio nesta etapa
         </p>
         <p className="mt-2 text-sm text-slate-500">
-          A estrutura visual esta pronta para receber modulos sem antecipar
+          A estrutura visual está pronta para receber módulos sem antecipar
           funcionalidades.
         </p>
       </section>

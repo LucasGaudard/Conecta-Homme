@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
   if (!user || user.status !== UserStatus.ACTIVE) {
     return NextResponse.json(
-      { message: "Credenciais invalidas." },
+      { message: "Credenciais inválidas." },
       { status: 401 },
     );
   }
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
   if (!passwordMatches) {
     return NextResponse.json(
-      { message: "Credenciais invalidas." },
+      { message: "Credenciais inválidas." },
       { status: 401 },
     );
   }

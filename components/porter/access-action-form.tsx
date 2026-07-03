@@ -21,7 +21,7 @@ export function AccessActionForm({ query, unitId }: AccessActionFormProps) {
             className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-navy-950 shadow-sm transition duration-200 hover:border-slate-300 focus-visible:border-navy-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/15"
           >
             <option value="ENTRY">Entrada</option>
-            <option value="EXIT">Saida</option>
+            <option value="EXIT">Saída</option>
           </select>
         </label>
         <label className="space-y-2">
@@ -47,7 +47,7 @@ export function AccessActionForm({ query, unitId }: AccessActionFormProps) {
           pendingLabel="Registrando..."
         >
           <LogOut className="h-4 w-4" />
-          Registrar saida
+          Registrar saída
         </SubmitButton>
       </div>
     </form>

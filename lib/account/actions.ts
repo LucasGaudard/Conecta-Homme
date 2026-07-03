@@ -39,7 +39,7 @@ export async function updateAccountAction(formData: FormData) {
 
   if (!parsed.success) {
     redirectWithMessage(route, {
-      error: parsed.error.issues[0]?.message ?? "Dados invalidos.",
+      error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
 
@@ -63,7 +63,7 @@ export async function updateAccountAction(formData: FormData) {
     });
     await createAuditLog({
       action: "UPDATE",
-      description: "Conta do usuario atualizada.",
+      description: "Conta do usuário atualizada.",
       entityId: currentUser.id,
       entityType: "User",
       module: "ACCOUNT",
@@ -75,7 +75,7 @@ export async function updateAccountAction(formData: FormData) {
       error.code === "P2002"
     ) {
       redirectWithMessage(route, {
-        error: "Este e-mail ja esta em uso por outro usuario.",
+        error: "Este e-mail já está em uso por outro usuário.",
       });
     }
 

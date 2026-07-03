@@ -104,7 +104,7 @@ export function VisitorTable({
                   {authorization.visitor.name}
                 </p>
                 <p className="mt-1 text-sm text-slate-500">
-                  {authorization.visitor.document ?? "Documento nao informado"}
+                  {authorization.visitor.document ?? "Documento não informado"}
                 </p>
               </div>
               <div className="text-right">
@@ -114,10 +114,10 @@ export function VisitorTable({
             <dl className="mobile-field-grid">
               <div className="mobile-field">
                 <dt className="mobile-field-label">Telefone</dt>
-                <dd className="mobile-field-value">{authorization.visitor.phone ?? "Nao informado"}</dd>
+                <dd className="mobile-field-value">{authorization.visitor.phone ?? "Não informado"}</dd>
               </div>
               <div className="mobile-field">
-                <dt className="mobile-field-label">Inicio</dt>
+                <dt className="mobile-field-label">Início</dt>
                 <dd className="mobile-field-value">{formatDateTime(authorization.startsAt)}</dd>
               </div>
               <div className="mobile-field">
@@ -158,7 +158,7 @@ export function VisitorTable({
                   </div>
                 </>
               ) : (
-                <span className="text-sm text-slate-400">QR Code indisponivel. Sem acao.</span>
+                <span className="text-sm text-slate-400">QR Code indisponível. Sem ação.</span>
               )}
             </div>
           </article>
@@ -172,11 +172,11 @@ export function VisitorTable({
           <tr>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="name" sortParam={keys.sort}>Visitante</SortableHeader></th>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="phone" sortParam={keys.sort}>Telefone</SortableHeader></th>
-            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="startsAt" sortParam={keys.sort}>Inicio</SortableHeader></th>
+            <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="startsAt" sortParam={keys.sort}>Início</SortableHeader></th>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="endsAt" sortParam={keys.sort}>Fim</SortableHeader></th>
             <th className="px-4 py-3 font-medium"><SortableHeader activeSort={sort} direction={direction} directionParam={keys.direction} pageParam={keys.page} searchParams={searchParams} sortKey="status" sortParam={keys.sort}>Status</SortableHeader></th>
             <th className="px-4 py-3 font-medium">QR Code</th>
-            <th className="px-4 py-3 font-medium">Acoes</th>
+            <th className="px-4 py-3 font-medium">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -196,10 +196,10 @@ export function VisitorTable({
                 <td>
                   <p className="font-medium text-navy-950">{authorization.visitor.name}</p>
                   <p className="text-xs text-slate-400">
-                    {authorization.visitor.document ?? "Documento nao informado"}
+                    {authorization.visitor.document ?? "Documento não informado"}
                   </p>
                 </td>
-                <td>{authorization.visitor.phone ?? "Nao informado"}</td>
+                <td>{authorization.visitor.phone ?? "Não informado"}</td>
                 <td>{formatDateTime(authorization.startsAt)}</td>
                 <td>{formatDateTime(authorization.endsAt)}</td>
                 <td>{formatVisitorStatus(authorization.status, authorization.endsAt)}</td>
@@ -228,7 +228,7 @@ export function VisitorTable({
                       </form>
                     </div>
                   ) : (
-                    <span className="text-xs text-slate-400">Indisponivel</span>
+                    <span className="text-xs text-slate-400">Indisponível</span>
                   )}
                 </td>
                 <td>
@@ -240,7 +240,7 @@ export function VisitorTable({
                       </SubmitButton>
                     </form>
                   ) : (
-                    <span className="text-xs text-slate-400">Sem acao</span>
+                    <span className="text-xs text-slate-400">Sem ação</span>
                   )}
                 </td>
               </tr>

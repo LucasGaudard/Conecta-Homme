@@ -2,17 +2,17 @@ import { AccessType } from "@prisma/client";
 import { z } from "zod";
 
 export const validateQrTokenSchema = z.object({
-  token: z.string().trim().min(1, "Informe o codigo do QR Code."),
+  token: z.string().trim().min(1, "Informe o código do QR Code."),
 });
 
 export const registerQrAccessSchema = z.object({
   accessType: z.nativeEnum(AccessType),
-  token: z.string().trim().min(1, "Informe o codigo do QR Code."),
+  token: z.string().trim().min(1, "Informe o código do QR Code."),
 });
 
 export const generateVisitorQrCodeSchema = z
   .object({
-    authorizationId: z.string().min(1, "Visitante invalido."),
+    authorizationId: z.string().min(1, "Visitante inválido."),
     expiresAt: z.string().min(1, "Informe a validade do QR Code."),
   })
   .refine(

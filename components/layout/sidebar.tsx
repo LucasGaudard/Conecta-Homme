@@ -45,7 +45,7 @@ export function Sidebar({ navigation, profile, user }: SidebarProps) {
               <AvatarInitial name={user?.name} />
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">
-                  {user?.name ?? "Usuario"}
+                  {user?.name ?? "Usuário"}
                 </p>
                 <p className="truncate text-xs text-blue-100">
                   {user?.email ?? profileLabels[profile]}
@@ -78,7 +78,7 @@ export function Sidebar({ navigation, profile, user }: SidebarProps) {
             <p className="truncate text-base font-semibold tracking-normal">
               Conecta Homme
             </p>
-            <p className="text-xs font-medium text-blue-100">Gestao condominial</p>
+            <p className="text-xs font-medium text-blue-100">Gestão condominial</p>
           </div>
         </div>
 
@@ -87,7 +87,7 @@ export function Sidebar({ navigation, profile, user }: SidebarProps) {
             <AvatarInitial name={user?.name} />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">
-                {user?.name ?? "Usuario"}
+                {user?.name ?? "Usuário"}
               </p>
               <p className="truncate text-xs text-blue-100">
                 {profileLabels[profile]}

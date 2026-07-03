@@ -78,18 +78,34 @@ export function PackageList({
           <div className="flex items-start justify-between gap-3">
             <div>
               <h3 className="font-semibold text-navy-950">
-                {item.description ?? "Encomenda sem descricao"}
+                {item.description ?? "Encomenda sem descrição"}
               </h3>
               <p className="mt-1 text-sm text-slate-500">
-                {item.carrier ?? "Transportadora nao informada"}
+                {item.carrier ?? "Transportadora não informada"}
               </p>
             </div>
             <PackageStatusBadge status={item.status} />
           </div>
           <dl className="mt-4 space-y-3 text-sm">
             <div>
-              <dt className="text-xs font-medium uppercase text-slate-400">Codigo</dt>
-              <dd className="mt-1 text-slate-600">{item.trackingCode ?? "Nao informado"}</dd>
+              <dt className="text-xs font-medium uppercase text-slate-400">Código</dt>
+              <dd className="mt-1 text-slate-600">{item.trackingCode ?? "Não informado"}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium uppercase text-slate-400">Código de retirada</dt>
+              <dd className="mt-1 text-slate-600">{item.pickupCode ?? "Não informado"}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium uppercase text-slate-400">Foto</dt>
+              <dd className="mt-1 text-slate-600">
+                {item.photoUrl ? (
+                  <a className="font-medium text-navy-700 underline-offset-4 hover:underline" href={item.photoUrl} rel="noreferrer" target="_blank">
+                    Ver foto
+                  </a>
+                ) : (
+                  "Não informado"
+                )}
+              </dd>
             </div>
             <div>
               <dt className="text-xs font-medium uppercase text-slate-400">Chegada</dt>
@@ -101,7 +117,7 @@ export function PackageList({
             </div>
             <div>
               <dt className="text-xs font-medium uppercase text-slate-400">Quem retirou</dt>
-              <dd className="mt-1 text-slate-600">{item.pickedUpByName ?? "Nao informado"}</dd>
+              <dd className="mt-1 text-slate-600">{item.pickedUpByName ?? "Não informado"}</dd>
             </div>
           </dl>
         </article>

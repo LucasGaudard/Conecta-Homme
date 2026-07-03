@@ -22,11 +22,11 @@ export default async function AdminCondominiumPage({
     <div className="space-y-6">
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-normal text-navy-950">
-          Configuracoes do condominio
+          Configurações do condomínio
         </h2>
         <p className="max-w-2xl text-sm leading-6 text-slate-500">
-          Gerencie dados gerais, contato, horario da portaria e identidade
-          visual preparada do condominio.
+          Gerencie dados gerais, contato, horário da portaria e identidade
+          visual preparada do condomínio.
         </p>
       </div>
 
