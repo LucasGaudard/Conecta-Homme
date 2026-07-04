@@ -1,46 +1,50 @@
-# Conecta Homme
+﻿# Conecta Homme
 
-Conecta Homme é um sistema web de gestão condominial criado para centralizar a rotina de administração, portaria e moradores em uma experiência moderna, responsiva e segura.
+## PWA
 
-O produto cobre desde o controle de unidades e moradores até visitantes, QR Code, encomendas, relatórios, notificações, auditoria e exportação administrativa de dados.
+O Conecta Homme pode ser instalado na tela inicial em Android, iOS e desktop. A implementacao usa manifest, icones proprios e service worker conservador para assets estaticos, sem cache de paginas autenticadas ou APIs privadas.
+
+Conecta Homme Ã© um sistema web de gestÃ£o condominial criado para centralizar a rotina de administraÃ§Ã£o, portaria e moradores em uma experiÃªncia moderna, responsiva e segura.
+
+O produto cobre desde o controle de unidades e moradores atÃ© visitantes, QR Code, encomendas, relatÃ³rios, notificaÃ§Ãµes, auditoria e exportaÃ§Ã£o administrativa de dados.
 
 ## Destaques
 
-- Interface premium com experiência responsiva para desktop, tablet e mobile.
-- Autenticação real com sessões seguras em cookie httpOnly.
+- Interface premium com experiÃªncia responsiva para desktop, tablet e mobile.
+- AutenticaÃ§Ã£o real com sessÃµes seguras em cookie httpOnly.
 - Perfis separados para Administrador, Portaria e Morador.
 - Dashboards com indicadores reais do banco.
 - Fluxos completos de visitantes, QR Code e controle de acesso.
-- Controle de encomendas com notificações ao morador.
-- Relatórios administrativos com filtros, gráficos e exportação CSV.
-- Central de notificações persistidas.
-- Configurações de conta e do condomínio.
-- Auditoria administrativa de ações importantes.
+- Controle de encomendas com notificaÃ§Ãµes ao morador.
+- RelatÃ³rios administrativos com filtros, grÃ¡ficos e exportaÃ§Ã£o CSV.
+- Central de notificaÃ§Ãµes persistidas.
+- ConfiguraÃ§Ãµes de conta e do condomÃ­nio.
+- Auditoria administrativa de aÃ§Ãµes importantes.
 
 ## Perfis
 
 ### Admin
 
 - Gerencia unidades e moradores.
-- Consulta encomendas e relatórios.
-- Configura dados do condomínio.
+- Consulta encomendas e relatÃ³rios.
+- Configura dados do condomÃ­nio.
 - Acompanha auditoria e exporta dados administrativos.
 
 ### Portaria
 
 - Busca unidades rapidamente.
-- Consulta status de presença.
-- Registra entrada e saída manual.
+- Consulta status de presenÃ§a.
+- Registra entrada e saÃ­da manual.
 - Valida QR Code.
 - Cadastra e entrega encomendas.
 
 ### Morador
 
-- Acompanha dados da própria unidade.
-- Atualiza status da residência.
+- Acompanha dados da prÃ³pria unidade.
+- Atualiza status da residÃªncia.
 - Autoriza visitantes.
-- Gera QR Code permanente e temporário.
-- Consulta encomendas, acessos e notificações.
+- Gera QR Code permanente e temporÃ¡rio.
+- Consulta encomendas, acessos e notificaÃ§Ãµes.
 - Atualiza dados da conta.
 
 ## Stack
@@ -58,36 +62,36 @@ O produto cobre desde o controle de unidades e moradores até visitantes, QR Cod
 - Recharts
 - qrcode.react
 
-## Módulos Principais
+## MÃ³dulos Principais
 
-- Login e proteção por perfil.
+- Login e proteÃ§Ã£o por perfil.
 - Dashboard Admin, Portaria e Morador.
-- Gestão de unidades.
-- Gestão de moradores vinculados.
-- Visitantes e autorizações.
-- QR Code permanente e temporário.
-- Validação de QR pela portaria.
+- GestÃ£o de unidades.
+- GestÃ£o de moradores vinculados.
+- Visitantes e autorizaÃ§Ãµes.
+- QR Code permanente e temporÃ¡rio.
+- ValidaÃ§Ã£o de QR pela portaria.
 - Controle de acessos.
 - Controle de encomendas.
-- Notificações.
-- Configurações da conta.
-- Configurações do condomínio.
+- NotificaÃ§Ãµes.
+- ConfiguraÃ§Ãµes da conta.
+- ConfiguraÃ§Ãµes do condomÃ­nio.
 - Auditoria.
-- Relatórios e exportação CSV.
+- RelatÃ³rios e exportaÃ§Ã£o CSV.
 
 ## Estrutura
 
 ```text
 app/          Rotas, layouts e Route Handlers
-components/   Componentes reutilizáveis e módulos de interface
-lib/          Auth, Prisma, queries, actions, validações e utilitários
+components/   Componentes reutilizÃ¡veis e mÃ³dulos de interface
+lib/          Auth, Prisma, queries, actions, validaÃ§Ãµes e utilitÃ¡rios
 prisma/       Schema, migrations e seed
 docs/         Guias operacionais
 ```
 
-## Execução Local
+## ExecuÃ§Ã£o Local
 
-Configure as variáveis de ambiente local a partir do arquivo de exemplo do projeto e use um banco PostgreSQL compatível.
+Configure as variÃ¡veis de ambiente local a partir do arquivo de exemplo do projeto e use um banco PostgreSQL compatÃ­vel.
 
 ```bash
 npm install
@@ -97,7 +101,7 @@ npm run prisma:seed
 npm run dev
 ```
 
-Aplicação local:
+AplicaÃ§Ã£o local:
 
 ```text
 http://localhost:3000
@@ -128,22 +132,22 @@ docs/DEPLOY.md
 
 ### V1.2
 
-- Exportação XLSX e PDF.
+- ExportaÃ§Ã£o XLSX e PDF.
 - Melhorias de busca global.
-- Preferências de notificação.
+- PreferÃªncias de notificaÃ§Ã£o.
 - Upload real de avatar e logo.
-- Mais filtros analíticos para relatórios.
+- Mais filtros analÃ­ticos para relatÃ³rios.
 - Melhorias de acessibilidade com testes automatizados.
 
 ### V2.0
 
-- Modelo multi-condomínio.
+- Modelo multi-condomÃ­nio.
 - Arquitetura SaaS com isolamento por tenant.
-- Planos, assinatura e gestão comercial.
+- Planos, assinatura e gestÃ£o comercial.
 - Painel master para operadores da plataforma.
-- Convites e onboarding automatizado de condomínios.
-- APIs externas para integrações com portaria remota e dispositivos.
+- Convites e onboarding automatizado de condomÃ­nios.
+- APIs externas para integraÃ§Ãµes com portaria remota e dispositivos.
 
 ## Status
 
-Conecta Homme V1.1 está preparado para validação final, deploy e apresentação em portfólio.
+Conecta Homme V1.1 estÃ¡ preparado para validaÃ§Ã£o final, deploy e apresentaÃ§Ã£o em portfÃ³lio.
