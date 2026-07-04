@@ -74,6 +74,18 @@ enum NotificationStatus {
   READ
 }
 
+enum LeisureSpaceStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum SpaceReservationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELED
+}
+
 model User {
   id           String     @id @default(cuid())
   name         String
@@ -95,6 +107,8 @@ model User {
   deliveredPackages Package[]            @relation("PackageDeliveredBy")
   notifications     Notification[]
   auditLogs         AuditLog[]
+  requestedReservations SpaceReservation[] @relation("ReservationRequestedBy")
+  approvedReservations  SpaceReservation[] @relation("ReservationApprovedBy")
 
   @@index([unitId])
 }
@@ -118,6 +132,7 @@ model Unit {
   packages            Package[]
   notifications       Notification[]
   qrCodeTokens        QRCodeToken[]
+  spaceReservations   SpaceReservation[]
 
   @@unique([block, apartment])
 }
@@ -235,6 +250,52 @@ model CondominiumSettings {
   logoUrl     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model LeisureSpace {
+  id          String             @id @default(cuid())
+  name        String
+  description String?
+  location    String?
+  capacity    Int?
+  rules       String?
+  status      LeisureSpaceStatus @default(ACTIVE)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  reservations SpaceReservation[]
+
+  @@index([status])
+  @@index([name])
+}
+
+model SpaceReservation {
+  id              String                 @id @default(cuid())
+  spaceId         String
+  unitId          String
+  requestedById   String
+  startAt         DateTime
+  endAt           DateTime
+  status          SpaceReservationStatus @default(PENDING)
+  notes           String?
+  rejectionReason String?
+  approvedById    String?
+  approvedAt      DateTime?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  space       LeisureSpace @relation(fields: [spaceId], references: [id])
+  unit        Unit         @relation(fields: [unitId], references: [id])
+  requestedBy User         @relation("ReservationRequestedBy", fields: [requestedById], references: [id])
+  approvedBy  User?        @relation("ReservationApprovedBy", fields: [approvedById], references: [id])
+
+  @@index([spaceId])
+  @@index([unitId])
+  @@index([requestedById])
+  @@index([approvedById])
+  @@index([status])
+  @@index([startAt])
+  @@index([endAt])
 }
 
 model AuditLog {

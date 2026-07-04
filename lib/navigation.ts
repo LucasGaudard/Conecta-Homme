@@ -2,6 +2,7 @@ export type NavigationIcon =
   | "audit"
   | "bell"
   | "building"
+  | "calendar"
   | "chart"
   | "home"
   | "package"
@@ -19,6 +20,8 @@ export type NavigationItem = {
 export const adminNavigation: NavigationItem[] = [
   { title: "Dashboard", href: "/admin", icon: "home" },
   { title: "Unidades", href: "/admin/unidades", icon: "building" },
+  { title: "Espaços", href: "/admin/espacos", icon: "calendar" },
+  { title: "Reservas", href: "/admin/reservas", icon: "calendar" },
   { title: "Encomendas", href: "/admin/encomendas", icon: "package" },
   { title: "Notificações", href: "/admin/notificacoes", icon: "bell" },
   { title: "Moradores", href: "/admin/unidades", icon: "users" },
@@ -32,6 +35,7 @@ export const porterNavigation: NavigationItem[] = [
   { title: "Dashboard", href: "/portaria", icon: "home" },
   { title: "Visitantes", href: "/portaria", icon: "users" },
   { title: "Encomendas", href: "/portaria/encomendas", icon: "package" },
+  { title: "Reservas", href: "/portaria/reservas", icon: "calendar" },
   { title: "Notificações", href: "/portaria/notificacoes", icon: "bell" },
   { title: "Validar QR Code", href: "/portaria/validar-qr", icon: "qrcode" },
   { title: "Configurações", href: "/portaria/configuracoes", icon: "settings" },
@@ -42,6 +46,7 @@ export const residentNavigation: NavigationItem[] = [
   { title: "Meu QR Code", href: "/morador/qrcode", icon: "qrcode" },
   { title: "Visitantes", href: "/morador/visitantes", icon: "users" },
   { title: "Encomendas", href: "/morador/encomendas", icon: "package" },
+  { title: "Reservas", href: "/morador/reservas", icon: "calendar" },
   { title: "Acessos", href: "/morador/acessos", icon: "shield" },
   { title: "Notificações", href: "/morador/notificacoes", icon: "bell" },
   { title: "Configurações", href: "/morador/configuracoes", icon: "settings" },
