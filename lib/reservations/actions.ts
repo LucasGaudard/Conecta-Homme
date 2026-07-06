@@ -4,13 +4,13 @@ import {
   LeisureSpaceStatus,
   NotificationStatus,
   NotificationType,
+  Prisma,
   SpaceReservationStatus,
-  UserRole,
 } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import {
   createLeisureSpaceSchema,
@@ -20,28 +20,32 @@ import {
   updateLeisureSpaceSchema,
 } from "@/lib/reservations/validation";
 
-async function requireRole(role: UserRole) {
-  const user = await getCurrentUser();
-
-  if (!user || user.role !== role) {
-    redirect("/login");
-  }
-
-  return user;
-}
-
 async function requireResidentUnit() {
-  const user = await requireRole(UserRole.RESIDENT);
+  const { condominiumId, user } = await requireCondominiumRole("RESIDENT");
   const resident = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { id: true, name: true, role: true, email: true, unitId: true },
+    select: { email: true, id: true, name: true, role: true, unitId: true },
   });
 
   if (!resident?.unitId) {
     redirect("/morador?error=Usuario sem unidade vinculada.");
   }
 
-  return { ...resident, unitId: resident.unitId };
+  const unit = await prisma.unit.findFirst({
+    where: {
+      condominiumId,
+      id: resident.unitId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!unit) {
+    redirect("/morador?error=Unidade nao encontrada.");
+  }
+
+  return { ...resident, condominiumId, unitId: unit.id };
 }
 
 function getStringValue(formData: FormData, key: string) {
@@ -63,9 +67,16 @@ function getReservationDateRange(data: { date: string; endTime: string; startTim
   };
 }
 
-async function hasApprovedConflict(spaceId: string, startAt: Date, endAt: Date, exceptId?: string) {
+async function hasApprovedConflict(
+  condominiumId: string,
+  spaceId: string,
+  startAt: Date,
+  endAt: Date,
+  exceptId?: string,
+) {
   const conflict = await prisma.spaceReservation.findFirst({
     where: {
+      condominiumId,
       id: exceptId ? { not: exceptId } : undefined,
       spaceId,
       status: SpaceReservationStatus.APPROVED,
@@ -89,8 +100,20 @@ function revalidateReservationSurfaces() {
   revalidatePath("/portaria/reservas");
 }
 
+function handleSpacePrismaError(error: unknown, path: string): never {
+  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+    redirectWithMessage(path, {
+      error: "Ja existe um espaco com este nome neste condominio.",
+    });
+  }
+
+  redirectWithMessage(path, {
+    error: "Nao foi possivel salvar o espaco. Tente novamente.",
+  });
+}
+
 export async function createLeisureSpaceAction(formData: FormData) {
-  const admin = await requireRole(UserRole.ADMIN);
+  const { condominiumId, user: admin } = await requireCondominiumRole("ADMIN");
   const parsed = createLeisureSpaceSchema.safeParse({
     capacity: getStringValue(formData, "capacity"),
     description: getStringValue(formData, "description"),
@@ -105,12 +128,19 @@ export async function createLeisureSpaceAction(formData: FormData) {
     });
   }
 
-  const space = await prisma.leisureSpace.create({
-    data: {
-      ...parsed.data,
-      status: LeisureSpaceStatus.ACTIVE,
-    },
-  });
+  let space;
+
+  try {
+    space = await prisma.leisureSpace.create({
+      data: {
+        ...parsed.data,
+        condominiumId,
+        status: LeisureSpaceStatus.ACTIVE,
+      },
+    });
+  } catch (error) {
+    handleSpacePrismaError(error, "/admin/espacos");
+  }
 
   await createAuditLog({
     action: "CREATE",
@@ -128,7 +158,7 @@ export async function createLeisureSpaceAction(formData: FormData) {
 }
 
 export async function updateLeisureSpaceAction(spaceId: string, formData: FormData) {
-  const admin = await requireRole(UserRole.ADMIN);
+  const { condominiumId, user: admin } = await requireCondominiumRole("ADMIN");
   const parsed = updateLeisureSpaceSchema.safeParse({
     capacity: getStringValue(formData, "capacity"),
     description: getStringValue(formData, "description"),
@@ -144,10 +174,32 @@ export async function updateLeisureSpaceAction(spaceId: string, formData: FormDa
     });
   }
 
-  const space = await prisma.leisureSpace.update({
-    where: { id: spaceId },
-    data: parsed.data,
+  const existing = await prisma.leisureSpace.findFirst({
+    where: {
+      condominiumId,
+      id: spaceId,
+    },
+    select: {
+      id: true,
+    },
   });
+
+  if (!existing) {
+    redirectWithMessage("/admin/espacos", {
+      error: "Espaco inexistente.",
+    });
+  }
+
+  let space;
+
+  try {
+    space = await prisma.leisureSpace.update({
+      where: { id: existing.id },
+      data: parsed.data,
+    });
+  } catch (error) {
+    handleSpacePrismaError(error, "/admin/espacos");
+  }
 
   await createAuditLog({
     action: space.status === LeisureSpaceStatus.INACTIVE ? "INACTIVATE" : "UPDATE",
@@ -171,9 +223,26 @@ export async function updateLeisureSpaceAction(spaceId: string, formData: FormDa
 }
 
 export async function inactivateLeisureSpaceAction(spaceId: string) {
-  const admin = await requireRole(UserRole.ADMIN);
-  const space = await prisma.leisureSpace.update({
-    where: { id: spaceId },
+  const { condominiumId, user: admin } = await requireCondominiumRole("ADMIN");
+  const space = await prisma.leisureSpace.findFirst({
+    where: {
+      condominiumId,
+      id: spaceId,
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  if (!space) {
+    redirectWithMessage("/admin/espacos", {
+      error: "Espaco inexistente.",
+    });
+  }
+
+  await prisma.leisureSpace.update({
+    where: { id: space.id },
     data: { status: LeisureSpaceStatus.INACTIVE },
   });
 
@@ -210,6 +279,7 @@ export async function requestSpaceReservationAction(formData: FormData) {
 
   const space = await prisma.leisureSpace.findFirst({
     where: {
+      condominiumId: resident.condominiumId,
       id: parsed.data.spaceId,
       status: LeisureSpaceStatus.ACTIVE,
     },
@@ -224,7 +294,7 @@ export async function requestSpaceReservationAction(formData: FormData) {
 
   const { endAt, startAt } = getReservationDateRange(parsed.data);
 
-  if (await hasApprovedConflict(space.id, startAt, endAt)) {
+  if (await hasApprovedConflict(resident.condominiumId, space.id, startAt, endAt)) {
     redirectWithMessage("/morador/reservas", {
       error: "Este horario ja esta reservado para o espaco selecionado.",
     });
@@ -232,6 +302,7 @@ export async function requestSpaceReservationAction(formData: FormData) {
 
   const reservation = await prisma.spaceReservation.create({
     data: {
+      condominiumId: resident.condominiumId,
       endAt,
       notes: parsed.data.notes,
       requestedById: resident.id,
@@ -257,21 +328,28 @@ export async function requestSpaceReservationAction(formData: FormData) {
   });
 }
 
+async function getAdminReservation(condominiumId: string, id: string) {
+  return prisma.spaceReservation.findFirst({
+    where: {
+      condominiumId,
+      id,
+    },
+    include: {
+      space: { select: { id: true, name: true } },
+      unit: { select: { id: true } },
+    },
+  });
+}
+
 export async function approveSpaceReservationAction(formData: FormData) {
-  const admin = await requireRole(UserRole.ADMIN);
+  const { condominiumId, user: admin } = await requireCondominiumRole("ADMIN");
   const parsed = reservationIdSchema.safeParse(getStringValue(formData, "id"));
 
   if (!parsed.success) {
     redirectWithMessage("/admin/reservas", { error: "Reserva invalida." });
   }
 
-  const reservation = await prisma.spaceReservation.findUnique({
-    where: { id: parsed.data },
-    include: {
-      space: { select: { name: true } },
-      unit: { select: { id: true } },
-    },
-  });
+  const reservation = await getAdminReservation(condominiumId, parsed.data);
 
   if (!reservation || reservation.status !== SpaceReservationStatus.PENDING) {
     redirectWithMessage("/admin/reservas", {
@@ -279,7 +357,15 @@ export async function approveSpaceReservationAction(formData: FormData) {
     });
   }
 
-  if (await hasApprovedConflict(reservation.spaceId, reservation.startAt, reservation.endAt, reservation.id)) {
+  if (
+    await hasApprovedConflict(
+      condominiumId,
+      reservation.spaceId,
+      reservation.startAt,
+      reservation.endAt,
+      reservation.id,
+    )
+  ) {
     redirectWithMessage("/admin/reservas", {
       error: "Ja existe uma reserva aprovada neste horario para o espaco.",
     });
@@ -298,6 +384,7 @@ export async function approveSpaceReservationAction(formData: FormData) {
 
     await tx.notification.create({
       data: {
+        condominiumId,
         message: `Sua reserva para ${reservation.space.name} foi aprovada.`,
         status: NotificationStatus.UNREAD,
         title: "Reserva aprovada",
@@ -326,7 +413,7 @@ export async function approveSpaceReservationAction(formData: FormData) {
 }
 
 export async function rejectSpaceReservationAction(formData: FormData) {
-  const admin = await requireRole(UserRole.ADMIN);
+  const { condominiumId, user: admin } = await requireCondominiumRole("ADMIN");
   const parsed = rejectReservationSchema.safeParse({
     id: getStringValue(formData, "id"),
     rejectionReason: getStringValue(formData, "rejectionReason"),
@@ -338,13 +425,7 @@ export async function rejectSpaceReservationAction(formData: FormData) {
     });
   }
 
-  const reservation = await prisma.spaceReservation.findUnique({
-    where: { id: parsed.data.id },
-    include: {
-      space: { select: { name: true } },
-      unit: { select: { id: true } },
-    },
-  });
+  const reservation = await getAdminReservation(condominiumId, parsed.data.id);
 
   if (!reservation || reservation.status !== SpaceReservationStatus.PENDING) {
     redirectWithMessage("/admin/reservas", {
@@ -365,6 +446,7 @@ export async function rejectSpaceReservationAction(formData: FormData) {
 
     await tx.notification.create({
       data: {
+        condominiumId,
         message: `Sua reserva para ${reservation.space.name} foi recusada. Motivo: ${parsed.data.rejectionReason}`,
         status: NotificationStatus.UNREAD,
         title: "Reserva recusada",
@@ -393,20 +475,14 @@ export async function rejectSpaceReservationAction(formData: FormData) {
 }
 
 export async function cancelSpaceReservationByAdminAction(formData: FormData) {
-  const admin = await requireRole(UserRole.ADMIN);
+  const { condominiumId, user: admin } = await requireCondominiumRole("ADMIN");
   const parsed = reservationIdSchema.safeParse(getStringValue(formData, "id"));
 
   if (!parsed.success) {
     redirectWithMessage("/admin/reservas", { error: "Reserva invalida." });
   }
 
-  const reservation = await prisma.spaceReservation.findUnique({
-    where: { id: parsed.data },
-    include: {
-      space: { select: { name: true } },
-      unit: { select: { id: true } },
-    },
-  });
+  const reservation = await getAdminReservation(condominiumId, parsed.data);
 
   if (!reservation || reservation.status === SpaceReservationStatus.CANCELED) {
     redirectWithMessage("/admin/reservas", {
@@ -424,6 +500,7 @@ export async function cancelSpaceReservationByAdminAction(formData: FormData) {
 
     await tx.notification.create({
       data: {
+        condominiumId,
         message: `Sua reserva para ${reservation.space.name} foi cancelada pela administracao.`,
         status: NotificationStatus.UNREAD,
         title: "Reserva cancelada",
@@ -461,6 +538,7 @@ export async function cancelSpaceReservationByResidentAction(formData: FormData)
 
   const reservation = await prisma.spaceReservation.findFirst({
     where: {
+      condominiumId: resident.condominiumId,
       id: parsed.data,
       unitId: resident.unitId,
     },

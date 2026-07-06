@@ -119,6 +119,8 @@ model Condominium {
   packages            Package[]
   notifications       Notification[]
   auditLogs           AuditLog[]
+  leisureSpaces       LeisureSpace[]
+  spaceReservations   SpaceReservation[]
 }
 
 model User {
@@ -310,24 +312,28 @@ model CondominiumSettings {
 }
 
 model LeisureSpace {
-  id          String             @id @default(cuid())
-  name        String
-  description String?
-  location    String?
-  capacity    Int?
-  rules       String?
-  status      LeisureSpaceStatus @default(ACTIVE)
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  id            String             @id @default(cuid())
+  condominiumId String
+  name          String
+  description   String?
+  location      String?
+  capacity      Int?
+  rules         String?
+  status        LeisureSpaceStatus @default(ACTIVE)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
 
+  condominium  Condominium        @relation(fields: [condominiumId], references: [id])
   reservations SpaceReservation[]
 
+  @@index([condominiumId])
   @@index([status])
   @@index([name])
 }
 
 model SpaceReservation {
   id              String                 @id @default(cuid())
+  condominiumId   String
   spaceId         String
   unitId          String
   requestedById   String
@@ -341,11 +347,13 @@ model SpaceReservation {
   createdAt       DateTime               @default(now())
   updatedAt       DateTime               @updatedAt
 
+  condominium Condominium  @relation(fields: [condominiumId], references: [id])
   space       LeisureSpace @relation(fields: [spaceId], references: [id])
   unit        Unit         @relation(fields: [unitId], references: [id])
   requestedBy User         @relation("ReservationRequestedBy", fields: [requestedById], references: [id])
   approvedBy  User?        @relation("ReservationApprovedBy", fields: [approvedById], references: [id])
 
+  @@index([condominiumId])
   @@index([spaceId])
   @@index([unitId])
   @@index([requestedById])

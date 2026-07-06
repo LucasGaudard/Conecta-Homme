@@ -1,21 +1,11 @@
-import { LeisureSpaceStatus, SpaceReservationStatus, UserRole } from "@prisma/client";
+import { LeisureSpaceStatus, SpaceReservationStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { adminReservationFiltersSchema } from "@/lib/reservations/validation";
 
-async function requireRole(role: UserRole) {
-  const user = await getCurrentUser();
-
-  if (!user || user.role !== role) {
-    redirect("/login");
-  }
-
-  return user;
-}
-
 async function requireResident() {
-  const user = await requireRole(UserRole.RESIDENT);
+  const { condominiumId, user } = await requireCondominiumRole("RESIDENT");
   const resident = await prisma.user.findUnique({
     where: { id: user.id },
     select: { id: true, name: true, unitId: true },
@@ -25,16 +15,39 @@ async function requireResident() {
     redirect("/morador?error=Usuario sem unidade vinculada.");
   }
 
-  return { ...resident, unitId: resident.unitId };
+  const unit = await prisma.unit.findFirst({
+    where: {
+      condominiumId,
+      id: resident.unitId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!unit) {
+    redirect("/morador?error=Unidade nao encontrada.");
+  }
+
+  return { ...resident, condominiumId, unitId: unit.id };
 }
 
 export async function getAdminLeisureSpaces() {
-  await requireRole(UserRole.ADMIN);
+  const { condominiumId } = await requireCondominiumRole("ADMIN");
 
   return prisma.leisureSpace.findMany({
+    where: {
+      condominiumId,
+    },
     include: {
       _count: {
-        select: { reservations: true },
+        select: {
+          reservations: {
+            where: {
+              condominiumId,
+            },
+          },
+        },
       },
     },
     orderBy: [{ status: "asc" }, { name: "asc" }],
@@ -42,23 +55,32 @@ export async function getAdminLeisureSpaces() {
 }
 
 export async function getActiveLeisureSpaces() {
-  await requireRole(UserRole.RESIDENT);
+  const { condominiumId } = await requireCondominiumRole("RESIDENT");
 
   return prisma.leisureSpace.findMany({
-    where: { status: LeisureSpaceStatus.ACTIVE },
+    where: {
+      condominiumId,
+      status: LeisureSpaceStatus.ACTIVE,
+    },
     orderBy: { name: "asc" },
   });
 }
 
 export async function getAdminReservationFilters() {
-  await requireRole(UserRole.ADMIN);
+  const { condominiumId } = await requireCondominiumRole("ADMIN");
 
   const [spaces, units] = await Promise.all([
     prisma.leisureSpace.findMany({
+      where: {
+        condominiumId,
+      },
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
     prisma.unit.findMany({
+      where: {
+        condominiumId,
+      },
       orderBy: [{ block: "asc" }, { apartment: "asc" }],
       select: { apartment: true, block: true, id: true, responsibleName: true },
     }),
@@ -75,7 +97,7 @@ export async function getAdminReservations(filters: {
   to?: string;
   unitId?: string;
 }) {
-  await requireRole(UserRole.ADMIN);
+  const { condominiumId } = await requireCondominiumRole("ADMIN");
   const parsedResult = adminReservationFiltersSchema.safeParse(filters);
   const parsed = parsedResult.success ? parsedResult.data : {};
   const query = parsed.q?.trim();
@@ -89,6 +111,7 @@ export async function getAdminReservations(filters: {
 
   return prisma.spaceReservation.findMany({
     where: {
+      condominiumId,
       spaceId: parsed.spaceId || undefined,
       startAt,
       status:
@@ -98,11 +121,11 @@ export async function getAdminReservations(filters: {
       unitId: parsed.unitId || undefined,
       OR: query
         ? [
-            { space: { name: { contains: query, mode: "insensitive" } } },
-            { requestedBy: { name: { contains: query, mode: "insensitive" } } },
-            { unit: { responsibleName: { contains: query, mode: "insensitive" } } },
-            { unit: { block: { contains: query, mode: "insensitive" } } },
-            { unit: { apartment: { contains: query, mode: "insensitive" } } },
+            { space: { condominiumId, name: { contains: query, mode: "insensitive" } } },
+            { requestedBy: { condominiumId, name: { contains: query, mode: "insensitive" } } },
+            { unit: { condominiumId, responsibleName: { contains: query, mode: "insensitive" } } },
+            { unit: { condominiumId, block: { contains: query, mode: "insensitive" } } },
+            { unit: { condominiumId, apartment: { contains: query, mode: "insensitive" } } },
           ]
         : undefined,
     },
@@ -120,11 +143,17 @@ export async function getResidentReservationPageData() {
   const resident = await requireResident();
   const [spaces, reservations] = await Promise.all([
     prisma.leisureSpace.findMany({
-      where: { status: LeisureSpaceStatus.ACTIVE },
+      where: {
+        condominiumId: resident.condominiumId,
+        status: LeisureSpaceStatus.ACTIVE,
+      },
       orderBy: { name: "asc" },
     }),
     prisma.spaceReservation.findMany({
-      where: { unitId: resident.unitId },
+      where: {
+        condominiumId: resident.condominiumId,
+        unitId: resident.unitId,
+      },
       include: {
         approvedBy: { select: { name: true } },
         space: true,
@@ -138,7 +167,7 @@ export async function getResidentReservationPageData() {
 }
 
 export async function getPorterTodayReservations() {
-  await requireRole(UserRole.PORTER);
+  const { condominiumId } = await requireCondominiumRole("PORTER");
   const now = new Date();
   const start = new Date(now);
   start.setHours(0, 0, 0, 0);
@@ -147,6 +176,7 @@ export async function getPorterTodayReservations() {
 
   return prisma.spaceReservation.findMany({
     where: {
+      condominiumId,
       endAt: { gte: start },
       startAt: { lte: end },
       status: SpaceReservationStatus.APPROVED,
