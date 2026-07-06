@@ -84,6 +84,7 @@ export async function getAdminReportsData(rawFilters: ReportFilters) {
     },
   };
   const packageWhere = {
+    condominiumId,
     receivedAt:
       from || to
         ? {
@@ -95,7 +96,10 @@ export async function getAdminReportsData(rawFilters: ReportFilters) {
       filters.packageStatus && filters.packageStatus !== "ALL"
         ? (filters.packageStatus as PackageStatus)
         : undefined,
-    unit: unitWhere,
+    unit: {
+      condominiumId,
+      ...unitWhere,
+    },
   };
   const visitorWhere = {
     condominiumId,
@@ -129,12 +133,12 @@ export async function getAdminReportsData(rawFilters: ReportFilters) {
     waitingPackagesTotal,
     deliveredPackagesTotal,
   ] = await Promise.all([
-    prisma.unit.count(),
-    prisma.unit.count({ where: { status: "ACTIVE" } }),
-    prisma.user.count({ where: { role: UserRole.RESIDENT, status: UserStatus.ACTIVE } }),
-    prisma.user.count({ where: { role: UserRole.PORTER, status: UserStatus.ACTIVE } }),
+    prisma.unit.count({ where: { condominiumId } }),
+    prisma.unit.count({ where: { condominiumId, status: "ACTIVE" } }),
+    prisma.user.count({ where: { condominiumId, role: UserRole.RESIDENT, status: UserStatus.ACTIVE } }),
+    prisma.user.count({ where: { condominiumId, role: UserRole.PORTER, status: UserStatus.ACTIVE } }),
     prisma.visitAuthorization.count({ where: { condominiumId, status: VisitorStatus.AUTHORIZED } }),
-    prisma.package.count({ where: { status: PackageStatus.WAITING_PICKUP } }),
+    prisma.package.count({ where: { condominiumId, status: PackageStatus.WAITING_PICKUP } }),
     prisma.accessLog.findMany({
       where: accessWhere,
       include: {

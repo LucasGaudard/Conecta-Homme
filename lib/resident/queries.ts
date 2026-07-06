@@ -61,6 +61,7 @@ export async function getResidentDashboardData() {
   ] = await Promise.all([
     prisma.package.count({
       where: {
+        condominiumId,
         status: PackageStatus.WAITING_PICKUP,
         unitId: unit.id,
       },
@@ -94,6 +95,7 @@ export async function getResidentDashboardData() {
     }),
     prisma.package.findMany({
       where: {
+        condominiumId,
         status: PackageStatus.WAITING_PICKUP,
         unitId: unit.id,
       },
@@ -126,6 +128,7 @@ export async function getResidentDashboardData() {
     }),
     prisma.notification.findMany({
       where: {
+        condominiumId,
         unitId: unit.id,
       },
       orderBy: {
@@ -175,10 +178,11 @@ export async function getResidentVisitors() {
 }
 
 export async function getResidentPackages() {
-  const { unit } = await getResidentContext();
+  const { resident, unit } = await getResidentContext();
 
   return prisma.package.findMany({
     where: {
+      condominiumId: resident.condominiumId,
       unitId: unit.id,
     },
     orderBy: {

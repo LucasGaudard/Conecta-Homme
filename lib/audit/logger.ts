@@ -2,6 +2,7 @@ import type { Prisma, UserRole } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 type AuditUser = {
+  condominiumId?: string | null;
   email?: string | null;
   id: string;
   name?: string | null;
@@ -26,6 +27,7 @@ export async function createAuditLog(
   await client.auditLog.create({
     data: {
       action: input.action,
+      condominiumId: input.user.condominiumId ?? null,
       description: input.description,
       entityId: input.entityId,
       entityType: input.entityType,

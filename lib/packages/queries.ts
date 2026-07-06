@@ -33,6 +33,7 @@ export async function getPorterPackages() {
 
   return prisma.package.findMany({
     where: {
+      condominiumId,
       unit: {
         condominiumId,
       },
@@ -60,6 +61,7 @@ export async function getResidentPackageList() {
 
   return prisma.package.findMany({
     where: {
+      condominiumId,
       unit: {
         condominiumId,
       },
@@ -89,6 +91,7 @@ export async function getAdminPackages(filters: {
 
   return prisma.package.findMany({
     where: {
+      condominiumId,
       receivedAt,
       status:
         parsed.status && parsed.status !== "ALL"

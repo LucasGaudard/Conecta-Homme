@@ -65,6 +65,7 @@ export async function createPackageAction(formData: FormData) {
     const packageRecord = await tx.package.create({
       data: {
         carrier: data.carrier,
+        condominiumId,
         description: data.description,
         photoUrl: data.photoUrl,
         pickupCode: data.pickupCode,
@@ -78,6 +79,7 @@ export async function createPackageAction(formData: FormData) {
 
     await tx.notification.create({
       data: {
+        condominiumId,
         message: "Uma encomenda foi registrada para sua unidade.",
         status: NotificationStatus.UNREAD,
         title: "Nova encomenda recebida",
@@ -126,6 +128,7 @@ export async function deliverPackageAction(formData: FormData) {
   const packageRecord = await prisma.package.findFirst({
     where: {
       id: parsed.data.packageId,
+      condominiumId,
       status: PackageStatus.WAITING_PICKUP,
       unit: {
         condominiumId,
@@ -145,6 +148,7 @@ export async function deliverPackageAction(formData: FormData) {
   const updated = await prisma.package.updateMany({
     where: {
       id: parsed.data.packageId,
+      condominiumId,
       status: PackageStatus.WAITING_PICKUP,
       unit: {
         condominiumId,

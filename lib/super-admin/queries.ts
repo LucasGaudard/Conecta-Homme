@@ -85,6 +85,7 @@ export async function getCondominiumById(id: string) {
     prisma.auditLog.findMany({
       where: {
         OR: [
+          { condominiumId: condominium.id },
           { entityType: "Condominium", entityId: condominium.id },
           { user: { condominiumId: condominium.id } },
         ],

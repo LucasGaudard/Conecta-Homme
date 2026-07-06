@@ -1,6 +1,6 @@
 import { NotificationStatus, NotificationType, Prisma, UserRole } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import {
   type NotificationStatusFilter,
   type NotificationTypeFilter,
@@ -8,30 +8,29 @@ import {
 import { prisma } from "@/lib/prisma";
 
 export type NotificationRole = UserRole;
+type TenantNotificationRole = Exclude<UserRole, "SUPER_ADMIN">;
 
 async function getNotificationContext(expectedRole?: NotificationRole) {
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser) {
+  if (expectedRole === UserRole.SUPER_ADMIN) {
     redirect("/login");
   }
 
-  if (expectedRole && currentUser.role !== expectedRole) {
-    redirect("/login");
-  }
-
+  const context = expectedRole
+    ? await requireCondominiumRole(expectedRole as TenantNotificationRole)
+    : await requireCondominiumRole(UserRole.ADMIN, UserRole.PORTER, UserRole.RESIDENT);
   const user = await prisma.user.findUnique({
     where: {
-      id: currentUser.id,
+      id: context.user.id,
     },
     select: {
+      condominiumId: true,
       id: true,
       role: true,
       unitId: true,
     },
   });
 
-  if (!user) {
+  if (!user || user.condominiumId !== context.condominiumId) {
     redirect("/login");
   }
 
@@ -39,7 +38,10 @@ async function getNotificationContext(expectedRole?: NotificationRole) {
     redirect("/login");
   }
 
-  return user;
+  return {
+    ...user,
+    condominiumId: context.condominiumId,
+  };
 }
 
 export function getNotificationRoute(role: NotificationRole) {
@@ -55,12 +57,14 @@ export function getNotificationRoute(role: NotificationRole) {
 }
 
 function getVisibleNotificationWhere(user: {
+  condominiumId: string;
   id: string;
   role: UserRole;
   unitId: string | null;
 }): Prisma.NotificationWhereInput {
   if (user.role === UserRole.RESIDENT) {
     return {
+      condominiumId: user.condominiumId,
       OR: [
         { userId: user.id },
         ...(user.unitId ? [{ unitId: user.unitId }] : []),
@@ -70,17 +74,18 @@ function getVisibleNotificationWhere(user: {
 
   if (user.role === UserRole.ADMIN) {
     return {
-      OR: [
-        { userId: user.id },
-        {
-          AND: [{ userId: null }, { unitId: null }],
-        },
-      ],
+      condominiumId: user.condominiumId,
     };
   }
 
   return {
-    userId: user.id,
+    condominiumId: user.condominiumId,
+    OR: [
+      { userId: user.id },
+      {
+        AND: [{ userId: null }, { unitId: null }],
+      },
+    ],
   };
 }
 
@@ -185,9 +190,10 @@ export async function getNotificationsPageData(
     }),
     role === UserRole.ADMIN
       ? Promise.all([
-          prisma.notification.count(),
+          prisma.notification.count({ where: { condominiumId: user.condominiumId } }),
           prisma.notification.count({
             where: {
+              condominiumId: user.condominiumId,
               status: NotificationStatus.UNREAD,
             },
           }),

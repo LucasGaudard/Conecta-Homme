@@ -49,6 +49,7 @@ export async function getPorterDashboardData() {
     }),
     prisma.package.count({
       where: {
+        condominiumId,
         status: PackageStatus.WAITING_PICKUP,
         unit: {
           condominiumId,
@@ -70,6 +71,7 @@ export async function getPorterDashboardData() {
     getRecentAccessLogs(condominiumId),
     prisma.package.findMany({
       where: {
+        condominiumId,
         status: PackageStatus.WAITING_PICKUP,
         unit: {
           condominiumId,
@@ -192,6 +194,7 @@ export async function searchPorterUnits(query: string) {
       },
       packages: {
         where: {
+          condominiumId,
           status: PackageStatus.WAITING_PICKUP,
         },
         orderBy: {

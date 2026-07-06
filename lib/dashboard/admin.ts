@@ -116,6 +116,7 @@ export async function getAdminDashboardData() {
     }),
     prisma.package.count({
       where: {
+        condominiumId,
         status: PackageStatus.WAITING_PICKUP,
         unit: {
           condominiumId,
@@ -186,6 +187,7 @@ export async function getAdminDashboardData() {
     }),
     prisma.package.findMany({
       where: {
+        condominiumId,
         unit: {
           condominiumId,
         },
@@ -254,6 +256,7 @@ export async function getAdminDashboardData() {
     prisma.package.groupBy({
       by: ["status"],
       where: {
+        condominiumId,
         unit: {
           condominiumId,
         },

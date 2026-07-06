@@ -1,13 +1,5 @@
-import { UserRole } from "@prisma/client";
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 
 export async function requireAdminExport() {
-  const user = await getCurrentUser();
-
-  if (!user || user.role !== UserRole.ADMIN) {
-    redirect("/login");
-  }
-
-  return user;
+  return requireCondominiumRole("ADMIN");
 }

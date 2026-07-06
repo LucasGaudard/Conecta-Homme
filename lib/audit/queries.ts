@@ -1,23 +1,16 @@
 import { Prisma, UserRole } from "@prisma/client";
-import { redirect } from "next/navigation";
 import {
   clampPage,
   normalizePage,
   normalizePageSize,
   pageCount,
 } from "@/components/ui/data-table-params";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import type { AuditFiltersInput } from "@/lib/audit/validation";
 import { prisma } from "@/lib/prisma";
 
 async function requireAdmin() {
-  const user = await getCurrentUser();
-
-  if (!user || user.role !== UserRole.ADMIN) {
-    redirect("/login");
-  }
-
-  return user;
+  return requireCondominiumRole("ADMIN");
 }
 
 function parseDateStart(value?: string) {
@@ -38,11 +31,12 @@ function parseDateEnd(value?: string) {
   return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
-function getAuditWhere(filters: AuditFiltersInput) {
+function getAuditWhere(filters: AuditFiltersInput, condominiumId: string) {
   const from = parseDateStart(filters.from);
   const to = parseDateEnd(filters.to);
 
   return {
+    condominiumId,
     ...(filters.action ? { action: filters.action } : {}),
     ...(filters.module ? { module: filters.module } : {}),
     ...(filters.role ? { userRole: filters.role as UserRole } : {}),
@@ -76,11 +70,11 @@ function getAuditWhere(filters: AuditFiltersInput) {
 }
 
 export async function getAuditLogs(filters: AuditFiltersInput) {
-  await requireAdmin();
+  const { condominiumId } = await requireAdmin();
 
   const pageSize = normalizePageSize(filters.pageSize);
   const requestedPage = normalizePage(filters.page);
-  const where = getAuditWhere(filters);
+  const where = getAuditWhere(filters, condominiumId);
 
   const totalItems = await prisma.auditLog.count({ where });
   const totalPages = pageCount(totalItems, pageSize);
@@ -106,12 +100,12 @@ export async function getAuditLogs(filters: AuditFiltersInput) {
 }
 
 export async function getAuditLogsForExport(filters: AuditFiltersInput) {
-  await requireAdmin();
+  const { condominiumId } = await requireAdmin();
 
   return prisma.auditLog.findMany({
     orderBy: {
       createdAt: "desc",
     },
-    where: getAuditWhere(filters),
+    where: getAuditWhere(filters, condominiumId),
   });
 }

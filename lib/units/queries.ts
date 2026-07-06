@@ -50,6 +50,7 @@ export async function getUnitById(unitId: string) {
           },
           packages: {
             where: {
+              condominiumId,
               status: "WAITING_PICKUP",
             },
           },
@@ -93,6 +94,9 @@ export async function getUnitById(unitId: string) {
         take: 5,
       },
       packages: {
+        where: {
+          condominiumId,
+        },
         orderBy: {
           createdAt: "desc",
         },

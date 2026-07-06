@@ -99,6 +99,7 @@ export async function generateResidentQrCodeAction() {
       entityType: "QRCodeToken",
       module: "QRCODE",
       user: {
+        condominiumId: resident.condominiumId,
         email: resident.email,
         id: resident.userId,
         name: resident.userName,
@@ -113,6 +114,7 @@ export async function generateResidentQrCodeAction() {
       entityType: "QRCodeToken",
       module: "QRCODE",
       user: {
+        condominiumId: resident.condominiumId,
         email: resident.email,
         id: resident.userId,
         name: resident.userName,
@@ -207,6 +209,7 @@ export async function generateVisitorQrCodeAction(formData: FormData) {
       entityType: "QRCodeToken",
       module: "QRCODE",
       user: {
+        condominiumId: resident.condominiumId,
         email: resident.email,
         id: resident.userId,
         name: resident.userName,
@@ -229,6 +232,7 @@ export async function generateVisitorQrCodeAction(formData: FormData) {
       entityType: "QRCodeToken",
       module: "QRCODE",
       user: {
+        condominiumId: resident.condominiumId,
         email: resident.email,
         id: resident.userId,
         name: resident.userName,

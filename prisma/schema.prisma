@@ -116,6 +116,9 @@ model Condominium {
   visitAuthorizations VisitAuthorization[]
   accessLogs          AccessLog[]
   qrCodeTokens        QRCodeToken[]
+  packages            Package[]
+  notifications       Notification[]
+  auditLogs           AuditLog[]
 }
 
 model User {
@@ -246,6 +249,7 @@ model AccessLog {
 
 model Package {
   id             String        @id @default(cuid())
+  condominiumId  String
   unitId         String
   carrier        String?
   trackingCode   String?
@@ -261,29 +265,34 @@ model Package {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  unit        Unit  @relation(fields: [unitId], references: [id])
-  receivedBy  User? @relation("PackageReceivedBy", fields: [receivedById], references: [id])
-  deliveredBy User? @relation("PackageDeliveredBy", fields: [deliveredById], references: [id])
+  condominium Condominium @relation(fields: [condominiumId], references: [id])
+  unit        Unit        @relation(fields: [unitId], references: [id])
+  receivedBy  User?       @relation("PackageReceivedBy", fields: [receivedById], references: [id])
+  deliveredBy User?       @relation("PackageDeliveredBy", fields: [deliveredById], references: [id])
 
+  @@index([condominiumId])
   @@index([unitId])
   @@index([receivedById])
   @@index([deliveredById])
 }
 
 model Notification {
-  id        String             @id @default(cuid())
-  userId    String?
-  unitId    String?
-  title     String
-  message   String
-  type      NotificationType
-  status    NotificationStatus @default(UNREAD)
-  createdAt DateTime           @default(now())
-  readAt    DateTime?
+  id            String             @id @default(cuid())
+  condominiumId String?
+  userId        String?
+  unitId        String?
+  title         String
+  message       String
+  type          NotificationType
+  status        NotificationStatus @default(UNREAD)
+  createdAt     DateTime           @default(now())
+  readAt        DateTime?
 
-  user User? @relation(fields: [userId], references: [id])
-  unit Unit? @relation(fields: [unitId], references: [id])
+  condominium Condominium? @relation(fields: [condominiumId], references: [id])
+  user        User?        @relation(fields: [userId], references: [id])
+  unit        Unit?        @relation(fields: [unitId], references: [id])
 
+  @@index([condominiumId])
   @@index([userId])
   @@index([unitId])
 }
@@ -347,20 +356,23 @@ model SpaceReservation {
 }
 
 model AuditLog {
-  id          String   @id @default(cuid())
-  userId      String?
-  userName    String?
-  userEmail   String?
-  userRole    UserRole
-  action      String
-  module      String
-  description String
-  entityType  String?
-  entityId    String?
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  condominiumId String?
+  userId        String?
+  userName      String?
+  userEmail     String?
+  userRole      UserRole
+  action        String
+  module        String
+  description   String
+  entityType    String?
+  entityId      String?
+  createdAt     DateTime @default(now())
 
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  condominium Condominium? @relation(fields: [condominiumId], references: [id])
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
 
+  @@index([condominiumId])
   @@index([userId])
   @@index([userRole])
   @@index([action])
