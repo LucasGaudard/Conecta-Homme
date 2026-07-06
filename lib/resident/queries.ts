@@ -48,6 +48,7 @@ export async function getResidentContext() {
 
 export async function getResidentDashboardData() {
   const { resident, unit } = await getResidentContext();
+  const { condominiumId } = resident;
   const now = new Date();
 
   const [
@@ -69,12 +70,14 @@ export async function getResidentDashboardData() {
         endsAt: {
           gte: now,
         },
+        condominiumId,
         status: VisitorStatus.AUTHORIZED,
         unitId: unit.id,
       },
     }),
     prisma.accessLog.findMany({
       where: {
+        condominiumId,
         unitId: unit.id,
       },
       orderBy: {
@@ -104,6 +107,7 @@ export async function getResidentDashboardData() {
         endsAt: {
           gte: now,
         },
+        condominiumId,
         status: VisitorStatus.AUTHORIZED,
         unitId: unit.id,
       },
@@ -148,10 +152,11 @@ export async function getResidentDashboardData() {
 }
 
 export async function getResidentVisitors() {
-  const { unit } = await getResidentContext();
+  const { resident, unit } = await getResidentContext();
 
   return prisma.visitAuthorization.findMany({
     where: {
+      condominiumId: resident.condominiumId,
       unitId: unit.id,
     },
     include: {
@@ -183,10 +188,11 @@ export async function getResidentPackages() {
 }
 
 export async function getResidentAccesses() {
-  const { unit } = await getResidentContext();
+  const { resident, unit } = await getResidentContext();
 
   return prisma.accessLog.findMany({
     where: {
+      condominiumId: resident.condominiumId,
       unitId: unit.id,
     },
     include: {

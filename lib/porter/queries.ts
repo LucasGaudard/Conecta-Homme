@@ -34,6 +34,7 @@ export async function getPorterDashboardData() {
     }),
     prisma.visitAuthorization.count({
       where: {
+        condominiumId,
         endsAt: {
           gte: start,
         },
@@ -56,6 +57,7 @@ export async function getPorterDashboardData() {
     }),
     prisma.accessLog.count({
       where: {
+        condominiumId,
         occurredAt: {
           gte: start,
           lt: end,
@@ -89,6 +91,7 @@ export async function getPorterDashboardData() {
     }),
     prisma.visitAuthorization.findMany({
       where: {
+        condominiumId,
         endsAt: {
           gte: start,
         },
@@ -162,6 +165,9 @@ export async function searchPorterUnits(query: string) {
   return prisma.unit.findMany({
     include: {
       accessLogs: {
+        where: {
+          condominiumId,
+        },
         include: {
           porter: {
             select: {
@@ -207,6 +213,9 @@ export async function searchPorterUnits(query: string) {
         },
       },
       visitAuthorizations: {
+        where: {
+          condominiumId,
+        },
         include: {
           visitor: {
             select: {
@@ -275,6 +284,7 @@ export async function getRecentAccessLogs(condominiumId?: string) {
 
   return prisma.accessLog.findMany({
     where: {
+      condominiumId: context.condominiumId,
       unit: {
         condominiumId: context.condominiumId,
       },

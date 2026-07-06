@@ -43,7 +43,11 @@ export async function getUnitById(unitId: string) {
     include: {
       _count: {
         select: {
-          accessLogs: true,
+          accessLogs: {
+            where: {
+              condominiumId,
+            },
+          },
           packages: {
             where: {
               status: "WAITING_PICKUP",
@@ -55,10 +59,17 @@ export async function getUnitById(unitId: string) {
               role: UserRole.RESIDENT,
             },
           },
-          visitAuthorizations: true,
+          visitAuthorizations: {
+            where: {
+              condominiumId,
+            },
+          },
         },
       },
       accessLogs: {
+        where: {
+          condominiumId,
+        },
         include: {
           porter: {
             select: {
@@ -97,6 +108,9 @@ export async function getUnitById(unitId: string) {
         },
       },
       visitAuthorizations: {
+        where: {
+          condominiumId,
+        },
         include: {
           authorizedBy: {
             select: {

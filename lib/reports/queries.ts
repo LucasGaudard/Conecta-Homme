@@ -6,18 +6,13 @@ import {
   UserStatus,
   VisitorStatus,
 } from "@prisma/client";
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { formatDayKey } from "@/lib/reports/format";
 import { reportFiltersSchema, type ReportFilters } from "@/lib/reports/validation";
 
 async function requireAdmin() {
-  const user = await getCurrentUser();
-
-  if (!user || user.role !== UserRole.ADMIN) {
-    redirect("/login");
-  }
+  return requireCondominiumRole("ADMIN");
 }
 
 function getDateRange(filters: ReportFilters) {
@@ -61,12 +56,13 @@ function accessByDay(items: Array<{ occurredAt: Date }>) {
 }
 
 export async function getAdminReportsData(rawFilters: ReportFilters) {
-  await requireAdmin();
+  const { condominiumId } = await requireAdmin();
   const filters = reportFiltersSchema.parse(rawFilters);
   const { from, to } = getDateRange(filters);
   const unitWhere = unitSearch(filters.q);
 
   const accessWhere = {
+    condominiumId,
     accessMethod:
       filters.accessMethod && filters.accessMethod !== "ALL"
         ? (filters.accessMethod as AccessMethod)
@@ -82,7 +78,10 @@ export async function getAdminReportsData(rawFilters: ReportFilters) {
             lte: to,
           }
         : undefined,
-    unit: unitWhere,
+    unit: {
+      condominiumId,
+      ...unitWhere,
+    },
   };
   const packageWhere = {
     receivedAt:
@@ -99,6 +98,7 @@ export async function getAdminReportsData(rawFilters: ReportFilters) {
     unit: unitWhere,
   };
   const visitorWhere = {
+    condominiumId,
     createdAt:
       from || to
         ? {
@@ -110,7 +110,10 @@ export async function getAdminReportsData(rawFilters: ReportFilters) {
       filters.visitorStatus && filters.visitorStatus !== "ALL"
         ? (filters.visitorStatus as VisitorStatus)
         : undefined,
-    unit: unitWhere,
+    unit: {
+      condominiumId,
+      ...unitWhere,
+    },
   };
 
   const [
@@ -130,7 +133,7 @@ export async function getAdminReportsData(rawFilters: ReportFilters) {
     prisma.unit.count({ where: { status: "ACTIVE" } }),
     prisma.user.count({ where: { role: UserRole.RESIDENT, status: UserStatus.ACTIVE } }),
     prisma.user.count({ where: { role: UserRole.PORTER, status: UserStatus.ACTIVE } }),
-    prisma.visitAuthorization.count({ where: { status: VisitorStatus.AUTHORIZED } }),
+    prisma.visitAuthorization.count({ where: { condominiumId, status: VisitorStatus.AUTHORIZED } }),
     prisma.package.count({ where: { status: PackageStatus.WAITING_PICKUP } }),
     prisma.accessLog.findMany({
       where: accessWhere,

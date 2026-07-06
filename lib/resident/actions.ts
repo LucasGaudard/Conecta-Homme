@@ -90,7 +90,7 @@ export async function updateResidentPresenceAction(formData: FormData) {
 }
 
 export async function createVisitorAuthorizationAction(formData: FormData) {
-  const { unitId, userId } = await requireResidentUnit();
+  const { condominiumId, unitId, userId } = await requireResidentUnit();
   const parsed = createVisitorAuthorizationSchema.safeParse({
     date: getStringValue(formData, "date"),
     document: getStringValue(formData, "document"),
@@ -114,6 +114,7 @@ export async function createVisitorAuthorizationAction(formData: FormData) {
   await prisma.$transaction(async (tx) => {
     const visitor = await tx.visitor.create({
       data: {
+        condominiumId,
         document: data.document,
         name: data.name,
         phone: data.phone,
@@ -123,6 +124,7 @@ export async function createVisitorAuthorizationAction(formData: FormData) {
     await tx.visitAuthorization.create({
       data: {
         authorizedById: userId,
+        condominiumId,
         endsAt,
         notes: data.notes,
         startsAt,
@@ -142,10 +144,11 @@ export async function createVisitorAuthorizationAction(formData: FormData) {
 }
 
 export async function cancelVisitorAuthorizationAction(authorizationId: string) {
-  const { unitId } = await requireResidentUnit();
+  const { condominiumId, unitId } = await requireResidentUnit();
 
-  await prisma.visitAuthorization.update({
+  const updated = await prisma.visitAuthorization.updateMany({
     where: {
+      condominiumId,
       id: authorizationId,
       unitId,
     },
@@ -153,6 +156,12 @@ export async function cancelVisitorAuthorizationAction(authorizationId: string) 
       status: VisitorStatus.CANCELED,
     },
   });
+
+  if (updated.count === 0) {
+    redirectWithMessage("/morador/visitantes", {
+      error: "Autorização não encontrada.",
+    });
+  }
 
   revalidatePath("/morador");
   revalidatePath("/morador/visitantes");

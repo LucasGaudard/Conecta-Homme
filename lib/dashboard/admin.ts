@@ -124,6 +124,7 @@ export async function getAdminDashboardData() {
     }),
     prisma.visitAuthorization.count({
       where: {
+        condominiumId,
         startsAt: {
           lt: end,
         },
@@ -138,6 +139,7 @@ export async function getAdminDashboardData() {
     }),
     prisma.accessLog.count({
       where: {
+        condominiumId,
         occurredAt: {
           gte: start,
           lt: end,
@@ -149,6 +151,7 @@ export async function getAdminDashboardData() {
     }),
     prisma.accessLog.findMany({
       where: {
+        condominiumId,
         unit: {
           condominiumId,
         },
@@ -202,6 +205,7 @@ export async function getAdminDashboardData() {
     }),
     prisma.visitAuthorization.findMany({
       where: {
+        condominiumId,
         unit: {
           condominiumId,
         },
@@ -231,6 +235,7 @@ export async function getAdminDashboardData() {
     }),
     prisma.accessLog.findMany({
       where: {
+        condominiumId,
         occurredAt: {
           gte: lastSevenDays.start,
           lte: lastSevenDays.end,
@@ -260,6 +265,7 @@ export async function getAdminDashboardData() {
     prisma.visitAuthorization.groupBy({
       by: ["status"],
       where: {
+        condominiumId,
         unit: {
           condominiumId,
         },

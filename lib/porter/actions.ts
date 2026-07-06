@@ -66,6 +66,7 @@ export async function registerManualAccessAction(formData: FormData) {
     data: {
       accessMethod: AccessMethod.MANUAL,
       accessType: data.accessType,
+      condominiumId,
       notes: data.notes,
       occurredAt: new Date(),
       porterId: porter.id,

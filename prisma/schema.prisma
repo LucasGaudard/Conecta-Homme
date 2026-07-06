@@ -110,35 +110,39 @@ model Condominium {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
-  units Unit[]
-  users User[]
+  units               Unit[]
+  users               User[]
+  visitors            Visitor[]
+  visitAuthorizations VisitAuthorization[]
+  accessLogs          AccessLog[]
+  qrCodeTokens        QRCodeToken[]
 }
 
 model User {
-  id           String     @id @default(cuid())
-  name         String
-  email        String     @unique
-  username     String?    @unique
-  passwordHash String
-  role         UserRole
-  status       UserStatus @default(ACTIVE)
-  phone        String?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  unitId       String?
+  id            String     @id @default(cuid())
+  name          String
+  email         String     @unique
+  username      String?    @unique
+  passwordHash  String
+  role          UserRole
+  status        UserStatus @default(ACTIVE)
+  phone         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  unitId        String?
   condominiumId String?
 
-  condominium       Condominium?         @relation(fields: [condominiumId], references: [id])
-  unit              Unit?                @relation(fields: [unitId], references: [id])
-  authorizedVisits  VisitAuthorization[] @relation("UserAuthorizedVisits")
-  accessLogs        AccessLog[]          @relation("AccessLogUser")
-  porterAccessLogs  AccessLog[]          @relation("AccessLogPorter")
-  receivedPackages  Package[]            @relation("PackageReceivedBy")
-  deliveredPackages Package[]            @relation("PackageDeliveredBy")
-  notifications     Notification[]
-  auditLogs         AuditLog[]
-  requestedReservations SpaceReservation[] @relation("ReservationRequestedBy")
-  approvedReservations  SpaceReservation[] @relation("ReservationApprovedBy")
+  condominium           Condominium?         @relation(fields: [condominiumId], references: [id])
+  unit                  Unit?                @relation(fields: [unitId], references: [id])
+  authorizedVisits      VisitAuthorization[] @relation("UserAuthorizedVisits")
+  accessLogs            AccessLog[]          @relation("AccessLogUser")
+  porterAccessLogs      AccessLog[]          @relation("AccessLogPorter")
+  receivedPackages      Package[]            @relation("PackageReceivedBy")
+  deliveredPackages     Package[]            @relation("PackageDeliveredBy")
+  notifications         Notification[]
+  auditLogs             AuditLog[]
+  requestedReservations SpaceReservation[]   @relation("ReservationRequestedBy")
+  approvedReservations  SpaceReservation[]   @relation("ReservationApprovedBy")
 
   @@index([condominiumId])
   @@index([unitId])
@@ -172,20 +176,25 @@ model Unit {
 }
 
 model Visitor {
-  id        String   @id @default(cuid())
-  name      String
-  document  String?
-  phone     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  condominiumId String
+  name          String
+  document      String?
+  phone         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
+  condominium         Condominium          @relation(fields: [condominiumId], references: [id])
   visitAuthorizations VisitAuthorization[]
   accessLogs          AccessLog[]
   qrCodeTokens        QRCodeToken[]
+
+  @@index([condominiumId])
 }
 
 model VisitAuthorization {
   id             String        @id @default(cuid())
+  condominiumId  String
   visitorId      String
   unitId         String
   authorizedById String
@@ -196,33 +205,38 @@ model VisitAuthorization {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
+  condominium  Condominium   @relation(fields: [condominiumId], references: [id])
   visitor      Visitor       @relation(fields: [visitorId], references: [id])
   unit         Unit          @relation(fields: [unitId], references: [id])
   authorizedBy User          @relation("UserAuthorizedVisits", fields: [authorizedById], references: [id])
   qrCodeTokens QRCodeToken[]
 
+  @@index([condominiumId])
   @@index([visitorId])
   @@index([unitId])
   @@index([authorizedById])
 }
 
 model AccessLog {
-  id           String       @id @default(cuid())
-  unitId       String?
-  visitorId    String?
-  userId       String?
-  porterId     String?
-  accessType   AccessType
-  accessMethod AccessMethod @default(MANUAL)
-  occurredAt   DateTime     @default(now())
-  notes        String?
-  createdAt    DateTime     @default(now())
+  id            String       @id @default(cuid())
+  condominiumId String
+  unitId        String?
+  visitorId     String?
+  userId        String?
+  porterId      String?
+  accessType    AccessType
+  accessMethod  AccessMethod @default(MANUAL)
+  occurredAt    DateTime     @default(now())
+  notes         String?
+  createdAt     DateTime     @default(now())
 
-  unit    Unit?    @relation(fields: [unitId], references: [id])
-  visitor Visitor? @relation(fields: [visitorId], references: [id])
-  user    User?    @relation("AccessLogUser", fields: [userId], references: [id])
-  porter  User?    @relation("AccessLogPorter", fields: [porterId], references: [id])
+  condominium Condominium @relation(fields: [condominiumId], references: [id])
+  unit        Unit?       @relation(fields: [unitId], references: [id])
+  visitor     Visitor?    @relation(fields: [visitorId], references: [id])
+  user        User?       @relation("AccessLogUser", fields: [userId], references: [id])
+  porter      User?       @relation("AccessLogPorter", fields: [porterId], references: [id])
 
+  @@index([condominiumId])
   @@index([unitId])
   @@index([visitorId])
   @@index([userId])
@@ -357,6 +371,7 @@ model AuditLog {
 
 model QRCodeToken {
   id                   String       @id @default(cuid())
+  condominiumId        String
   token                String       @unique
   accessCode           String       @unique
   type                 QRCodeType
@@ -368,10 +383,12 @@ model QRCodeToken {
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
 
+  condominium        Condominium         @relation(fields: [condominiumId], references: [id])
   unit               Unit?               @relation(fields: [unitId], references: [id])
   visitor            Visitor?            @relation(fields: [visitorId], references: [id])
   visitAuthorization VisitAuthorization? @relation(fields: [visitAuthorizationId], references: [id])
 
+  @@index([condominiumId])
   @@index([unitId])
   @@index([visitorId])
   @@index([visitAuthorizationId])

@@ -1,16 +1,11 @@
 import { QRCodeStatus, QRCodeType, UnitStatus, VisitorStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { normalizeQrAccessCode } from "@/lib/qrcode/access-code";
 
 export async function getResidentQrCodeData() {
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser || currentUser.role !== "RESIDENT") {
-    redirect("/login");
-  }
-
+  const { condominiumId, user: currentUser } = await requireCondominiumRole("RESIDENT");
   const user = await prisma.user.findUnique({
     where: { id: currentUser.id },
     include: {
@@ -18,12 +13,13 @@ export async function getResidentQrCodeData() {
     },
   });
 
-  if (!user?.unit) {
+  if (!user?.unit || user.unit.condominiumId !== condominiumId) {
     redirect("/morador?error=Usuário sem unidade vinculada.");
   }
 
   const qrCode = await prisma.qRCodeToken.findFirst({
     where: {
+      condominiumId,
       status: QRCodeStatus.ACTIVE,
       type: QRCodeType.RESIDENT,
       unitId: user.unit.id,
@@ -40,12 +36,7 @@ export async function getResidentQrCodeData() {
 }
 
 export async function getVisitorQrCodesForResident() {
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser || currentUser.role !== "RESIDENT") {
-    redirect("/login");
-  }
-
+  const { condominiumId, user: currentUser } = await requireCondominiumRole("RESIDENT");
   const user = await prisma.user.findUnique({
     where: { id: currentUser.id },
     select: { unitId: true },
@@ -57,9 +48,11 @@ export async function getVisitorQrCodesForResident() {
 
   return prisma.qRCodeToken.findMany({
     where: {
+      condominiumId,
       status: QRCodeStatus.ACTIVE,
       type: QRCodeType.VISITOR,
       visitAuthorization: {
+        condominiumId,
         unitId: user.unitId,
       },
     },
@@ -69,7 +62,9 @@ export async function getVisitorQrCodesForResident() {
   });
 }
 
-export async function getQrValidationResult(token: string) {
+export async function getQrValidationResult(token: string, tenantCondominiumId?: string) {
+  const condominiumId =
+    tenantCondominiumId ?? (await requireCondominiumRole("PORTER")).condominiumId;
   const normalizedToken = normalizeQrAccessCode(token);
 
   if (!normalizedToken) {
@@ -78,6 +73,7 @@ export async function getQrValidationResult(token: string) {
 
   const qrCode = await prisma.qRCodeToken.findFirst({
     where: {
+      condominiumId,
       OR: [
         { accessCode: normalizedToken },
         { token: token.trim() },
@@ -135,7 +131,15 @@ export async function getQrValidationResult(token: string) {
   const unit = qrCode.unit ?? qrCode.visitAuthorization?.unit;
   const visitor = qrCode.visitor ?? qrCode.visitAuthorization?.visitor ?? null;
 
-  if (!unit) {
+  if (!unit || unit.condominiumId !== condominiumId) {
+    return {
+      allowed: false,
+      reason: "QR Code inválido",
+      token: normalizedToken,
+    };
+  }
+
+  if (visitor && visitor.condominiumId !== condominiumId) {
     return {
       allowed: false,
       reason: "QR Code inválido",
@@ -159,6 +163,7 @@ export async function getQrValidationResult(token: string) {
 
     if (
       !authorization ||
+      authorization.condominiumId !== condominiumId ||
       authorization.status !== VisitorStatus.AUTHORIZED ||
       authorization.endsAt < new Date()
     ) {
