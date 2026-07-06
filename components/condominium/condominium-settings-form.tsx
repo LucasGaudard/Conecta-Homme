@@ -1,4 +1,4 @@
-import type { CondominiumSettings } from "@prisma/client";
+import type { Condominium } from "@prisma/client";
 import { Building2, Clock, Mail, MapPin, Phone } from "lucide-react";
 import { FeedbackAlert } from "@/components/admin/feedback-alert";
 import { CondominiumIdentityCard } from "@/components/condominium/condominium-identity-card";
@@ -8,7 +8,10 @@ import { updateCondominiumSettingsAction } from "@/lib/condominium/actions";
 
 type CondominiumSettingsFormProps = {
   error?: string;
-  settings: CondominiumSettings;
+  settings: Pick<
+    Condominium,
+    "address" | "email" | "logoUrl" | "name" | "phone" | "porterHours" | "updatedAt"
+  >;
   success?: string;
 };
 

@@ -1,4 +1,85 @@
-# Checklist Manual - Conecta Homme V1.1
+# Checklist Manual - Conecta Homme
+
+## V2.0 - QA Multi-Condominio
+
+Use esta checklist antes de promover a V2.0. Prepare pelo menos dois condominios ativos, A e B, com usuarios separados:
+
+- SUPER_ADMIN global com `condominiumId` nulo.
+- Admin A, Portaria A e Morador A vinculados ao Condominio A.
+- Admin B, Portaria B e Morador B vinculados ao Condominio B.
+- Unidade `A-101` cadastrada nos dois condominios para confirmar que a unicidade e as buscas sao tenant-scoped.
+
+### Super Admin
+
+- Entrar como SUPER_ADMIN e confirmar redirecionamento para `/super-admin`.
+- Criar, editar, suspender, inativar e reativar condominios.
+- Confirmar que logs globais de plataforma aparecem no contexto do Super Admin.
+- Confirmar que SUPER_ADMIN nao acessa `/admin`, `/portaria` ou `/morador`.
+
+### Isolamento Admin A/Admin B
+
+- Entrar como Admin A e cadastrar unidade `A-101`.
+- Entrar como Admin B e cadastrar tambem unidade `A-101`.
+- Confirmar que Admin A nao visualiza unidades, moradores, encomendas, reservas, auditoria, notificacoes ou relatorios do Condominio B.
+- Confirmar o mesmo isolamento no sentido B para A.
+
+### Configuracoes do Condominio
+
+- Como Admin A, acessar `/admin/condominio` e alterar nome, telefone, e-mail, endereco, horario da portaria e `logoUrl`.
+- Como Admin B, acessar `/admin/condominio` e confirmar que os dados de B nao foram alterados.
+- Alterar configuracoes de B e confirmar que A permanece inalterado.
+- Confirmar que nenhum formulario envia ou depende de `condominiumId` vindo do cliente.
+
+### QR Code e Codigos Curtos
+
+- Como Morador A, gerar QR permanente.
+- Como Portaria A, validar o QR de A com sucesso.
+- Como Portaria B, tentar validar o QR de A e confirmar recusa sem revelar dados de A.
+- Repetir o teste com QR temporario de visitante.
+
+### Encomendas
+
+- Como Portaria A, registrar encomenda para unidade de A.
+- Confirmar que Morador A e Admin A visualizam a encomenda.
+- Confirmar que Portaria B, Morador B e Admin B nao visualizam a encomenda de A.
+- Marcar entrega em A e confirmar que B continua sem acesso.
+
+### Reservas
+
+- Como Admin A e Admin B, criar espacos de lazer independentes.
+- Como Morador A, solicitar reserva em A.
+- Confirmar que Admin A visualiza/aprova/recusa/cancela apenas reservas de A.
+- Confirmar que Admin B e Portaria B nao visualizam reservas de A.
+- Testar reserva aprovada sobreposta no mesmo espaco e condominio, esperando bloqueio.
+- Testar horarios iguais em condominios diferentes, esperando independencia.
+
+### Relatorios, Auditoria e Exports
+
+- Gerar dados em A e B para acessos, encomendas, visitantes, reservas e auditoria.
+- Como Admin A, conferir `/admin/relatorios`, `/admin/auditoria` e `/admin/encomendas`.
+- Exportar relatorios, encomendas e auditoria em A.
+- Abrir os CSVs e confirmar que contem somente dados de A.
+- Repetir como Admin B e confirmar isolamento.
+
+### Bloqueio de Condominio
+
+- Como SUPER_ADMIN, suspender o Condominio A.
+- Confirmar que Admin A, Portaria A e Morador A sao redirecionados para `/condominio-bloqueado`.
+- Confirmar que usuarios de B continuam operando normalmente.
+
+### PWA e Cache
+
+- Confirmar que paginas autenticadas nao sao servidas por cache offline.
+- Confirmar que `/api`, `/admin`, `/portaria`, `/morador` e `/login` sempre buscam da rede.
+
+### Validacao Automatizada
+
+- `npx prisma format` passando.
+- `npm run prisma:generate` passando.
+- `npm run lint` passando.
+- `npm run build` passando.
+
+## V1.1 - Checklist Manual
 
 Use esta lista antes de deploy, demonstração ou entrega. Execute os testes com usuários de homologação criados para o ambiente, sem registrar credenciais em documentação pública.
 

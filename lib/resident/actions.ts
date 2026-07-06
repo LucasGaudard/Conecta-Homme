@@ -62,7 +62,7 @@ function redirectWithMessage(path: string, params: Record<string, string>): neve
 }
 
 export async function updateResidentPresenceAction(formData: FormData) {
-  const { unitId } = await requireResidentUnit();
+  const { condominiumId, unitId } = await requireResidentUnit();
   const parsed = updatePresenceSchema.safeParse({
     presenceStatus: getStringValue(formData, "presenceStatus"),
   });
@@ -73,8 +73,9 @@ export async function updateResidentPresenceAction(formData: FormData) {
     });
   }
 
-  await prisma.unit.update({
+  await prisma.unit.updateMany({
     where: {
+      condominiumId,
       id: unitId,
     },
     data: {
@@ -172,7 +173,7 @@ export async function cancelVisitorAuthorizationAction(authorizationId: string) 
 }
 
 export async function updateResidentSettingsAction(formData: FormData) {
-  const { unitId, userId } = await requireResidentUnit();
+  const { condominiumId, unitId, userId } = await requireResidentUnit();
   const parsed = updateResidentSettingsSchema.safeParse({
     email: getStringValue(formData, "email"),
     password: getStringValue(formData, "password"),
@@ -188,8 +189,9 @@ export async function updateResidentSettingsAction(formData: FormData) {
 
   const data = parsed.data;
   const operations: Prisma.PrismaPromise<unknown>[] = [
-    prisma.unit.update({
+    prisma.unit.updateMany({
       where: {
+        condominiumId,
         id: unitId,
       },
       data: {
@@ -202,9 +204,10 @@ export async function updateResidentSettingsAction(formData: FormData) {
 
   if (data.password && data.password.length > 0) {
     operations.push(
-      prisma.user.update({
+      prisma.user.updateMany({
         where: {
           id: userId,
+          condominiumId,
         },
         data: {
           passwordHash: await hashPassword(data.password),

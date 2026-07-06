@@ -1,4 +1,4 @@
-import type { CondominiumSettings } from "@prisma/client";
+import type { Condominium } from "@prisma/client";
 
 export function getCondominiumInitials(name: string) {
   const words = name.trim().split(/\s+/).filter(Boolean);
@@ -13,7 +13,7 @@ export function getCondominiumInitials(name: string) {
     .join("");
 }
 
-export function formatCondominiumUpdatedAt(settings: CondominiumSettings) {
+export function formatCondominiumUpdatedAt(settings: Pick<Condominium, "updatedAt">) {
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
     hour: "2-digit",

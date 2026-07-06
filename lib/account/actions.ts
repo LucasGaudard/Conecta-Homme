@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
+import { requireCondominiumRole, requireSuperAdmin } from "@/lib/auth/authorization";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { hashPassword } from "@/lib/auth/password";
 import { accountRouteByRole } from "@/lib/account/format";
@@ -29,6 +30,10 @@ export async function updateAccountAction(formData: FormData) {
     redirect("/login");
   }
 
+  const actor =
+    currentUser.role === "SUPER_ADMIN"
+      ? await requireSuperAdmin()
+      : (await requireCondominiumRole(currentUser.role)).user;
   const route = accountRouteByRole[currentUser.role];
   const parsed = updateAccountSchema.safeParse({
     email: getStringValue(formData, "email"),
@@ -50,9 +55,12 @@ export async function updateAccountAction(formData: FormData) {
       : undefined;
 
   try {
-    await prisma.user.update({
+    const updated = await prisma.user.updateMany({
       where: {
-        id: currentUser.id,
+        id: actor.id,
+        ...(actor.role === "SUPER_ADMIN"
+          ? { condominiumId: null }
+          : { condominiumId: actor.condominiumId }),
       },
       data: {
         email: data.email,
@@ -61,13 +69,17 @@ export async function updateAccountAction(formData: FormData) {
         ...(passwordHash ? { passwordHash } : {}),
       },
     });
+    if (updated.count === 0) {
+      redirect("/login");
+    }
+
     await createAuditLog({
       action: "UPDATE",
       description: "Conta do usuário atualizada.",
-      entityId: currentUser.id,
+      entityId: actor.id,
       entityType: "User",
       module: "ACCOUNT",
-      user: currentUser,
+      user: actor,
     });
   } catch (error) {
     if (

@@ -76,18 +76,20 @@ function handlePrismaError(error: unknown, path: string): never {
   redirectWithError(path, "Não foi possível salvar os dados. Tente novamente.");
 }
 
-async function getOwnedUnitId(unitId: string, condominiumId: string) {
+async function getOwnedUnit(unitId: string, condominiumId: string) {
   const unit = await prisma.unit.findFirst({
     where: {
       condominiumId,
       id: unitId,
     },
     select: {
+      apartment: true,
+      block: true,
       id: true,
     },
   });
 
-  return unit?.id ?? null;
+  return unit;
 }
 
 export async function createUnitAction(formData: FormData) {
@@ -165,18 +167,23 @@ export async function updateUnitAction(unitId: string, formData: FormData) {
     redirectWithError(errorPath, parsed.error.issues[0]?.message ?? "Dados inválidos.");
   }
 
-  const ownedUnitId = await getOwnedUnitId(unitId, condominiumId);
+  const ownedUnit = await getOwnedUnit(unitId, condominiumId);
 
-  if (!ownedUnitId) {
+  if (!ownedUnit) {
     redirectWithError("/admin/unidades", "Unidade não encontrada.");
   }
 
   try {
-    const unit = await prisma.unit.update({
-      where: { id: ownedUnitId },
+    const updated = await prisma.unit.updateMany({
+      where: { condominiumId, id: ownedUnit.id },
       data: parsed.data,
     });
-    updatedUnitLabel = `${unit.block}-${unit.apartment}`;
+
+    if (updated.count === 0) {
+      redirectWithError("/admin/unidades", "Unidade nÃ£o encontrada.");
+    }
+
+    updatedUnitLabel = `${ownedUnit.block}-${ownedUnit.apartment}`;
   } catch (error) {
     handlePrismaError(error, errorPath);
   }
@@ -184,7 +191,7 @@ export async function updateUnitAction(unitId: string, formData: FormData) {
   await createAuditLog({
     action: "UPDATE",
     description: `Unidade ${updatedUnitLabel} atualizada.`,
-    entityId: ownedUnitId,
+    entityId: ownedUnit.id,
     entityType: "Unit",
     module: "UNIT",
     user: admin,
@@ -192,38 +199,42 @@ export async function updateUnitAction(unitId: string, formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/admin/unidades");
-  revalidatePath(`/admin/unidades/${ownedUnitId}`);
-  redirect(`/admin/unidades/${ownedUnitId}?success=${encodeURIComponent("Unidade atualizada com sucesso.")}`);
+  revalidatePath(`/admin/unidades/${ownedUnit.id}`);
+  redirect(`/admin/unidades/${ownedUnit.id}?success=${encodeURIComponent("Unidade atualizada com sucesso.")}`);
 }
 
 export async function inactivateUnitAction(unitId: string) {
   const { condominiumId, user: admin } = await requireAdmin();
-  const ownedUnitId = await getOwnedUnitId(unitId, condominiumId);
+  const ownedUnit = await getOwnedUnit(unitId, condominiumId);
 
-  if (!ownedUnitId) {
+  if (!ownedUnit) {
     redirectWithError("/admin/unidades", "Unidade não encontrada.");
   }
 
   const unit = await prisma.$transaction(async (tx) => {
-    const updatedUnit = await tx.unit.update({
-      where: { id: ownedUnitId },
+    const updatedUnit = await tx.unit.updateMany({
+      where: { condominiumId, id: ownedUnit.id },
       data: {
         status: UnitStatus.INACTIVE,
       },
     });
 
+    if (updatedUnit.count === 0) {
+      redirectWithError("/admin/unidades", "Unidade nÃ£o encontrada.");
+    }
+
     await tx.user.updateMany({
       where: {
         condominiumId,
         role: UserRole.RESIDENT,
-        unitId: ownedUnitId,
+        unitId: ownedUnit.id,
       },
       data: {
         status: UserStatus.INACTIVE,
       },
     });
 
-    return updatedUnit;
+    return ownedUnit;
   });
 
   await createAuditLog({
@@ -237,6 +248,6 @@ export async function inactivateUnitAction(unitId: string) {
 
   revalidatePath("/admin");
   revalidatePath("/admin/unidades");
-  revalidatePath(`/admin/unidades/${ownedUnitId}`);
+  revalidatePath(`/admin/unidades/${ownedUnit.id}`);
   redirect(`/admin/unidades?success=${encodeURIComponent("Unidade inativada com sucesso.")}`);
 }

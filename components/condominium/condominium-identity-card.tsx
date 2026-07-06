@@ -1,4 +1,4 @@
-import type { CondominiumSettings } from "@prisma/client";
+import type { Condominium } from "@prisma/client";
 import { Building2, Image as ImageIcon, Palette } from "lucide-react";
 import {
   formatCondominiumUpdatedAt,
@@ -6,7 +6,7 @@ import {
 } from "@/lib/condominium/format";
 
 type CondominiumIdentityCardProps = {
-  settings: CondominiumSettings;
+  settings: Pick<Condominium, "logoUrl" | "name" | "updatedAt">;
 };
 
 export function CondominiumIdentityCard({
@@ -68,7 +68,7 @@ export function CondominiumIdentityCard({
               Registro único
             </div>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              As configurações funcionam como registro único do condomínio.
+              As configurações usam o registro do condomínio autenticado.
             </p>
           </div>
         </div>

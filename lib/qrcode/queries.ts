@@ -100,8 +100,8 @@ export async function getQrValidationResult(token: string, tenantCondominiumId?:
   }
 
   if (qrCode.expiresAt && qrCode.expiresAt < new Date()) {
-    await prisma.qRCodeToken.update({
-      where: { id: qrCode.id },
+    await prisma.qRCodeToken.updateMany({
+      where: { condominiumId, id: qrCode.id },
       data: { status: QRCodeStatus.EXPIRED },
     });
 

@@ -3,11 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
-import {
-  CONDOMINIUM_SETTINGS_ID,
-  defaultCondominiumSettings,
-} from "@/lib/condominium/constants";
-import { requireAdminUser } from "@/lib/condominium/queries";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { updateCondominiumSettingsSchema } from "@/lib/condominium/validation";
 import { prisma } from "@/lib/prisma";
 
@@ -24,7 +20,7 @@ function redirectWithMessage(params: Record<string, string>): never {
 }
 
 export async function updateCondominiumSettingsAction(formData: FormData) {
-  const admin = await requireAdminUser();
+  const { condominiumId, user: admin } = await requireCondominiumRole("ADMIN");
 
   const parsed = updateCondominiumSettingsSchema.safeParse({
     address: getStringValue(formData, "address"),
@@ -43,23 +39,18 @@ export async function updateCondominiumSettingsAction(formData: FormData) {
 
   const data = parsed.data;
 
-  const settings = await prisma.condominiumSettings.upsert({
+  const settings = await prisma.condominium.update({
     where: {
-      id: CONDOMINIUM_SETTINGS_ID,
+      id: condominiumId,
     },
-    update: data,
-    create: {
-      id: CONDOMINIUM_SETTINGS_ID,
-      ...defaultCondominiumSettings,
-      ...data,
-    },
+    data,
   });
 
   await createAuditLog({
     action: "UPDATE",
     description: `Configurações do condomínio ${settings.name} atualizadas.`,
     entityId: settings.id,
-    entityType: "CondominiumSettings",
+    entityType: "Condominium",
     module: "CONDOMINIUM",
     user: admin,
   });

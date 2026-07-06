@@ -190,24 +190,28 @@ export async function updateLeisureSpaceAction(spaceId: string, formData: FormDa
     });
   }
 
-  let space;
-
   try {
-    space = await prisma.leisureSpace.update({
-      where: { id: existing.id },
+    const updated = await prisma.leisureSpace.updateMany({
+      where: { condominiumId, id: existing.id },
       data: parsed.data,
     });
+
+    if (updated.count === 0) {
+      redirectWithMessage("/admin/espacos", {
+        error: "Espaco inexistente.",
+      });
+    }
   } catch (error) {
     handleSpacePrismaError(error, "/admin/espacos");
   }
 
   await createAuditLog({
-    action: space.status === LeisureSpaceStatus.INACTIVE ? "INACTIVATE" : "UPDATE",
+    action: parsed.data.status === LeisureSpaceStatus.INACTIVE ? "INACTIVATE" : "UPDATE",
     description:
-      space.status === LeisureSpaceStatus.INACTIVE
-        ? `Espaco ${space.name} inativado.`
-        : `Espaco ${space.name} atualizado.`,
-    entityId: space.id,
+      parsed.data.status === LeisureSpaceStatus.INACTIVE
+        ? `Espaco ${parsed.data.name} inativado.`
+        : `Espaco ${parsed.data.name} atualizado.`,
+    entityId: existing.id,
     entityType: "LeisureSpace",
     module: "RESERVATION",
     user: admin,
@@ -216,7 +220,7 @@ export async function updateLeisureSpaceAction(spaceId: string, formData: FormDa
   revalidateReservationSurfaces();
   redirectWithMessage("/admin/espacos", {
     success:
-      space.status === LeisureSpaceStatus.INACTIVE
+      parsed.data.status === LeisureSpaceStatus.INACTIVE
         ? "Espaco inativado com sucesso."
         : "Espaco atualizado com sucesso.",
   });
@@ -241,10 +245,16 @@ export async function inactivateLeisureSpaceAction(spaceId: string) {
     });
   }
 
-  await prisma.leisureSpace.update({
-    where: { id: space.id },
+  const updated = await prisma.leisureSpace.updateMany({
+    where: { condominiumId, id: space.id },
     data: { status: LeisureSpaceStatus.INACTIVE },
   });
+
+  if (updated.count === 0) {
+    redirectWithMessage("/admin/espacos", {
+      error: "Espaco inexistente.",
+    });
+  }
 
   await createAuditLog({
     action: "INACTIVATE",
@@ -372,8 +382,12 @@ export async function approveSpaceReservationAction(formData: FormData) {
   }
 
   await prisma.$transaction(async (tx) => {
-    await tx.spaceReservation.update({
-      where: { id: reservation.id },
+    const updated = await tx.spaceReservation.updateMany({
+      where: {
+        condominiumId,
+        id: reservation.id,
+        status: SpaceReservationStatus.PENDING,
+      },
       data: {
         approvedAt: new Date(),
         approvedById: admin.id,
@@ -381,6 +395,12 @@ export async function approveSpaceReservationAction(formData: FormData) {
         status: SpaceReservationStatus.APPROVED,
       },
     });
+
+    if (updated.count === 0) {
+      redirectWithMessage("/admin/reservas", {
+        error: "Reserva inexistente ou ja analisada.",
+      });
+    }
 
     await tx.notification.create({
       data: {
@@ -434,8 +454,12 @@ export async function rejectSpaceReservationAction(formData: FormData) {
   }
 
   await prisma.$transaction(async (tx) => {
-    await tx.spaceReservation.update({
-      where: { id: reservation.id },
+    const updated = await tx.spaceReservation.updateMany({
+      where: {
+        condominiumId,
+        id: reservation.id,
+        status: SpaceReservationStatus.PENDING,
+      },
       data: {
         approvedAt: null,
         approvedById: admin.id,
@@ -443,6 +467,12 @@ export async function rejectSpaceReservationAction(formData: FormData) {
         status: SpaceReservationStatus.REJECTED,
       },
     });
+
+    if (updated.count === 0) {
+      redirectWithMessage("/admin/reservas", {
+        error: "Reserva inexistente ou ja analisada.",
+      });
+    }
 
     await tx.notification.create({
       data: {
@@ -491,12 +521,22 @@ export async function cancelSpaceReservationByAdminAction(formData: FormData) {
   }
 
   await prisma.$transaction(async (tx) => {
-    await tx.spaceReservation.update({
-      where: { id: reservation.id },
+    const updated = await tx.spaceReservation.updateMany({
+      where: {
+        condominiumId,
+        id: reservation.id,
+        status: { not: SpaceReservationStatus.CANCELED },
+      },
       data: {
         status: SpaceReservationStatus.CANCELED,
       },
     });
+
+    if (updated.count === 0) {
+      redirectWithMessage("/admin/reservas", {
+        error: "Reserva inexistente ou ja cancelada.",
+      });
+    }
 
     await tx.notification.create({
       data: {
@@ -553,10 +593,21 @@ export async function cancelSpaceReservationByResidentAction(formData: FormData)
     });
   }
 
-  await prisma.spaceReservation.update({
-    where: { id: reservation.id },
+  const updated = await prisma.spaceReservation.updateMany({
+    where: {
+      condominiumId: resident.condominiumId,
+      id: reservation.id,
+      status: SpaceReservationStatus.PENDING,
+      unitId: resident.unitId,
+    },
     data: { status: SpaceReservationStatus.CANCELED },
   });
+
+  if (updated.count === 0) {
+    redirectWithMessage("/morador/reservas", {
+      error: "Apenas solicitacoes pendentes podem ser canceladas pelo morador.",
+    });
+  }
 
   await createAuditLog({
     action: "CANCEL",

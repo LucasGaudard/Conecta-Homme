@@ -1,5 +1,22 @@
 # Changelog
 
+## V2.0 - Plataforma Multi-Condominio
+
+Principais entregas:
+
+- Base SaaS multi-condominio com `SUPER_ADMIN` global e tenants isolados.
+- Model `Condominium` com status `ACTIVE`, `INACTIVE` e `SUSPENDED`.
+- Sessao com `userId`, `role` e `condominiumId`.
+- Protecoes de servidor para Super Admin, usuarios tenant e roles por condominio.
+- Painel Super Admin com CRUD de condominios e auditoria global.
+- Isolamento por `condominiumId` para usuarios, unidades, visitantes, autorizacoes, acessos, QR Codes, encomendas, notificacoes, auditoria, espacos e reservas.
+- QR permanente e temporario tenant-scoped, impedindo validacao cruzada entre portarias.
+- Encomendas, notificacoes, relatorios, auditoria e exports isolados por tenant.
+- Reservas de espacos com constraint PostgreSQL contra sobreposicao por condominio e espaco.
+- Configuracoes do condominio migradas da tela administrativa para o proprio model `Condominium`; `CondominiumSettings` permanece apenas como legado de compatibilidade.
+- Hardening de conta e actions criticas para validar usuario, tenant e `condominiumId` no servidor.
+- Checklist manual V2.0 para QA multi-condominio.
+
 ## V1.1 - Release Premium
 
 Principais melhorias:

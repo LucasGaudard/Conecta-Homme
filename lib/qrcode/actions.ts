@@ -217,8 +217,9 @@ export async function generateVisitorQrCodeAction(formData: FormData) {
       },
     });
   } else {
-    const updated = await prisma.qRCodeToken.update({
+    await prisma.qRCodeToken.updateMany({
       where: {
+        condominiumId,
         id: existing.id,
       },
       data: {
@@ -228,7 +229,7 @@ export async function generateVisitorQrCodeAction(formData: FormData) {
     await createAuditLog({
       action: "GENERATE",
       description: `QR Code temporário reutilizado para visitante ${authorization.visitor.name}.`,
-      entityId: updated.id,
+      entityId: existing.id,
       entityType: "QRCodeToken",
       module: "QRCODE",
       user: {
