@@ -1,21 +1,15 @@
 "use server";
 
-import { AccessMethod, UnitStatus, UserRole } from "@prisma/client";
+import { AccessMethod, UnitStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { registerManualAccessSchema } from "@/lib/porter/validation";
 
 async function requirePorter() {
-  const user = await getCurrentUser();
-
-  if (!user || user.role !== UserRole.PORTER) {
-    redirect("/login");
-  }
-
-  return user;
+  return requireCondominiumRole("PORTER");
 }
 
 function getStringValue(formData: FormData, key: string) {
@@ -39,7 +33,7 @@ function redirectToPorter(query: string | undefined, params: Record<string, stri
 }
 
 export async function registerManualAccessAction(formData: FormData) {
-  const porter = await requirePorter();
+  const { condominiumId, user: porter } = await requirePorter();
   const parsed = registerManualAccessSchema.safeParse({
     accessType: getStringValue(formData, "accessType"),
     notes: getStringValue(formData, "notes"),
@@ -54,8 +48,11 @@ export async function registerManualAccessAction(formData: FormData) {
   }
 
   const data = parsed.data;
-  const unit = await prisma.unit.findUnique({
-    where: { id: data.unitId },
+  const unit = await prisma.unit.findFirst({
+    where: {
+      condominiumId,
+      id: data.unitId,
+    },
     select: { status: true },
   });
 

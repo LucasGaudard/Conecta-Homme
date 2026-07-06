@@ -79,11 +79,7 @@ export async function getCondominiumById(id: string) {
   const [unitCount, auditLogs] = await Promise.all([
     prisma.unit.count({
       where: {
-        users: {
-          some: {
-            condominiumId: condominium.id,
-          },
-        },
+        condominiumId: condominium.id,
       },
     }),
     prisma.auditLog.findMany({

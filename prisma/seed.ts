@@ -66,7 +66,8 @@ async function main() {
 
   const unit = await prisma.unit.upsert({
     where: {
-      block_apartment: {
+      condominiumId_block_apartment: {
+        condominiumId: condominium.id,
         block: "A",
         apartment: "201",
       },
@@ -74,6 +75,7 @@ async function main() {
     update: {},
     create: {
       block: "A",
+      condominiumId: condominium.id,
       apartment: "201",
       responsibleName: "Morador A201",
       email: "morador@conectahomme.com",

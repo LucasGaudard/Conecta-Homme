@@ -110,6 +110,7 @@ model Condominium {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
+  units Unit[]
   users User[]
 }
 
@@ -145,6 +146,7 @@ model User {
 
 model Unit {
   id              String         @id @default(cuid())
+  condominiumId   String
   block           String
   apartment       String
   responsibleName String
@@ -156,6 +158,7 @@ model Unit {
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
+  condominium         Condominium          @relation(fields: [condominiumId], references: [id])
   users               User[]
   visitAuthorizations VisitAuthorization[]
   accessLogs          AccessLog[]
@@ -164,7 +167,8 @@ model Unit {
   qrCodeTokens        QRCodeToken[]
   spaceReservations   SpaceReservation[]
 
-  @@unique([block, apartment])
+  @@unique([condominiumId, block, apartment])
+  @@index([condominiumId])
 }
 
 model Visitor {

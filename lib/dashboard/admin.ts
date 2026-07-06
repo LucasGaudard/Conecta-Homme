@@ -7,6 +7,7 @@ import {
   UserStatus,
   VisitorStatus,
 } from "@prisma/client";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 
 function getTodayRange() {
@@ -74,6 +75,7 @@ function formatAccessMethod(accessMethod: AccessMethod) {
 }
 
 export async function getAdminDashboardData() {
+  const { condominiumId } = await requireCondominiumRole("ADMIN");
   const { end, start } = getTodayRange();
   const lastSevenDays = getLastDaysRange(7);
 
@@ -93,15 +95,21 @@ export async function getAdminDashboardData() {
     doNotDisturbUnits,
     inactiveUnits,
   ] = await Promise.all([
-    prisma.unit.count(),
+    prisma.unit.count({
+      where: {
+        condominiumId,
+      },
+    }),
     prisma.user.count({
       where: {
+        condominiumId,
         role: UserRole.RESIDENT,
         status: UserStatus.ACTIVE,
       },
     }),
     prisma.user.count({
       where: {
+        condominiumId,
         role: UserRole.PORTER,
         status: UserStatus.ACTIVE,
       },
@@ -109,6 +117,9 @@ export async function getAdminDashboardData() {
     prisma.package.count({
       where: {
         status: PackageStatus.WAITING_PICKUP,
+        unit: {
+          condominiumId,
+        },
       },
     }),
     prisma.visitAuthorization.count({
@@ -120,6 +131,9 @@ export async function getAdminDashboardData() {
         endsAt: {
           gte: start,
         },
+        unit: {
+          condominiumId,
+        },
       },
     }),
     prisma.accessLog.count({
@@ -128,9 +142,17 @@ export async function getAdminDashboardData() {
           gte: start,
           lt: end,
         },
+        unit: {
+          condominiumId,
+        },
       },
     }),
     prisma.accessLog.findMany({
+      where: {
+        unit: {
+          condominiumId,
+        },
+      },
       include: {
         porter: {
           select: {
@@ -160,6 +182,11 @@ export async function getAdminDashboardData() {
       take: 5,
     }),
     prisma.package.findMany({
+      where: {
+        unit: {
+          condominiumId,
+        },
+      },
       include: {
         unit: {
           select: {
@@ -174,6 +201,11 @@ export async function getAdminDashboardData() {
       take: 5,
     }),
     prisma.visitAuthorization.findMany({
+      where: {
+        unit: {
+          condominiumId,
+        },
+      },
       include: {
         authorizedBy: {
           select: {
@@ -203,6 +235,9 @@ export async function getAdminDashboardData() {
           gte: lastSevenDays.start,
           lte: lastSevenDays.end,
         },
+        unit: {
+          condominiumId,
+        },
       },
       select: {
         occurredAt: true,
@@ -213,18 +248,29 @@ export async function getAdminDashboardData() {
     }),
     prisma.package.groupBy({
       by: ["status"],
+      where: {
+        unit: {
+          condominiumId,
+        },
+      },
       _count: {
         _all: true,
       },
     }),
     prisma.visitAuthorization.groupBy({
       by: ["status"],
+      where: {
+        unit: {
+          condominiumId,
+        },
+      },
       _count: {
         _all: true,
       },
     }),
     prisma.unit.findMany({
       where: {
+        condominiumId,
         presenceStatus: PresenceStatus.DO_NOT_DISTURB,
       },
       orderBy: [{ block: "asc" }, { apartment: "asc" }],
@@ -238,6 +284,7 @@ export async function getAdminDashboardData() {
     }),
     prisma.unit.count({
       where: {
+        condominiumId,
         status: "INACTIVE",
       },
     }),

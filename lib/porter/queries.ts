@@ -1,4 +1,5 @@
 import { PackageStatus, PresenceStatus, UnitStatus, UserRole, VisitorStatus } from "@prisma/client";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 
 function getTodayRange() {
@@ -12,6 +13,7 @@ function getTodayRange() {
 }
 
 export async function getPorterDashboardData() {
+  const { condominiumId } = await requireCondominiumRole("PORTER");
   const { end, start } = getTodayRange();
 
   const [
@@ -26,6 +28,7 @@ export async function getPorterDashboardData() {
   ] = await Promise.all([
     prisma.unit.count({
       where: {
+        condominiumId,
         status: UnitStatus.ACTIVE,
       },
     }),
@@ -38,11 +41,17 @@ export async function getPorterDashboardData() {
           lt: end,
         },
         status: VisitorStatus.AUTHORIZED,
+        unit: {
+          condominiumId,
+        },
       },
     }),
     prisma.package.count({
       where: {
         status: PackageStatus.WAITING_PICKUP,
+        unit: {
+          condominiumId,
+        },
       },
     }),
     prisma.accessLog.count({
@@ -51,12 +60,18 @@ export async function getPorterDashboardData() {
           gte: start,
           lt: end,
         },
+        unit: {
+          condominiumId,
+        },
       },
     }),
-    getRecentAccessLogs(),
+    getRecentAccessLogs(condominiumId),
     prisma.package.findMany({
       where: {
         status: PackageStatus.WAITING_PICKUP,
+        unit: {
+          condominiumId,
+        },
       },
       include: {
         unit: {
@@ -81,6 +96,9 @@ export async function getPorterDashboardData() {
           lt: end,
         },
         status: VisitorStatus.AUTHORIZED,
+        unit: {
+          condominiumId,
+        },
       },
       include: {
         unit: {
@@ -104,6 +122,7 @@ export async function getPorterDashboardData() {
     }),
     prisma.unit.findMany({
       where: {
+        condominiumId,
         presenceStatus: PresenceStatus.DO_NOT_DISTURB,
         status: UnitStatus.ACTIVE,
       },
@@ -133,6 +152,7 @@ export async function getPorterDashboardData() {
 }
 
 export async function searchPorterUnits(query: string) {
+  const { condominiumId } = await requireCondominiumRole("PORTER");
   const normalizedQuery = query.trim();
 
   if (normalizedQuery.length === 0) {
@@ -175,6 +195,7 @@ export async function searchPorterUnits(query: string) {
       },
       users: {
         where: {
+          condominiumId,
           role: UserRole.RESIDENT,
         },
         orderBy: {
@@ -210,6 +231,7 @@ export async function searchPorterUnits(query: string) {
     ],
     take: 8,
     where: {
+      condominiumId,
       OR: [
         {
           block: {
@@ -246,8 +268,17 @@ export async function searchPorterUnits(query: string) {
   });
 }
 
-export async function getRecentAccessLogs() {
+export async function getRecentAccessLogs(condominiumId?: string) {
+  const context = condominiumId
+    ? { condominiumId }
+    : await requireCondominiumRole("PORTER");
+
   return prisma.accessLog.findMany({
+    where: {
+      unit: {
+        condominiumId: context.condominiumId,
+      },
+    },
     include: {
       porter: {
         select: {

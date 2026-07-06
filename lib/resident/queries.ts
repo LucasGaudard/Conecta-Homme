@@ -1,14 +1,10 @@
-import { PackageStatus, UserRole, VisitorStatus } from "@prisma/client";
+import { PackageStatus, VisitorStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 
 async function requireResident() {
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser || currentUser.role !== UserRole.RESIDENT) {
-    redirect("/login");
-  }
+  const { condominiumId, user: currentUser } = await requireCondominiumRole("RESIDENT");
 
   const user = await prisma.user.findUnique({
     where: {
@@ -28,6 +24,7 @@ async function requireResident() {
   }
 
   return {
+    condominiumId,
     ...user,
     unitId: user.unitId,
   };
@@ -35,8 +32,9 @@ async function requireResident() {
 
 export async function getResidentContext() {
   const resident = await requireResident();
-  const unit = await prisma.unit.findUnique({
+  const unit = await prisma.unit.findFirst({
     where: {
+      condominiumId: resident.condominiumId,
       id: resident.unitId,
     },
   });

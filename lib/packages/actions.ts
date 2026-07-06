@@ -1,21 +1,15 @@
 "use server";
 
-import { NotificationStatus, NotificationType, PackageStatus, UnitStatus, UserRole } from "@prisma/client";
+import { NotificationStatus, NotificationType, PackageStatus, UnitStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { createPackageSchema, deliverPackageSchema } from "@/lib/packages/validation";
 
 async function requirePorter() {
-  const user = await getCurrentUser();
-
-  if (!user || user.role !== UserRole.PORTER) {
-    redirect("/login");
-  }
-
-  return user;
+  return requireCondominiumRole("PORTER");
 }
 
 function getStringValue(formData: FormData, key: string) {
@@ -35,7 +29,7 @@ function redirectToPorterPackages(query: string | undefined, params: Record<stri
 }
 
 export async function createPackageAction(formData: FormData) {
-  const porter = await requirePorter();
+  const { condominiumId, user: porter } = await requirePorter();
   const parsed = createPackageSchema.safeParse({
     carrier: getStringValue(formData, "carrier"),
     description: getStringValue(formData, "description"),
@@ -53,8 +47,11 @@ export async function createPackageAction(formData: FormData) {
   }
 
   const data = parsed.data;
-  const unit = await prisma.unit.findUnique({
-    where: { id: data.unitId },
+  const unit = await prisma.unit.findFirst({
+    where: {
+      condominiumId,
+      id: data.unitId,
+    },
     select: { status: true },
   });
 
@@ -114,7 +111,7 @@ export async function createPackageAction(formData: FormData) {
 }
 
 export async function deliverPackageAction(formData: FormData) {
-  const porter = await requirePorter();
+  const { condominiumId, user: porter } = await requirePorter();
   const parsed = deliverPackageSchema.safeParse({
     packageId: getStringValue(formData, "packageId"),
     pickedUpByName: getStringValue(formData, "pickedUpByName"),
@@ -130,6 +127,9 @@ export async function deliverPackageAction(formData: FormData) {
     where: {
       id: parsed.data.packageId,
       status: PackageStatus.WAITING_PICKUP,
+      unit: {
+        condominiumId,
+      },
     },
     select: {
       id: true,
@@ -146,6 +146,9 @@ export async function deliverPackageAction(formData: FormData) {
     where: {
       id: parsed.data.packageId,
       status: PackageStatus.WAITING_PICKUP,
+      unit: {
+        condominiumId,
+      },
     },
     data: {
       deliveredAt: new Date(),

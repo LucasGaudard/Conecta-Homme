@@ -1,21 +1,11 @@
-import { PackageStatus, UserRole } from "@prisma/client";
+import { PackageStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { adminPackageFiltersSchema } from "@/lib/packages/validation";
 
-async function requireRole(role: UserRole) {
-  const user = await getCurrentUser();
-
-  if (!user || user.role !== role) {
-    redirect("/login");
-  }
-
-  return user;
-}
-
 export async function searchUnitsForPackage(query: string) {
-  await requireRole(UserRole.PORTER);
+  const { condominiumId } = await requireCondominiumRole("PORTER");
   const normalizedQuery = query.trim();
 
   if (!normalizedQuery) {
@@ -24,6 +14,7 @@ export async function searchUnitsForPackage(query: string) {
 
   return prisma.unit.findMany({
     where: {
+      condominiumId,
       OR: [
         { block: { contains: normalizedQuery, mode: "insensitive" } },
         { apartment: { contains: normalizedQuery, mode: "insensitive" } },
@@ -38,9 +29,14 @@ export async function searchUnitsForPackage(query: string) {
 }
 
 export async function getPorterPackages() {
-  await requireRole(UserRole.PORTER);
+  const { condominiumId } = await requireCondominiumRole("PORTER");
 
   return prisma.package.findMany({
+    where: {
+      unit: {
+        condominiumId,
+      },
+    },
     include: {
       deliveredBy: { select: { name: true } },
       receivedBy: { select: { name: true } },
@@ -52,7 +48,7 @@ export async function getPorterPackages() {
 }
 
 export async function getResidentPackageList() {
-  const user = await requireRole(UserRole.RESIDENT);
+  const { condominiumId, user } = await requireCondominiumRole("RESIDENT");
   const resident = await prisma.user.findUnique({
     where: { id: user.id },
     select: { unitId: true },
@@ -63,7 +59,12 @@ export async function getResidentPackageList() {
   }
 
   return prisma.package.findMany({
-    where: { unitId: resident.unitId },
+    where: {
+      unit: {
+        condominiumId,
+      },
+      unitId: resident.unitId,
+    },
     orderBy: { receivedAt: "desc" },
   });
 }
@@ -74,7 +75,7 @@ export async function getAdminPackages(filters: {
   status?: string;
   to?: string;
 }) {
-  await requireRole(UserRole.ADMIN);
+  const { condominiumId } = await requireCondominiumRole("ADMIN");
   const parsedResult = adminPackageFiltersSchema.safeParse(filters);
   const parsed = parsedResult.success ? parsedResult.data : {};
   const query = parsed.q?.trim();
@@ -95,13 +96,16 @@ export async function getAdminPackages(filters: {
           : undefined,
       unit: query
         ? {
+            condominiumId,
             OR: [
               { block: { contains: query, mode: "insensitive" } },
               { apartment: { contains: query, mode: "insensitive" } },
               { responsibleName: { contains: query, mode: "insensitive" } },
             ],
           }
-        : undefined,
+        : {
+            condominiumId,
+          },
     },
     include: {
       deliveredBy: { select: { name: true } },

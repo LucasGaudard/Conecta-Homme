@@ -3,20 +3,14 @@
 import { Prisma, PresenceStatus, UnitStatus, UserRole, UserStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/current-user";
-import { hashPassword } from "@/lib/auth/password";
 import { createAuditLog } from "@/lib/audit/logger";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
+import { hashPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/prisma";
 import { createUnitSchema, updateUnitSchema } from "@/lib/units/validation";
 
 async function requireAdmin() {
-  const user = await getCurrentUser();
-
-  if (!user || user.role !== UserRole.ADMIN) {
-    redirect("/login");
-  }
-
-  return user;
+  return requireCondominiumRole("ADMIN");
 }
 
 function getStringValue(formData: FormData, key: string) {
@@ -61,8 +55,13 @@ function handlePrismaError(error: unknown, path: string): never {
       ? error.meta.target.join(", ")
       : String(error.meta?.target ?? "");
 
-    if (target.includes("block") || target.includes("apartment")) {
-      redirectWithError(path, "Já existe uma unidade com este bloco e apartamento.");
+    if (
+      target.includes("Unit_condominiumId_block_apartment_key") ||
+      target.includes("condominiumId") ||
+      target.includes("block") ||
+      target.includes("apartment")
+    ) {
+      redirectWithError(path, "Já existe uma unidade com este bloco e apartamento neste condomínio.");
     }
 
     if (target.includes("email")) {
@@ -77,9 +76,22 @@ function handlePrismaError(error: unknown, path: string): never {
   redirectWithError(path, "Não foi possível salvar os dados. Tente novamente.");
 }
 
-export async function createUnitAction(formData: FormData) {
-  const admin = await requireAdmin();
+async function getOwnedUnitId(unitId: string, condominiumId: string) {
+  const unit = await prisma.unit.findFirst({
+    where: {
+      condominiumId,
+      id: unitId,
+    },
+    select: {
+      id: true,
+    },
+  });
 
+  return unit?.id ?? null;
+}
+
+export async function createUnitAction(formData: FormData) {
+  const { condominiumId, user: admin } = await requireAdmin();
   const parsed = createUnitSchema.safeParse(getCreatePayload(formData));
 
   if (!parsed.success) {
@@ -97,6 +109,7 @@ export async function createUnitAction(formData: FormData) {
         data: {
           apartment: data.apartment,
           block: data.block,
+          condominiumId,
           cpf: data.cpf,
           email: data.email,
           phone: data.phone,
@@ -108,6 +121,7 @@ export async function createUnitAction(formData: FormData) {
 
       await tx.user.create({
         data: {
+          condominiumId,
           email: data.residentEmail,
           name: data.residentName,
           passwordHash,
@@ -142,8 +156,7 @@ export async function createUnitAction(formData: FormData) {
 }
 
 export async function updateUnitAction(unitId: string, formData: FormData) {
-  const admin = await requireAdmin();
-
+  const { condominiumId, user: admin } = await requireAdmin();
   const parsed = updateUnitSchema.safeParse(getUpdatePayload(formData));
   const errorPath = `/admin/unidades/${unitId}/editar`;
   let updatedUnitLabel = "";
@@ -152,9 +165,15 @@ export async function updateUnitAction(unitId: string, formData: FormData) {
     redirectWithError(errorPath, parsed.error.issues[0]?.message ?? "Dados inválidos.");
   }
 
+  const ownedUnitId = await getOwnedUnitId(unitId, condominiumId);
+
+  if (!ownedUnitId) {
+    redirectWithError("/admin/unidades", "Unidade não encontrada.");
+  }
+
   try {
     const unit = await prisma.unit.update({
-      where: { id: unitId },
+      where: { id: ownedUnitId },
       data: parsed.data,
     });
     updatedUnitLabel = `${unit.block}-${unit.apartment}`;
@@ -165,7 +184,7 @@ export async function updateUnitAction(unitId: string, formData: FormData) {
   await createAuditLog({
     action: "UPDATE",
     description: `Unidade ${updatedUnitLabel} atualizada.`,
-    entityId: unitId,
+    entityId: ownedUnitId,
     entityType: "Unit",
     module: "UNIT",
     user: admin,
@@ -173,16 +192,21 @@ export async function updateUnitAction(unitId: string, formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/admin/unidades");
-  revalidatePath(`/admin/unidades/${unitId}`);
-  redirect(`/admin/unidades/${unitId}?success=${encodeURIComponent("Unidade atualizada com sucesso.")}`);
+  revalidatePath(`/admin/unidades/${ownedUnitId}`);
+  redirect(`/admin/unidades/${ownedUnitId}?success=${encodeURIComponent("Unidade atualizada com sucesso.")}`);
 }
 
 export async function inactivateUnitAction(unitId: string) {
-  const admin = await requireAdmin();
+  const { condominiumId, user: admin } = await requireAdmin();
+  const ownedUnitId = await getOwnedUnitId(unitId, condominiumId);
+
+  if (!ownedUnitId) {
+    redirectWithError("/admin/unidades", "Unidade não encontrada.");
+  }
 
   const unit = await prisma.$transaction(async (tx) => {
     const updatedUnit = await tx.unit.update({
-      where: { id: unitId },
+      where: { id: ownedUnitId },
       data: {
         status: UnitStatus.INACTIVE,
       },
@@ -190,8 +214,9 @@ export async function inactivateUnitAction(unitId: string) {
 
     await tx.user.updateMany({
       where: {
+        condominiumId,
         role: UserRole.RESIDENT,
-        unitId,
+        unitId: ownedUnitId,
       },
       data: {
         status: UserStatus.INACTIVE,
@@ -212,6 +237,6 @@ export async function inactivateUnitAction(unitId: string) {
 
   revalidatePath("/admin");
   revalidatePath("/admin/unidades");
-  revalidatePath(`/admin/unidades/${unitId}`);
+  revalidatePath(`/admin/unidades/${ownedUnitId}`);
   redirect(`/admin/unidades?success=${encodeURIComponent("Unidade inativada com sucesso.")}`);
 }

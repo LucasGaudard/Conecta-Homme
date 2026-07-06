@@ -1,9 +1,9 @@
 "use server";
 
-import { Prisma, UserRole, VisitorStatus } from "@prisma/client";
+import { Prisma, VisitorStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { hashPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/prisma";
 import {
@@ -13,12 +13,7 @@ import {
 } from "@/lib/resident/validation";
 
 async function requireResidentUnit() {
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser || currentUser.role !== UserRole.RESIDENT) {
-    redirect("/login");
-  }
-
+  const { condominiumId, user: currentUser } = await requireCondominiumRole("RESIDENT");
   const user = await prisma.user.findUnique({
     where: {
       id: currentUser.id,
@@ -33,8 +28,23 @@ async function requireResidentUnit() {
     redirect("/morador?error=Usuário sem unidade vinculada.");
   }
 
+  const unit = await prisma.unit.findFirst({
+    where: {
+      condominiumId,
+      id: user.unitId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!unit) {
+    redirect("/morador?error=Unidade não encontrada.");
+  }
+
   return {
-    unitId: user.unitId,
+    condominiumId,
+    unitId: unit.id,
     userId: user.id,
   };
 }

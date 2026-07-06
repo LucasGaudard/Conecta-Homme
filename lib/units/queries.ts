@@ -1,13 +1,17 @@
 import { UserRole } from "@prisma/client";
+import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 
 export async function getUnits() {
+  const { condominiumId } = await requireCondominiumRole("ADMIN");
+
   return prisma.unit.findMany({
     include: {
       _count: {
         select: {
           users: {
             where: {
+              condominiumId,
               role: UserRole.RESIDENT,
             },
           },
@@ -22,12 +26,18 @@ export async function getUnits() {
         apartment: "asc",
       },
     ],
+    where: {
+      condominiumId,
+    },
   });
 }
 
 export async function getUnitById(unitId: string) {
-  return prisma.unit.findUnique({
+  const { condominiumId } = await requireCondominiumRole("ADMIN");
+
+  return prisma.unit.findFirst({
     where: {
+      condominiumId,
       id: unitId,
     },
     include: {
@@ -41,6 +51,7 @@ export async function getUnitById(unitId: string) {
           },
           users: {
             where: {
+              condominiumId,
               role: UserRole.RESIDENT,
             },
           },
@@ -78,6 +89,7 @@ export async function getUnitById(unitId: string) {
       },
       users: {
         where: {
+          condominiumId,
           role: UserRole.RESIDENT,
         },
         orderBy: {
