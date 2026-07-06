@@ -51,17 +51,17 @@ export function ResidentStatusCard({
       </CardHeader>
       <CardContent className="space-y-4">
         <FeedbackAlert error={error} success={success} />
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className="grid min-w-0 gap-3 xl:grid-cols-2 2xl:grid-cols-3">
           {options.map((option) => (
             <form key={option.value} action={updateResidentPresenceAction}>
               <input type="hidden" name="presenceStatus" value={option.value} />
               <SubmitButton
                 variant={presenceStatus === option.value ? "default" : "outline"}
-                className="h-auto w-full justify-start px-4 py-3"
+                className="h-auto min-w-0 w-full justify-start whitespace-normal px-4 py-3"
                 pendingLabel="Atualizando..."
               >
-                <option.icon className="h-4 w-4" />
-                <span className="text-left">{option.label}</span>
+                <option.icon className="h-4 w-4 shrink-0" />
+                <span className="min-w-0 text-left leading-5">{option.label}</span>
               </SubmitButton>
             </form>
           ))}

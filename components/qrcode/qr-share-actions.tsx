@@ -73,20 +73,43 @@ export function QrShareActions({
   }
 
   return (
-    <div className="grid gap-2 sm:grid-cols-3">
-      <Button type="button" variant="outline" size="sm" onClick={copyCode}>
-        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-        {copied ? "Código copiado" : "Copiar código"}
+    <div className="grid min-w-0 gap-2 lg:grid-cols-3">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="min-w-0 w-full whitespace-normal"
+        onClick={copyCode}
+      >
+        {copied ? (
+          <Check className="h-4 w-4 shrink-0" />
+        ) : (
+          <Copy className="h-4 w-4 shrink-0" />
+        )}
+        <span className="min-w-0 leading-5">
+          {copied ? "Código copiado" : "Copiar código"}
+        </span>
       </Button>
       <Button asChild variant="outline" size="sm">
-        <a href={whatsappHref} target="_blank" rel="noreferrer">
-          <MessageCircle className="h-4 w-4" />
-          WhatsApp
+        <a
+          href={whatsappHref}
+          target="_blank"
+          rel="noreferrer"
+          className="min-w-0 w-full whitespace-normal"
+        >
+          <MessageCircle className="h-4 w-4 shrink-0" />
+          <span className="min-w-0 leading-5">WhatsApp</span>
         </a>
       </Button>
-      <Button type="button" variant="outline" size="sm" onClick={downloadQrCode}>
-        <Download className="h-4 w-4" />
-        Baixar QR
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="min-w-0 w-full whitespace-normal"
+        onClick={downloadQrCode}
+      >
+        <Download className="h-4 w-4 shrink-0" />
+        <span className="min-w-0 leading-5">Baixar QR</span>
       </Button>
     </div>
   );
