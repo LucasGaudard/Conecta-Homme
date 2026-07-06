@@ -3,9 +3,10 @@ import { NotificationBell } from "@/components/notifications/notification-bell";
 import { AvatarInitial } from "@/components/ui/avatar";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { getNotificationHeaderData } from "@/lib/notifications/queries";
+import type { UserRole } from "@prisma/client";
 
 type HeaderProps = {
-  profile: "ADMIN" | "PORTER" | "RESIDENT";
+  profile: UserRole;
   title: string;
   user?: {
     email?: string | null;
@@ -14,13 +15,15 @@ type HeaderProps = {
 };
 
 const profileLabels = {
+  SUPER_ADMIN: "Super Admin",
   ADMIN: "Admin",
   PORTER: "Portaria",
   RESIDENT: "Morador",
-};
+} satisfies Record<UserRole, string>;
 
 export async function Header({ profile, title, user }: HeaderProps) {
-  const notificationData = await getNotificationHeaderData(profile);
+  const notificationData =
+    profile === "SUPER_ADMIN" ? null : await getNotificationHeaderData(profile);
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
@@ -37,11 +40,13 @@ export async function Header({ profile, title, user }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <NotificationBell
-            latest={notificationData.latest}
-            route={notificationData.route}
-            unreadCount={notificationData.unreadCount}
-          />
+          {notificationData ? (
+            <NotificationBell
+              latest={notificationData.latest}
+              route={notificationData.route}
+              unreadCount={notificationData.unreadCount}
+            />
+          ) : null}
           <div className="hidden items-center gap-3 rounded-full border border-slate-200 bg-white px-2 py-1.5 shadow-sm sm:flex">
             <AvatarInitial
               name={user?.name}

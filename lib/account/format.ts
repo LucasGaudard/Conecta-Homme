@@ -8,7 +8,7 @@ export const accountRoleLabels: Record<UserRole, string> = {
 };
 
 export const accountRouteByRole: Record<UserRole, string> = {
-  SUPER_ADMIN: "/",
+  SUPER_ADMIN: "/super-admin",
   ADMIN: "/admin/configuracoes",
   PORTER: "/portaria/configuracoes",
   RESIDENT: "/morador/configuracoes",

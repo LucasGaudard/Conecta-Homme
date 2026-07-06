@@ -24,7 +24,7 @@ type SidebarNavProps = {
 };
 
 function isActivePath(pathname: string, href: string) {
-  if (href === "/admin" || href === "/portaria" || href === "/morador") {
+  if (href === "/admin" || href === "/portaria" || href === "/morador" || href === "/super-admin") {
     return pathname === href;
   }
 

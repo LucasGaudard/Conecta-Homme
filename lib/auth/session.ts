@@ -2,6 +2,7 @@ import type { UserRole } from "@prisma/client";
 import { SESSION_MAX_AGE_SECONDS } from "@/lib/auth/constants";
 
 export type SessionPayload = {
+  condominiumId: string | null;
   exp: number;
   name: string;
   role: UserRole;

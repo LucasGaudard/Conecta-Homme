@@ -2,11 +2,12 @@ import { Building2, ChevronDown, LogOut, Menu } from "lucide-react";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { AvatarInitial } from "@/components/ui/avatar";
 import { SubmitButton } from "@/components/ui/submit-button";
+import type { UserRole } from "@prisma/client";
 import type { NavigationItem } from "@/lib/navigation";
 
 type SidebarProps = {
   navigation: NavigationItem[];
-  profile: "ADMIN" | "PORTER" | "RESIDENT";
+  profile: UserRole;
   user?: {
     email?: string | null;
     name?: string | null;
@@ -14,10 +15,11 @@ type SidebarProps = {
 };
 
 const profileLabels = {
+  SUPER_ADMIN: "Super Admin",
   ADMIN: "Administrador",
   PORTER: "Portaria",
   RESIDENT: "Morador",
-};
+} satisfies Record<UserRole, string>;
 
 export function Sidebar({ navigation, profile, user }: SidebarProps) {
   return (

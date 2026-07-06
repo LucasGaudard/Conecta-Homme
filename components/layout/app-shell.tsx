@@ -1,18 +1,22 @@
 import { Header } from "@/components/layout/header";
 import { Sidebar } from "@/components/layout/sidebar";
 import { SkipLink } from "@/components/layout/skip-link";
-import { getCurrentUser } from "@/lib/auth/current-user";
+import { requireCondominiumRole, requireSuperAdmin } from "@/lib/auth/authorization";
 import type { NavigationItem } from "@/lib/navigation";
+import type { UserRole } from "@prisma/client";
 
 type AppShellProps = {
   children: React.ReactNode;
   navigation: NavigationItem[];
-  profile: "ADMIN" | "PORTER" | "RESIDENT";
+  profile: UserRole;
   title: string;
 };
 
 export async function AppShell({ children, navigation, profile, title }: AppShellProps) {
-  const user = await getCurrentUser();
+  const user =
+    profile === "SUPER_ADMIN"
+      ? await requireSuperAdmin()
+      : (await requireCondominiumRole(profile)).user;
 
   return (
     <div className="min-h-screen bg-slate-50">

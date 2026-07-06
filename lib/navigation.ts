@@ -31,6 +31,10 @@ export const adminNavigation: NavigationItem[] = [
   { title: "Condomínio", href: "/admin/condominio", icon: "building" },
 ];
 
+export const superAdminNavigation: NavigationItem[] = [
+  { title: "Dashboard", href: "/super-admin", icon: "home" },
+];
+
 export const porterNavigation: NavigationItem[] = [
   { title: "Dashboard", href: "/portaria", icon: "home" },
   { title: "Visitantes", href: "/portaria", icon: "users" },

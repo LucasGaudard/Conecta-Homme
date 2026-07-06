@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { UserStatus } from "@prisma/client";
+import { UserRole, UserStatus } from "@prisma/client";
 import { roleHomePath, SESSION_COOKIE_NAME, SESSION_MAX_AGE_SECONDS } from "@/lib/auth/constants";
 import { createSessionToken } from "@/lib/auth/session";
 import { loginSchema } from "@/lib/auth/validation";
@@ -45,6 +45,7 @@ export async function POST(request: Request) {
   }
 
   const token = await createSessionToken({
+    condominiumId: user.role === UserRole.SUPER_ADMIN ? null : user.condominiumId,
     name: user.name,
     role: user.role,
     userId: user.id,

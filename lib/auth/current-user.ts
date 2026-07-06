@@ -23,6 +23,15 @@ export async function getCurrentUser() {
       id: true,
       name: true,
       email: true,
+      condominium: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          status: true,
+        },
+      },
+      condominiumId: true,
       role: true,
       status: true,
     },
