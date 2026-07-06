@@ -21,12 +21,14 @@ export const notificationStatusLabels: Record<NotificationStatus, string> = {
 };
 
 export const notificationRouteByRole: Record<UserRole, string> = {
+  SUPER_ADMIN: "/",
   ADMIN: "/admin/notificacoes",
   PORTER: "/portaria/notificacoes",
   RESIDENT: "/morador/notificacoes",
 };
 
 export const notificationRoleLabels: Record<UserRole, string> = {
+  SUPER_ADMIN: "Super Admin",
   ADMIN: "Admin",
   PORTER: "Portaria",
   RESIDENT: "Morador",

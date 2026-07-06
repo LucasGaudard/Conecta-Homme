@@ -8,6 +8,7 @@ datasource db {
 }
 
 enum UserRole {
+  SUPER_ADMIN
   ADMIN
   PORTER
   RESIDENT
@@ -86,6 +87,32 @@ enum SpaceReservationStatus {
   CANCELED
 }
 
+enum CondominiumStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model Condominium {
+  id           String            @id @default(cuid())
+  name         String
+  slug         String            @unique
+  document     String?
+  phone        String?
+  email        String?
+  address      String?
+  porterHours  String?
+  logoUrl      String?
+  status       CondominiumStatus @default(ACTIVE)
+  planCode     String?
+  billingEmail String?
+  trialEndsAt  DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  users User[]
+}
+
 model User {
   id           String     @id @default(cuid())
   name         String
@@ -98,7 +125,9 @@ model User {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   unitId       String?
+  condominiumId String?
 
+  condominium       Condominium?         @relation(fields: [condominiumId], references: [id])
   unit              Unit?                @relation(fields: [unitId], references: [id])
   authorizedVisits  VisitAuthorization[] @relation("UserAuthorizedVisits")
   accessLogs        AccessLog[]          @relation("AccessLogUser")
@@ -110,6 +139,7 @@ model User {
   requestedReservations SpaceReservation[] @relation("ReservationRequestedBy")
   approvedReservations  SpaceReservation[] @relation("ReservationApprovedBy")
 
+  @@index([condominiumId])
   @@index([unitId])
 }
 
