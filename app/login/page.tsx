@@ -2,12 +2,21 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Building2, CheckCircle2, ShieldCheck } from "lucide-react";
 import { LoginForm } from "@/components/auth/login-form";
+import { FeedbackAlert } from "@/components/admin/feedback-alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { roleHomePath } from "@/lib/auth/constants";
 import { getCurrentUser } from "@/lib/auth/current-user";
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{
+    error?: string;
+    success?: string;
+  }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   const user = await getCurrentUser();
+  const params = await searchParams;
 
   if (user) {
     redirect(roleHomePath[user.role]);
@@ -62,7 +71,10 @@ export default async function LoginPage() {
             </p>
           </CardHeader>
           <CardContent>
+            <FeedbackAlert error={params.error} success={params.success} />
+            <div className={params.error || params.success ? "mt-5" : ""}>
             <LoginForm />
+            </div>
           </CardContent>
         </Card>
         </div>

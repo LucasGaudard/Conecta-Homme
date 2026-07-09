@@ -35,6 +35,14 @@ Boas prÃ¡ticas:
 
 Consulte `.env.example` apenas como referÃªncia de nomes esperados pelo projeto.
 
+Para recuperacao de senha por e-mail, configure tambem:
+
+- `NEXT_PUBLIC_APP_URL`: URL publica usada para montar o link de redefinicao.
+- `RESEND_API_KEY`: chave da Resend para envio transacional.
+- `EMAIL_FROM`: remetente validado no provedor de e-mail.
+
+Em desenvolvimento, se `RESEND_API_KEY` ou `EMAIL_FROM` nao estiverem configurados, o link de redefinicao e registrado no console do servidor. Em producao, configure as variaveis antes de liberar o fluxo para usuarios reais.
+
 ## 3. Banco de Dados
 
 Use PostgreSQL gerenciado com SSL habilitado quando recomendado pelo provedor.

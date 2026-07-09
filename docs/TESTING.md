@@ -72,6 +72,20 @@ Use esta checklist antes de promover a V2.0. Prepare pelo menos dois condominios
 - Confirmar que paginas autenticadas nao sao servidas por cache offline.
 - Confirmar que `/api`, `/admin`, `/portaria`, `/morador` e `/login` sempre buscam da rede.
 
+### Recuperacao de Senha
+
+- Em `/login`, acessar `Esqueci minha senha`.
+- Solicitar recuperacao para e-mail existente e confirmar mensagem generica.
+- Solicitar recuperacao para e-mail inexistente e confirmar a mesma mensagem generica.
+- Em desenvolvimento sem chave de e-mail, copiar o link registrado no console do servidor.
+- Abrir `/redefinir-senha?token=...` e tentar senha curta, esperando bloqueio.
+- Tentar confirmacao diferente da nova senha, esperando bloqueio.
+- Redefinir com senha valida e confirmar redirecionamento para login.
+- Entrar com a senha nova.
+- Tentar reutilizar o mesmo token e confirmar erro de link invalido ou expirado.
+- Gerar outro token e alterar `expiresAt` no banco para o passado; confirmar erro de token expirado.
+- Confirmar que usuarios INACTIVE ou tenants com condominio INACTIVE/SUSPENDED nao concluem redefinicao operacional.
+
 ### Validacao Automatizada
 
 - `npx prisma format` passando.

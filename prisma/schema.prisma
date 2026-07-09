@@ -148,9 +148,25 @@ model User {
   auditLogs             AuditLog[]
   requestedReservations SpaceReservation[]   @relation("ReservationRequestedBy")
   approvedReservations  SpaceReservation[]   @relation("ReservationApprovedBy")
+  passwordResetTokens   PasswordResetToken[]
 
   @@index([condominiumId])
   @@index([unitId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([usedAt])
 }
 
 model Unit {

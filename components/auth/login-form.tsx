@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Lock, Mail } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -72,9 +73,17 @@ export function LoginForm() {
       </div>
 
       <div className="space-y-2">
-        <label className="field-label" htmlFor="password">
-          Senha
-        </label>
+        <div className="flex items-center justify-between gap-3">
+          <label className="field-label" htmlFor="password">
+            Senha
+          </label>
+          <Link
+            href="/esqueci-minha-senha"
+            className="text-xs font-semibold text-navy-700 transition hover:text-navy-950"
+          >
+            Esqueci minha senha
+          </Link>
+        </div>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
