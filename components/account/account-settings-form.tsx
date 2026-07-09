@@ -76,14 +76,39 @@ export function AccountSettingsForm({
             />
           </div>
           <div className={fieldClass}>
-            <label className={labelClass} htmlFor="password">
+            <label className={labelClass} htmlFor="currentPassword">
+              Senha atual
+            </label>
+            <Input
+              id="currentPassword"
+              name="currentPassword"
+              type="password"
+              autoComplete="current-password"
+              placeholder="Obrigatoria para trocar senha"
+            />
+          </div>
+          <div className={fieldClass}>
+            <label className={labelClass} htmlFor="newPassword">
               Nova senha
             </label>
             <Input
-              id="password"
-              name="password"
+              id="newPassword"
+              name="newPassword"
               type="password"
-              placeholder="Deixe em branco para manter"
+              autoComplete="new-password"
+              placeholder="Minimo de 6 caracteres"
+            />
+          </div>
+          <div className={fieldClass}>
+            <label className={labelClass} htmlFor="confirmPassword">
+              Confirmar nova senha
+            </label>
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              placeholder="Repita a nova senha"
             />
           </div>
         </div>

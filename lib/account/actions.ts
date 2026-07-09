@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
 import { requireCondominiumRole, requireSuperAdmin } from "@/lib/auth/authorization";
 import { getCurrentUser } from "@/lib/auth/current-user";
-import { hashPassword } from "@/lib/auth/password";
+import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { accountRouteByRole } from "@/lib/account/format";
 import { updateAccountSchema } from "@/lib/account/validation";
 import { prisma } from "@/lib/prisma";
@@ -36,9 +36,11 @@ export async function updateAccountAction(formData: FormData) {
       : (await requireCondominiumRole(currentUser.role)).user;
   const route = accountRouteByRole[currentUser.role];
   const parsed = updateAccountSchema.safeParse({
+    confirmPassword: getStringValue(formData, "confirmPassword"),
+    currentPassword: getStringValue(formData, "currentPassword"),
     email: getStringValue(formData, "email"),
     name: getStringValue(formData, "name"),
-    password: getStringValue(formData, "password"),
+    newPassword: getStringValue(formData, "newPassword"),
     phone: getStringValue(formData, "phone"),
   });
 
@@ -49,10 +51,40 @@ export async function updateAccountAction(formData: FormData) {
   }
 
   const data = parsed.data;
-  const passwordHash =
-    data.password && data.password.length > 0
-      ? await hashPassword(data.password)
-      : undefined;
+  const newPassword = data.newPassword?.trim() ?? "";
+  const wantsPasswordChange = newPassword.length > 0;
+  let passwordHash: string | undefined;
+
+  if (wantsPasswordChange) {
+    const storedUser = await prisma.user.findFirst({
+      where: {
+        id: actor.id,
+        ...(actor.role === "SUPER_ADMIN"
+          ? { condominiumId: null }
+          : { condominiumId: actor.condominiumId }),
+      },
+      select: {
+        passwordHash: true,
+      },
+    });
+
+    if (!storedUser) {
+      redirect("/login");
+    }
+
+    const passwordMatches = await verifyPassword(
+      data.currentPassword?.trim() ?? "",
+      storedUser.passwordHash,
+    );
+
+    if (!passwordMatches) {
+      redirectWithMessage(route, {
+        error: "Senha atual invalida.",
+      });
+    }
+
+    passwordHash = await hashPassword(newPassword);
+  }
 
   try {
     const updated = await prisma.user.updateMany({
