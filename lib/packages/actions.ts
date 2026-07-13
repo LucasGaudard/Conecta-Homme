@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
 import { requireCondominiumRole } from "@/lib/auth/authorization";
+import { handleActionError } from "@/lib/errors/handle-action-error";
 import { prisma } from "@/lib/prisma";
 import { createPackageSchema, deliverPackageSchema } from "@/lib/packages/validation";
 
@@ -70,44 +71,63 @@ export async function createPackageAction(formData: FormData) {
     });
   }
 
-  const createdPackage = await prisma.$transaction(async (tx) => {
-    const packageRecord = await tx.package.create({
-      data: {
-        carrier: data.carrier,
-        condominiumId,
-        description: data.description,
-        photoUrl: data.photoUrl,
-        pickupCode: data.pickupCode,
-        receivedAt: new Date(),
-        receivedById: user.id,
-        status: PackageStatus.WAITING_PICKUP,
-        trackingCode: data.trackingCode,
-        unitId: data.unitId,
-      },
+  try {
+    const createdPackage = await prisma.$transaction(async (tx) => {
+      const packageRecord = await tx.package.create({
+        data: {
+          carrier: data.carrier,
+          condominiumId,
+          description: data.description,
+          photoUrl: data.photoUrl,
+          pickupCode: data.pickupCode,
+          receivedAt: new Date(),
+          receivedById: user.id,
+          status: PackageStatus.WAITING_PICKUP,
+          trackingCode: data.trackingCode,
+          unitId: data.unitId,
+        },
+      });
+
+      await tx.notification.create({
+        data: {
+          condominiumId,
+          message: "Uma encomenda foi registrada para sua unidade.",
+          status: NotificationStatus.UNREAD,
+          title: "Nova encomenda recebida",
+          type: NotificationType.PACKAGE,
+          unitId: data.unitId,
+        },
+      });
+
+      return packageRecord;
     });
 
-    await tx.notification.create({
-      data: {
-        condominiumId,
-        message: "Uma encomenda foi registrada para sua unidade.",
-        status: NotificationStatus.UNREAD,
-        title: "Nova encomenda recebida",
-        type: NotificationType.PACKAGE,
-        unitId: data.unitId,
-      },
+    await createAuditLog({
+      action: "CREATE",
+      description: "Encomenda cadastrada para unidade.",
+      entityId: createdPackage.id,
+      entityType: "Package",
+      module: "PACKAGE",
+      user,
     });
-
-    return packageRecord;
-  });
-
-  await createAuditLog({
-    action: "CREATE",
-    description: "Encomenda cadastrada para unidade.",
-    entityId: createdPackage.id,
-    entityType: "Package",
-    module: "PACKAGE",
-    user,
-  });
+  } catch (error) {
+    redirectToPackages(path, data.query, {
+      error: handleActionError(error, {
+        context: {
+          action: "createPackageAction",
+          condominiumId,
+          metadata: { unitId: data.unitId },
+          module: "PACKAGE",
+          role: user.role,
+          userId: user.id,
+        },
+        fallbackMessage: "Não foi possível cadastrar a encomenda.",
+        prisma: {
+          notFound: "Registro relacionado não encontrado.",
+        },
+      }),
+    });
+  }
 
   revalidatePath("/admin");
   revalidatePath("/admin/encomendas");
@@ -155,37 +175,56 @@ export async function deliverPackageAction(formData: FormData) {
     });
   }
 
-  const updated = await prisma.package.updateMany({
-    where: {
-      id: parsed.data.packageId,
-      condominiumId,
-      status: PackageStatus.WAITING_PICKUP,
-      unit: {
+  try {
+    const updated = await prisma.package.updateMany({
+      where: {
+        id: parsed.data.packageId,
         condominiumId,
+        status: PackageStatus.WAITING_PICKUP,
+        unit: {
+          condominiumId,
+        },
       },
-    },
-    data: {
-      deliveredAt: new Date(),
-      deliveredById: user.id,
-      pickedUpByName: parsed.data.pickedUpByName,
-      status: PackageStatus.DELIVERED,
-    },
-  });
+      data: {
+        deliveredAt: new Date(),
+        deliveredById: user.id,
+        pickedUpByName: parsed.data.pickedUpByName,
+        status: PackageStatus.DELIVERED,
+      },
+    });
 
-  if (updated.count === 0) {
+    if (updated.count === 0) {
+      redirectToPackages(path, undefined, {
+        error: "Encomenda inexistente ou já entregue.",
+      });
+    }
+
+    await createAuditLog({
+      action: "DELIVER",
+      description: `Encomenda entregue para ${parsed.data.pickedUpByName}.`,
+      entityId: packageRecord.id,
+      entityType: "Package",
+      module: "PACKAGE",
+      user,
+    });
+  } catch (error) {
     redirectToPackages(path, undefined, {
-      error: "Encomenda inexistente ou já entregue.",
+      error: handleActionError(error, {
+        context: {
+          action: "deliverPackageAction",
+          condominiumId,
+          metadata: { packageId: parsed.data.packageId },
+          module: "PACKAGE",
+          role: user.role,
+          userId: user.id,
+        },
+        fallbackMessage: "Não foi possível entregar a encomenda.",
+        prisma: {
+          notFound: "Encomenda inexistente ou já entregue.",
+        },
+      }),
     });
   }
-
-  await createAuditLog({
-    action: "DELIVER",
-    description: `Encomenda entregue para ${parsed.data.pickedUpByName}.`,
-    entityId: packageRecord.id,
-    entityType: "Package",
-    module: "PACKAGE",
-    user,
-  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/encomendas");

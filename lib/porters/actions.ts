@@ -1,11 +1,12 @@
 "use server";
 
-import { Prisma, UserRole, UserStatus } from "@prisma/client";
+import { UserRole, UserStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
 import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { hashPassword } from "@/lib/auth/password";
+import { handleActionError } from "@/lib/errors/handle-action-error";
 import { prisma } from "@/lib/prisma";
 import {
   createPorterSchema,
@@ -26,15 +27,33 @@ function redirectWithMessage(path: string, params: Record<string, string>): neve
   redirect(`${path}?${searchParams.toString()}`);
 }
 
-function handlePorterError(error: unknown, path: string): never {
-  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-    redirectWithMessage(path, {
-      error: "Já existe um usuário com este e-mail.",
-    });
-  }
-
-  redirectWithMessage(path, {
-    error: "Não foi possível salvar o porteiro.",
+function handlePorterActionError(
+  error: unknown,
+  context: {
+    action: string;
+    condominiumId: string;
+    porterId?: string;
+    user: Awaited<ReturnType<typeof requireCondominiumRole>>["user"];
+  },
+) {
+  return handleActionError(error, {
+    context: {
+      action: context.action,
+      condominiumId: context.condominiumId,
+      metadata: context.porterId ? { porterId: context.porterId } : undefined,
+      module: "PORTER",
+      role: context.user.role,
+      userId: context.user.id,
+    },
+    fallbackMessage: "Não foi possível salvar o porteiro.",
+    prisma: {
+      missingColumn:
+        "Campo de porteiro indisponível no banco. Verifique se a migration incremental foi aplicada.",
+      notFound: "Porteiro não encontrado ou indisponível para alteração.",
+      unique: {
+        email: "Já existe um usuário com este e-mail.",
+      },
+    },
   });
 }
 
@@ -65,6 +84,7 @@ export async function createPorterAction(formData: FormData) {
   }
 
   const data = parsed.data;
+  let createdPorterId = "";
 
   try {
     const porter = await prisma.user.create({
@@ -80,6 +100,8 @@ export async function createPorterAction(formData: FormData) {
       },
     });
 
+    createdPorterId = porter.id;
+
     await createAuditLog({
       action: "CREATE",
       description: `Porteiro ${porter.name} cadastrado.`,
@@ -90,12 +112,19 @@ export async function createPorterAction(formData: FormData) {
     });
 
     revalidatePath("/admin/porteiros");
-    redirectWithMessage(`/admin/porteiros/${porter.id}`, {
-      success: "Porteiro cadastrado com sucesso.",
-    });
   } catch (error) {
-    handlePorterError(error, "/admin/porteiros/novo");
+    redirectWithMessage("/admin/porteiros/novo", {
+      error: handlePorterActionError(error, {
+        action: "createPorterAction",
+        condominiumId,
+        user: admin,
+      }),
+    });
   }
+
+  redirectWithMessage(`/admin/porteiros/${createdPorterId}`, {
+    success: "Porteiro cadastrado com sucesso.",
+  });
 }
 
 export async function updatePorterAction(id: string, formData: FormData) {
@@ -144,12 +173,20 @@ export async function updatePorterAction(id: string, formData: FormData) {
 
     revalidatePath("/admin/porteiros");
     revalidatePath(`/admin/porteiros/${id}`);
-    redirectWithMessage(`/admin/porteiros/${id}`, {
-      success: "Porteiro atualizado com sucesso.",
-    });
   } catch (error) {
-    handlePorterError(error, errorPath);
+    redirectWithMessage(errorPath, {
+      error: handlePorterActionError(error, {
+        action: "updatePorterAction",
+        condominiumId,
+        porterId: id,
+        user: admin,
+      }),
+    });
   }
+
+  redirectWithMessage(`/admin/porteiros/${id}`, {
+    success: "Porteiro atualizado com sucesso.",
+  });
 }
 
 export async function changePorterStatusAction(formData: FormData) {

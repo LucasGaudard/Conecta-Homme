@@ -1,14 +1,14 @@
 "use server";
 
-import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
+import { accountRouteByRole } from "@/lib/account/format";
+import { updateAccountSchema } from "@/lib/account/validation";
 import { requireCondominiumRole, requireSuperAdmin } from "@/lib/auth/authorization";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
-import { accountRouteByRole } from "@/lib/account/format";
-import { updateAccountSchema } from "@/lib/account/validation";
+import { handleActionError } from "@/lib/errors/handle-action-error";
 import { prisma } from "@/lib/prisma";
 
 function getStringValue(formData: FormData, key: string) {
@@ -114,16 +114,23 @@ export async function updateAccountAction(formData: FormData) {
       user: actor,
     });
   } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
-      redirectWithMessage(route, {
-        error: "Este e-mail já está em uso por outro usuário.",
-      });
-    }
-
-    throw error;
+    redirectWithMessage(route, {
+      error: handleActionError(error, {
+        context: {
+          action: "updateAccountAction",
+          condominiumId: actor.condominiumId,
+          module: "ACCOUNT",
+          role: actor.role,
+          userId: actor.id,
+        },
+        fallbackMessage: "Não foi possível atualizar a conta.",
+        prisma: {
+          unique: {
+            email: "Este e-mail já está em uso por outro usuário.",
+          },
+        },
+      }),
+    });
   }
 
   revalidatePath("/admin");
