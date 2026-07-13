@@ -8,8 +8,8 @@ import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { createPackageSchema, deliverPackageSchema } from "@/lib/packages/validation";
 
-async function requirePorter() {
-  return requireCondominiumRole("PORTER");
+async function requirePackageOperator() {
+  return requireCondominiumRole("ADMIN", "PORTER");
 }
 
 function getStringValue(formData: FormData, key: string) {
@@ -18,18 +18,27 @@ function getStringValue(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-function redirectToPorterPackages(query: string | undefined, params: Record<string, string>): never {
+function packagePathForRole(role: "ADMIN" | "PORTER") {
+  return role === "ADMIN" ? "/admin/encomendas" : "/portaria/encomendas";
+}
+
+function redirectToPackages(
+  path: string,
+  query: string | undefined,
+  params: Record<string, string>,
+): never {
   const searchParams = new URLSearchParams(params);
 
   if (query) {
     searchParams.set("q", query);
   }
 
-  redirect(`/portaria/encomendas?${searchParams.toString()}`);
+  redirect(`${path}?${searchParams.toString()}`);
 }
 
 export async function createPackageAction(formData: FormData) {
-  const { condominiumId, user: porter } = await requirePorter();
+  const { condominiumId, user } = await requirePackageOperator();
+  const path = packagePathForRole(user.role === "ADMIN" ? "ADMIN" : "PORTER");
   const parsed = createPackageSchema.safeParse({
     carrier: getStringValue(formData, "carrier"),
     description: getStringValue(formData, "description"),
@@ -41,7 +50,7 @@ export async function createPackageAction(formData: FormData) {
   });
 
   if (!parsed.success) {
-    redirectToPorterPackages(getStringValue(formData, "query"), {
+    redirectToPackages(path, getStringValue(formData, "query"), {
       error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
@@ -56,7 +65,7 @@ export async function createPackageAction(formData: FormData) {
   });
 
   if (!unit || unit.status !== UnitStatus.ACTIVE) {
-    redirectToPorterPackages(data.query, {
+    redirectToPackages(path, data.query, {
       error: "Unidade inexistente ou inativa.",
     });
   }
@@ -70,7 +79,7 @@ export async function createPackageAction(formData: FormData) {
         photoUrl: data.photoUrl,
         pickupCode: data.pickupCode,
         receivedAt: new Date(),
-        receivedById: porter.id,
+        receivedById: user.id,
         status: PackageStatus.WAITING_PICKUP,
         trackingCode: data.trackingCode,
         unitId: data.unitId,
@@ -97,7 +106,7 @@ export async function createPackageAction(formData: FormData) {
     entityId: createdPackage.id,
     entityType: "Package",
     module: "PACKAGE",
-    user: porter,
+    user,
   });
 
   revalidatePath("/admin");
@@ -107,20 +116,21 @@ export async function createPackageAction(formData: FormData) {
   revalidatePath("/morador/notificacoes");
   revalidatePath("/portaria");
   revalidatePath("/portaria/encomendas");
-  redirectToPorterPackages(data.query, {
+  redirectToPackages(path, data.query, {
     success: "Encomenda cadastrada com sucesso.",
   });
 }
 
 export async function deliverPackageAction(formData: FormData) {
-  const { condominiumId, user: porter } = await requirePorter();
+  const { condominiumId, user } = await requirePackageOperator();
+  const path = packagePathForRole(user.role === "ADMIN" ? "ADMIN" : "PORTER");
   const parsed = deliverPackageSchema.safeParse({
     packageId: getStringValue(formData, "packageId"),
     pickedUpByName: getStringValue(formData, "pickedUpByName"),
   });
 
   if (!parsed.success) {
-    redirectToPorterPackages(undefined, {
+    redirectToPackages(path, undefined, {
       error: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     });
   }
@@ -140,7 +150,7 @@ export async function deliverPackageAction(formData: FormData) {
   });
 
   if (!packageRecord) {
-    redirectToPorterPackages(undefined, {
+    redirectToPackages(path, undefined, {
       error: "Encomenda inexistente ou já entregue.",
     });
   }
@@ -156,14 +166,14 @@ export async function deliverPackageAction(formData: FormData) {
     },
     data: {
       deliveredAt: new Date(),
-      deliveredById: porter.id,
+      deliveredById: user.id,
       pickedUpByName: parsed.data.pickedUpByName,
       status: PackageStatus.DELIVERED,
     },
   });
 
   if (updated.count === 0) {
-    redirectToPorterPackages(undefined, {
+    redirectToPackages(path, undefined, {
       error: "Encomenda inexistente ou já entregue.",
     });
   }
@@ -174,7 +184,7 @@ export async function deliverPackageAction(formData: FormData) {
     entityId: packageRecord.id,
     entityType: "Package",
     module: "PACKAGE",
-    user: porter,
+    user,
   });
 
   revalidatePath("/admin");
@@ -183,7 +193,7 @@ export async function deliverPackageAction(formData: FormData) {
   revalidatePath("/morador/encomendas");
   revalidatePath("/portaria");
   revalidatePath("/portaria/encomendas");
-  redirectToPorterPackages(undefined, {
+  redirectToPackages(path, undefined, {
     success: "Encomenda marcada como entregue.",
   });
 }

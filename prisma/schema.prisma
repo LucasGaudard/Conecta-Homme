@@ -124,18 +124,19 @@ model Condominium {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  name          String
-  email         String     @unique
-  username      String?    @unique
-  passwordHash  String
-  role          UserRole
-  status        UserStatus @default(ACTIVE)
-  phone         String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  unitId        String?
-  condominiumId String?
+  id                     String     @id @default(cuid())
+  name                   String
+  email                  String     @unique
+  username               String?    @unique
+  passwordHash           String
+  role                   UserRole
+  status                 UserStatus @default(ACTIVE)
+  phone                  String?
+  porterShiftDescription String?
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
+  unitId                 String?
+  condominiumId          String?
 
   condominium           Condominium?         @relation(fields: [condominiumId], references: [id])
   unit                  Unit?                @relation(fields: [unitId], references: [id])

@@ -4,8 +4,13 @@ import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
 import { adminPackageFiltersSchema } from "@/lib/packages/validation";
 
-export async function searchUnitsForPackage(query: string) {
-  const { condominiumId } = await requireCondominiumRole("PORTER");
+type PackageOperatorRole = "ADMIN" | "PORTER";
+
+export async function searchUnitsForPackage(
+  query: string,
+  role: PackageOperatorRole = "PORTER",
+) {
+  const { condominiumId } = await requireCondominiumRole(role);
   const normalizedQuery = query.trim();
 
   if (!normalizedQuery) {
@@ -30,6 +35,26 @@ export async function searchUnitsForPackage(query: string) {
 
 export async function getPorterPackages() {
   const { condominiumId } = await requireCondominiumRole("PORTER");
+
+  return prisma.package.findMany({
+    where: {
+      condominiumId,
+      unit: {
+        condominiumId,
+      },
+    },
+    include: {
+      deliveredBy: { select: { name: true } },
+      receivedBy: { select: { name: true } },
+      unit: { select: { apartment: true, block: true, responsibleName: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 30,
+  });
+}
+
+export async function getOperatorPackages(role: PackageOperatorRole) {
+  const { condominiumId } = await requireCondominiumRole(role);
 
   return prisma.package.findMany({
     where: {

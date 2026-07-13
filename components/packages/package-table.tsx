@@ -73,6 +73,7 @@ export function PackageTable({
   const direction = normalizeSortDirection(getSearchParam(searchParams, keys.direction));
   const sortedPackages = sortPackages(packages, sort, direction);
   const visiblePackages = pageSlice(sortedPackages, page, pageSize);
+  const canManageDelivery = mode === "admin" || mode === "porter";
 
   return (
     <div className="space-y-4">
@@ -144,13 +145,9 @@ export function PackageTable({
               <dd className="mobile-field-value">{item.pickedUpByName ?? "Não informado"}</dd>
             </div>
           </dl>
-          {mode === "porter" ? (
+          {canManageDelivery && item.status === "WAITING_PICKUP" ? (
             <div className="mt-4">
-              {item.status === "WAITING_PICKUP" ? (
-                <PackageDeliveryForm packageId={item.id} />
-              ) : (
-                <span className="text-sm text-slate-400">Entregue</span>
-              )}
+              <PackageDeliveryForm packageId={item.id} />
             </div>
           ) : null}
         </article>
@@ -193,7 +190,7 @@ export function PackageTable({
             <th className="px-4 py-3 font-medium">Recebido por</th>
             <th className="px-4 py-3 font-medium">Entregue por</th>
             <th className="px-4 py-3 font-medium">Retirado por</th>
-            {mode === "porter" ? <th className="px-4 py-3 font-medium">Acao</th> : null}
+            {canManageDelivery ? <th className="px-4 py-3 font-medium">Acao</th> : null}
           </tr>
         </thead>
         <tbody>
@@ -221,7 +218,7 @@ export function PackageTable({
               <td>{item.receivedBy?.name ?? "Não informado"}</td>
               <td>{item.deliveredBy?.name ?? "Não informado"}</td>
               <td>{item.pickedUpByName ?? "Não informado"}</td>
-              {mode === "porter" ? (
+              {canManageDelivery ? (
                 <td>
                   {item.status === "WAITING_PICKUP" ? (
                     <PackageDeliveryForm packageId={item.id} />
