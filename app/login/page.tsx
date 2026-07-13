@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Building2, CheckCircle2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { LoginForm } from "@/components/auth/login-form";
+import { CondotechBrand } from "@/components/brand/condotech-brand";
 import { FeedbackAlert } from "@/components/admin/feedback-alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { roleHomePath } from "@/lib/auth/constants";
@@ -25,17 +26,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   return (
     <main className="grid min-h-screen bg-slate-50 lg:grid-cols-[0.95fr_1.05fr]">
       <section className="hidden bg-navy-950 px-10 py-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <Link href="/" className="flex items-center gap-3 text-lg font-semibold">
-          <span className="flex h-11 w-11 items-center justify-center rounded-md bg-white text-navy-950 shadow-soft">
-            <Building2 className="h-5 w-5" />
-          </span>
-          Conecta Homme
+        <Link href="/" className="w-max" aria-label="CONDOTECH">
+          <CondotechBrand className="text-white" priority />
         </Link>
 
         <div className="max-w-lg space-y-6">
           <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-sm font-medium text-blue-100">
             <ShieldCheck className="h-4 w-4" />
-            Condominio conectado
+            Gestão inteligente do seu condomínio
           </p>
           <h1 className="text-4xl font-semibold tracking-normal">
             Uma entrada única para administrar rotinas do condomínio.
@@ -45,7 +43,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             moradores com acesso seguro por perfil.
           </p>
           <div className="grid gap-3 text-sm text-blue-100">
-            {["Administracao", "Portaria", "Moradores"].map((item) => (
+            {["Administração", "Portaria", "Moradores"].map((item) => (
               <div key={item} className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-white" />
                 {item}
@@ -57,26 +55,23 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
       <section className="flex items-center justify-center px-4 py-8 sm:px-6 sm:py-10">
         <div className="w-full max-w-md space-y-5">
-          <Link href="/" className="mx-auto flex w-max items-center gap-3 text-base font-semibold text-navy-950 lg:hidden">
-            <span className="flex h-10 w-10 items-center justify-center rounded-md bg-navy-950 text-white shadow-soft">
-              <Building2 className="h-5 w-5" />
-            </span>
-            Conecta Homme
+          <Link href="/" className="mx-auto flex w-max text-navy-950 lg:hidden" aria-label="CONDOTECH">
+            <CondotechBrand priority size="sm" />
           </Link>
-        <Card className="w-full max-w-md shadow-elevated">
-          <CardHeader>
-            <CardTitle className="text-2xl text-navy-950">Entrar</CardTitle>
-            <p className="text-sm text-slate-500">
-              Use seu e-mail ou usuario para acessar.
-            </p>
-          </CardHeader>
-          <CardContent>
-            <FeedbackAlert error={params.error} success={params.success} />
-            <div className={params.error || params.success ? "mt-5" : ""}>
-            <LoginForm />
-            </div>
-          </CardContent>
-        </Card>
+          <Card className="w-full max-w-md shadow-elevated">
+            <CardHeader>
+              <CardTitle className="text-2xl text-navy-950">Entrar</CardTitle>
+              <p className="text-sm text-slate-500">
+                Use seu e-mail ou usuário para acessar.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <FeedbackAlert error={params.error} success={params.success} />
+              <div className={params.error || params.success ? "mt-5" : ""}>
+                <LoginForm />
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
     </main>

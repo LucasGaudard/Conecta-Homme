@@ -9,7 +9,7 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 };
 
-const DISMISSED_KEY = "conecta-homme-install-dismissed";
+const DISMISSED_KEY = "condotech-install-dismissed";
 
 function isStandaloneMode() {
   const navigatorWithStandalone = window.navigator as Navigator & {
@@ -83,7 +83,7 @@ export function PwaInstallPrompt() {
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-navy-950">Instalar aplicativo</p>
           <p className="text-xs leading-5 text-slate-500">
-            Abra o Conecta Homme em modo app neste dispositivo.
+            Abra o CONDOTECH em modo app neste dispositivo.
           </p>
         </div>
         <Button type="button" size="sm" onClick={installApp}>

@@ -1,5 +1,13 @@
 # Changelog
 
+## V2.0 - Identidade CONDOTECH
+
+Principais melhorias:
+
+- Atualizacao da identidade visual do produto para CONDOTECH.
+- Aplicacao do slogan "Gestao inteligente do seu condominio" em superficies institucionais.
+- Atualizacao de logo, metadata, PWA, recuperacao de senha e documentacao publica.
+
 ## V2.0 - Plataforma Multi-Condominio
 
 Principais entregas:

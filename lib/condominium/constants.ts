@@ -4,7 +4,7 @@ export const defaultCondominiumSettings = {
   address: "",
   email: "",
   logoUrl: "",
-  name: "Conecta Homme",
+  name: "Condomínio",
   phone: "",
   porterHours: "24 horas",
 };

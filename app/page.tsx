@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Building2, ShieldCheck } from "lucide-react";
+import { CondotechBrand } from "@/components/brand/condotech-brand";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -14,12 +15,20 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-5">
-            <h1 className="max-w-3xl text-4xl font-semibold tracking-normal text-navy-950 sm:text-5xl">
-              Conecta Homme
-            </h1>
+            <div className="space-y-4">
+              <CondotechBrand
+                className="text-navy-950"
+                imageClassName="rounded-xl shadow-soft"
+                priority
+                size="lg"
+              />
+              <h1 className="max-w-3xl text-4xl font-semibold tracking-normal text-navy-950 sm:text-5xl">
+                CONDOTECH
+              </h1>
+            </div>
             <p className="max-w-2xl text-lg leading-8 text-slate-600">
-              Base inicial do sistema para moradores, portaria, visitantes,
-              encomendas, controle de acesso e relatórios.
+              Gestão inteligente do seu condomínio para moradores, portaria,
+              visitantes, encomendas, controle de acesso e relatórios.
             </p>
           </div>
 
@@ -50,7 +59,7 @@ export default function HomePage() {
                   <div>
                     <p className="font-medium text-navy-950">{profile}</p>
                     <p className="text-sm text-slate-500">
-                      Area reservada preparada
+                      Área reservada preparada
                     </p>
                   </div>
                 </div>

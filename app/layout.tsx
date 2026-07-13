@@ -7,16 +7,16 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "Conecta Homme",
-    template: "%s | Conecta Homme",
+    default: "CONDOTECH",
+    template: "%s | CONDOTECH",
   },
-  description: "Sistema de gestão de condomínios",
+  description: "Gestão inteligente do seu condomínio",
   manifest: "/manifest.webmanifest",
-  applicationName: "Conecta Homme",
+  applicationName: "CONDOTECH",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Conecta Homme",
+    title: "CONDOTECH",
   },
   icons: {
     apple: "/apple-touch-icon.png",

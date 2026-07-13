@@ -1,10 +1,12 @@
-﻿# Conecta Homme
+﻿# CONDOTECH
+
+Gestão inteligente do seu condomínio.
 
 ## PWA
 
-O Conecta Homme pode ser instalado na tela inicial em Android, iOS e desktop. A implementacao usa manifest, icones proprios e service worker conservador para assets estaticos, sem cache de paginas autenticadas ou APIs privadas.
+O CONDOTECH pode ser instalado na tela inicial em Android, iOS e desktop. A implementacao usa manifest, icones proprios e service worker conservador para assets estaticos, sem cache de paginas autenticadas ou APIs privadas.
 
-Conecta Homme Ã© um sistema web de gestÃ£o condominial criado para centralizar a rotina de administraÃ§Ã£o, portaria e moradores em uma experiÃªncia moderna, responsiva e segura.
+CONDOTECH é um sistema web de gestão condominial criado para centralizar a rotina de administração, portaria e moradores em uma experiência moderna, responsiva e segura.
 
 O produto cobre desde o controle de unidades e moradores atÃ© visitantes, QR Code, encomendas, relatÃ³rios, notificaÃ§Ãµes, auditoria e exportaÃ§Ã£o administrativa de dados.
 
@@ -150,4 +152,4 @@ docs/DEPLOY.md
 
 ## Status
 
-Conecta Homme V1.1 estÃ¡ preparado para validaÃ§Ã£o final, deploy e apresentaÃ§Ã£o em portfÃ³lio.
+CONDOTECH V2.0 está preparado para validação final, deploy e operação preservando dados reais por condomínio.

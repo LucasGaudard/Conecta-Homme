@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Building2, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { FeedbackAlert } from "@/components/admin/feedback-alert";
+import { CondotechBrand } from "@/components/brand/condotech-brand";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -23,11 +24,8 @@ export default async function ForgotPasswordPage({
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-8 sm:px-6">
       <div className="w-full max-w-md space-y-5">
-        <Link href="/" className="mx-auto flex w-max items-center gap-3 text-base font-semibold text-navy-950">
-          <span className="flex h-10 w-10 items-center justify-center rounded-md bg-navy-950 text-white shadow-soft">
-            <Building2 className="h-5 w-5" />
-          </span>
-          Conecta Homme
+        <Link href="/" className="mx-auto flex w-max text-navy-950" aria-label="CONDOTECH">
+          <CondotechBrand priority size="sm" />
         </Link>
 
         <Card className="shadow-elevated">

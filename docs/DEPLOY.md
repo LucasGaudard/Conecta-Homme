@@ -1,8 +1,8 @@
-﻿# Deploy - Conecta Homme
+﻿# Deploy - CONDOTECH
 
 ## PWA
 
-O Conecta Homme possui manifest, icones e service worker para instalacao como aplicativo. O service worker usa cache apenas para assets estaticos e nao deve cachear paginas autenticadas, rotas privadas ou APIs.
+O CONDOTECH possui manifest, icones e service worker para instalacao como aplicativo. O service worker usa cache apenas para assets estaticos e nao deve cachear paginas autenticadas, rotas privadas ou APIs.
 
 Para validar:
 
@@ -12,7 +12,7 @@ Para validar:
 
 Em todos os dispositivos, valide que dados autenticados continuam vindo da rede e que logout/login nao reaproveitam dados antigos de outro usuario.
 
-Este guia resume a publicaÃ§Ã£o segura do Conecta Homme em um ambiente Next.js com PostgreSQL gerenciado.
+Este guia resume a publicação segura do CONDOTECH em um ambiente Next.js com PostgreSQL gerenciado.
 
 ## 1. PrÃ©-requisitos
 

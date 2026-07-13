@@ -1,7 +1,7 @@
 {
-  "name": "Conecta Homme",
-  "short_name": "Conecta Homme",
-  "description": "Sistema de gestão de condomínios",
+  "name": "CONDOTECH",
+  "short_name": "CONDOTECH",
+  "description": "Gestão inteligente do seu condomínio",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

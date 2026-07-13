@@ -105,15 +105,17 @@ export async function requestPasswordResetAction(formData: FormData) {
     await sendEmail({
       html: `
         <p>Ola, ${user.name}.</p>
-        <p>Recebemos uma solicitacao para redefinir sua senha no Conecta Homme.</p>
+        <p>Recebemos uma solicitacao para redefinir sua senha no CONDOTECH.</p>
+        <p>Gestao inteligente do seu condominio.</p>
         <p><a href="${resetUrl}">Clique aqui para criar uma nova senha</a>.</p>
         <p>Este link expira em ${PASSWORD_RESET_EXPIRES_IN_MINUTES} minutos.</p>
         <p>Se voce nao solicitou esta alteracao, ignore este e-mail.</p>
       `,
-      subject: "Redefinicao de senha - Conecta Homme",
+      subject: "Redefinicao de senha - CONDOTECH",
       text: [
         `Ola, ${user.name}.`,
-        "Recebemos uma solicitacao para redefinir sua senha no Conecta Homme.",
+        "Recebemos uma solicitacao para redefinir sua senha no CONDOTECH.",
+        "Gestao inteligente do seu condominio.",
         `Acesse: ${resetUrl}`,
         `Este link expira em ${PASSWORD_RESET_EXPIRES_IN_MINUTES} minutos.`,
         "Se voce nao solicitou esta alteracao, ignore este e-mail.",

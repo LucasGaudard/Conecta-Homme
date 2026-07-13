@@ -19,7 +19,7 @@ export default async function SuperAdminPage() {
             Super Admin
           </h2>
           <p className="max-w-2xl text-sm leading-6 text-slate-500">
-            Área de gestão da plataforma Conecta Homme.
+            Área de gestão da plataforma CONDOTECH.
           </p>
         </div>
         <Button asChild>

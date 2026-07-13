@@ -1,4 +1,4 @@
-# Checklist Manual - Conecta Homme
+# Checklist Manual - CONDOTECH
 
 ## V2.0 - QA Multi-Condominio
 

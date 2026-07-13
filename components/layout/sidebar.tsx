@@ -1,4 +1,5 @@
-import { Building2, ChevronDown, LogOut, Menu } from "lucide-react";
+import { ChevronDown, LogOut, Menu } from "lucide-react";
+import { CondotechBrand } from "@/components/brand/condotech-brand";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { AvatarInitial } from "@/components/ui/avatar";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -27,11 +28,9 @@ export function Sidebar({ navigation, profile, user }: SidebarProps) {
       <details className="group border-b border-white/10 lg:hidden">
         <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 marker:hidden [&::-webkit-details-marker]:hidden">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white text-navy-950 shadow-soft">
-              <Building2 className="h-5 w-5" />
-            </span>
+            <CondotechBrand imageClassName="bg-white" showText={false} size="sm" />
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold">Conecta Homme</p>
+              <p className="truncate text-sm font-semibold">CONDOTECH</p>
               <p className="truncate text-xs text-blue-100">{profileLabels[profile]}</p>
             </div>
           </div>
@@ -73,14 +72,12 @@ export function Sidebar({ navigation, profile, user }: SidebarProps) {
 
       <div className="hidden h-full flex-col lg:flex">
         <div className="flex h-20 items-center gap-3 border-b border-white/10 px-5">
-          <span className="flex h-11 w-11 items-center justify-center rounded-md bg-white text-navy-950 shadow-soft">
-            <Building2 className="h-5 w-5" />
-          </span>
+          <CondotechBrand imageClassName="bg-white" showText={false} />
           <div className="min-w-0">
             <p className="truncate text-base font-semibold tracking-normal">
-              Conecta Homme
+              CONDOTECH
             </p>
-            <p className="text-xs font-medium text-blue-100">Gestão condominial</p>
+            <p className="text-xs font-medium text-blue-100">Gestão inteligente</p>
           </div>
         </div>
 
