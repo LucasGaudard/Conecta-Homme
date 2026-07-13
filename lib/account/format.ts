@@ -1,12 +1,14 @@
 import { UserRole } from "@prisma/client";
 
 export const accountRoleLabels: Record<UserRole, string> = {
+  SUPER_ADMIN: "Super Admin",
   ADMIN: "Admin",
   PORTER: "Portaria",
   RESIDENT: "Morador",
 };
 
 export const accountRouteByRole: Record<UserRole, string> = {
+  SUPER_ADMIN: "/super-admin",
   ADMIN: "/admin/configuracoes",
   PORTER: "/portaria/configuracoes",
   RESIDENT: "/morador/configuracoes",

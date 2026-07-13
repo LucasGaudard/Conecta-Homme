@@ -4,6 +4,7 @@ export const SESSION_COOKIE_NAME = "conecta_homme_session";
 export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
 
 export const roleHomePath: Record<UserRole, string> = {
+  SUPER_ADMIN: "/super-admin",
   ADMIN: "/admin",
   PORTER: "/portaria",
   RESIDENT: "/morador",
@@ -16,4 +17,5 @@ export const protectedPathRoles: Array<{
   { path: "/admin", role: "ADMIN" },
   { path: "/portaria", role: "PORTER" },
   { path: "/morador", role: "RESIDENT" },
+  { path: "/super-admin", role: "SUPER_ADMIN" },
 ];

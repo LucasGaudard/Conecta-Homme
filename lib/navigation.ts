@@ -20,6 +20,7 @@ export type NavigationItem = {
 export const adminNavigation: NavigationItem[] = [
   { title: "Dashboard", href: "/admin", icon: "home" },
   { title: "Unidades", href: "/admin/unidades", icon: "building" },
+  { title: "Porteiros", href: "/admin/porteiros", icon: "shield" },
   { title: "Espaços", href: "/admin/espacos", icon: "calendar" },
   { title: "Reservas", href: "/admin/reservas", icon: "calendar" },
   { title: "Encomendas", href: "/admin/encomendas", icon: "package" },

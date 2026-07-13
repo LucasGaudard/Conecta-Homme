@@ -16,7 +16,7 @@ export function PackageForm({ query, units }: PackageFormProps) {
       <div>
         <h3 className="text-base font-semibold text-navy-950">Cadastrar encomenda</h3>
         <p className="mt-1 text-sm text-slate-500">
-          Busque a unidade e registre a encomenda recebida na portaria.
+          Busque a unidade e registre a encomenda recebida.
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">

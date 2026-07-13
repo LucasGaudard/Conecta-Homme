@@ -144,7 +144,7 @@ export function PackageTable({
               <dd className="mobile-field-value">{item.pickedUpByName ?? "Não informado"}</dd>
             </div>
           </dl>
-          {mode === "porter" ? (
+          {mode === "porter" || mode === "admin" ? (
             <div className="mt-4">
               {item.status === "WAITING_PICKUP" ? (
                 <PackageDeliveryForm packageId={item.id} />
@@ -193,7 +193,7 @@ export function PackageTable({
             <th className="px-4 py-3 font-medium">Recebido por</th>
             <th className="px-4 py-3 font-medium">Entregue por</th>
             <th className="px-4 py-3 font-medium">Retirado por</th>
-            {mode === "porter" ? <th className="px-4 py-3 font-medium">Acao</th> : null}
+            {mode === "porter" || mode === "admin" ? <th className="px-4 py-3 font-medium">Acao</th> : null}
           </tr>
         </thead>
         <tbody>
@@ -221,7 +221,7 @@ export function PackageTable({
               <td>{item.receivedBy?.name ?? "Não informado"}</td>
               <td>{item.deliveredBy?.name ?? "Não informado"}</td>
               <td>{item.pickedUpByName ?? "Não informado"}</td>
-              {mode === "porter" ? (
+              {mode === "porter" || mode === "admin" ? (
                 <td>
                   {item.status === "WAITING_PICKUP" ? (
                     <PackageDeliveryForm packageId={item.id} />

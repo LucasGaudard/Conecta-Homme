@@ -1,10 +1,14 @@
+import { FeedbackAlert } from "@/components/admin/feedback-alert";
 import { PackageFilters } from "@/components/packages/package-filters";
+import { PackageForm } from "@/components/packages/package-form";
 import { PackageTable } from "@/components/packages/package-table";
 import { ExportButtons } from "@/components/export/export-buttons";
-import { getAdminPackages } from "@/lib/packages/queries";
+import { getAdminPackages, searchUnitsForPackage } from "@/lib/packages/queries";
+import { UserRole } from "@prisma/client";
 
 type AdminPackagesPageProps = {
   searchParams: Promise<{
+    error?: string;
     from?: string;
     packagesDir?: string;
     packagesPage?: string;
@@ -12,6 +16,7 @@ type AdminPackagesPageProps = {
     packagesSort?: string;
     q?: string;
     status?: string;
+    success?: string;
     to?: string;
   }>;
 };
@@ -22,7 +27,10 @@ export default async function AdminPackagesPage({
   searchParams,
 }: AdminPackagesPageProps) {
   const filters = await searchParams;
-  const packages = await getAdminPackages(filters);
+  const [packages, units] = await Promise.all([
+    getAdminPackages(filters),
+    searchUnitsForPackage(filters.q ?? "", UserRole.ADMIN),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -35,6 +43,7 @@ export default async function AdminPackagesPage({
         </p>
       </div>
 
+      <FeedbackAlert error={filters.error} success={filters.success} />
       <PackageFilters
         mode="admin"
         defaultQuery={filters.q}
@@ -42,6 +51,7 @@ export default async function AdminPackagesPage({
         defaultFrom={filters.from}
         defaultTo={filters.to}
       />
+      <PackageForm query={filters.q ?? ""} units={units} />
       <div className="flex justify-end">
         <ExportButtons
           basePath="/admin/encomendas/export"
