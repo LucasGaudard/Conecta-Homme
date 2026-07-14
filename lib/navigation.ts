@@ -25,7 +25,7 @@ export const adminNavigation: NavigationItem[] = [
   { title: "Reservas", href: "/admin/reservas", icon: "calendar" },
   { title: "Encomendas", href: "/admin/encomendas", icon: "package" },
   { title: "Notificações", href: "/admin/notificacoes", icon: "bell" },
-  { title: "Moradores", href: "/admin/unidades", icon: "users" },
+  { title: "Moradores", href: "/admin/moradores", icon: "users" },
   { title: "Relatórios", href: "/admin/relatorios", icon: "chart" },
   { title: "Auditoria", href: "/admin/auditoria", icon: "audit" },
   { title: "Configurações", href: "/admin/configuracoes", icon: "settings" },
