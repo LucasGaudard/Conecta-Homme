@@ -68,6 +68,27 @@
     @apply text-xs leading-5 text-slate-500;
   }
 
+  .sidebar-scrollbar {
+    scrollbar-color: rgb(255 255 255 / 0.24) transparent;
+    scrollbar-width: thin;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-white/20;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-white/30;
+  }
+
   .table-shell {
     @apply max-w-full overflow-x-auto rounded-lg border border-slate-200/80 bg-white shadow-soft;
     -webkit-overflow-scrolling: touch;

@@ -55,8 +55,8 @@ export function SidebarNav({ layout = "desktop", navigation }: SidebarNavProps) 
       className={cn(
         "flex gap-2",
         layout === "mobile"
-          ? "max-h-[55vh] flex-col overflow-y-auto px-4 pb-4"
-          : "overflow-x-auto px-4 pb-4 lg:flex-col lg:overflow-visible lg:px-3 lg:py-4",
+          ? "sidebar-scrollbar max-h-[55vh] flex-col overflow-y-auto px-4 pb-4"
+          : "overflow-x-auto px-4 pb-4 lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:px-3 lg:py-4 sidebar-scrollbar",
       )}
     >
       {navigation.map((item, index) => {

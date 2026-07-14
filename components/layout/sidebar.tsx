@@ -24,7 +24,7 @@ const profileLabels = {
 
 export function Sidebar({ navigation, profile, user }: SidebarProps) {
   return (
-    <aside className="bg-navy-950 text-white shadow-elevated lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:w-72">
+    <aside className="bg-navy-950 text-white shadow-elevated lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:h-screen lg:w-72">
       <details className="group border-b border-white/10 lg:hidden">
         <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 marker:hidden [&::-webkit-details-marker]:hidden">
           <div className="flex min-w-0 items-center gap-3">
@@ -70,7 +70,7 @@ export function Sidebar({ navigation, profile, user }: SidebarProps) {
         </div>
       </details>
 
-      <div className="hidden h-full flex-col lg:flex">
+      <div className="hidden h-full min-h-0 flex-col lg:flex">
         <div className="flex h-20 items-center gap-3 border-b border-white/10 px-5">
           <CondotechBrand imageClassName="bg-white" showText={false} />
           <div className="min-w-0">
