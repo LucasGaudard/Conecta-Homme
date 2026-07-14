@@ -9,7 +9,7 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 };
 
-const DISMISSED_KEY = "condotech-install-dismissed";
+const DISMISSED_KEY = "condotech-install-guidance-dismissed-v2";
 
 function isStandaloneMode() {
   const navigatorWithStandalone = window.navigator as Navigator & {
@@ -22,8 +22,23 @@ function isStandaloneMode() {
   );
 }
 
+function isIOSDevice() {
+  const navigatorWithStandalone = window.navigator as Navigator & {
+    standalone?: boolean;
+  };
+  const userAgent = window.navigator.userAgent.toLowerCase();
+
+  return (
+    /iphone|ipad|ipod/.test(userAgent) ||
+    (userAgent.includes("macintosh") && navigator.maxTouchPoints > 1) ||
+    navigatorWithStandalone.standalone === true
+  );
+}
+
 export function PwaInstallPrompt() {
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [mode, setMode] = useState<"manual" | "prompt" | null>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -31,15 +46,28 @@ export function PwaInstallPrompt() {
       return;
     }
 
+    let installPromptReceived = false;
+    const fallbackTimeout = window.setTimeout(() => {
+      if (!installPromptReceived && !isStandaloneMode()) {
+        setIsIOS(isIOSDevice());
+        setMode("manual");
+        setVisible(true);
+      }
+    }, 2500);
+
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
+      installPromptReceived = true;
+      window.clearTimeout(fallbackTimeout);
       setInstallEvent(event as BeforeInstallPromptEvent);
+      setMode("prompt");
       setVisible(true);
     };
 
     const handleInstalled = () => {
       setVisible(false);
       setInstallEvent(null);
+      setMode(null);
       window.localStorage.setItem(DISMISSED_KEY, "true");
     };
 
@@ -47,12 +75,13 @@ export function PwaInstallPrompt() {
     window.addEventListener("appinstalled", handleInstalled);
 
     return () => {
+      window.clearTimeout(fallbackTimeout);
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
       window.removeEventListener("appinstalled", handleInstalled);
     };
   }, []);
 
-  if (!visible || !installEvent) {
+  if (!visible || !mode) {
     return null;
   }
 
@@ -63,6 +92,7 @@ export function PwaInstallPrompt() {
     const choice = await installEvent.userChoice;
     setVisible(false);
     setInstallEvent(null);
+    setMode(null);
 
     if (choice.outcome === "dismissed") {
       window.localStorage.setItem(DISMISSED_KEY, "true");
@@ -74,6 +104,13 @@ export function PwaInstallPrompt() {
     setVisible(false);
   }
 
+  const description =
+    mode === "prompt"
+      ? "Abra o CONDOTECH em modo app neste dispositivo."
+      : isIOS
+        ? "No Safari, toque em Compartilhar e selecione Adicionar à Tela de Início."
+        : "Abra o menu do navegador e escolha Instalar app ou Adicionar à tela inicial.";
+
   return (
     <div className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-elevated sm:bottom-6">
       <div className="flex items-center gap-3">
@@ -83,12 +120,14 @@ export function PwaInstallPrompt() {
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-navy-950">Instalar aplicativo</p>
           <p className="text-xs leading-5 text-slate-500">
-            Abra o CONDOTECH em modo app neste dispositivo.
+            {description}
           </p>
         </div>
-        <Button type="button" size="sm" onClick={installApp}>
-          Instalar
-        </Button>
+        {mode === "prompt" ? (
+          <Button type="button" size="sm" onClick={installApp}>
+            Instalar
+          </Button>
+        ) : null}
         <Button
           type="button"
           variant="ghost"

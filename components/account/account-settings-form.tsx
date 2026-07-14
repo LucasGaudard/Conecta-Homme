@@ -1,6 +1,5 @@
 import type { UserRole } from "@prisma/client";
 import { FeedbackAlert } from "@/components/admin/feedback-alert";
-import { AccountAvatarCard } from "@/components/account/account-avatar-card";
 import { AccountInfoCard } from "@/components/account/account-info-card";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -30,10 +29,10 @@ export function AccountSettingsForm({
   return (
     <div className="grid gap-6 xl:grid-cols-[0.9fr_1.4fr]">
       <div className="space-y-4">
-        <AccountAvatarCard name={user.name} />
         <AccountInfoCard
           createdAt={user.createdAt}
           email={user.email}
+          name={user.name}
           role={user.role}
           username={user.username}
         />

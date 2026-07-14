@@ -1,10 +1,12 @@
 import type { UserRole } from "@prisma/client";
 import { CalendarDays, ShieldCheck, UserRound } from "lucide-react";
+import { AvatarInitial } from "@/components/ui/avatar";
 import { accountRoleLabels, formatAccountDate } from "@/lib/account/format";
 
 type AccountInfoCardProps = {
   createdAt: Date;
   email: string;
+  name: string;
   role: UserRole;
   username?: string | null;
 };
@@ -12,18 +14,25 @@ type AccountInfoCardProps = {
 export function AccountInfoCard({
   createdAt,
   email,
+  name,
   role,
   username,
 }: AccountInfoCardProps) {
   return (
     <section className="surface-card p-5">
-      <div className="mb-4">
-        <h3 className="text-base font-semibold text-navy-950">
-          Informacoes da conta
-        </h3>
-        <p className="mt-1 text-sm text-slate-500">
-          Dados estruturais do acesso logado.
-        </p>
+      <div className="mb-5 flex items-center gap-4">
+        <AvatarInitial
+          name={name}
+          className="h-16 w-16 border-navy-100 bg-navy-950 text-xl text-white"
+        />
+        <div className="min-w-0">
+          <h3 className="truncate text-base font-semibold text-navy-950">
+            {name}
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            {accountRoleLabels[role]}
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
