@@ -280,6 +280,40 @@ export async function searchPorterUnits(query: string) {
   });
 }
 
+export async function getPorterVisitors() {
+  const { condominiumId } = await requireCondominiumRole("PORTER");
+
+  return prisma.visitAuthorization.findMany({
+    where: {
+      condominiumId,
+      status: VisitorStatus.AUTHORIZED,
+      unit: {
+        condominiumId,
+      },
+      visitor: {
+        condominiumId,
+      },
+    },
+    include: {
+      unit: {
+        select: {
+          apartment: true,
+          block: true,
+          responsibleName: true,
+        },
+      },
+      visitor: {
+        select: {
+          document: true,
+          name: true,
+          phone: true,
+        },
+      },
+    },
+    orderBy: [{ startsAt: "asc" }, { createdAt: "desc" }],
+  });
+}
+
 export async function getRecentAccessLogs(condominiumId?: string) {
   const context = condominiumId
     ? { condominiumId }

@@ -40,7 +40,7 @@ export const superAdminNavigation: NavigationItem[] = [
 
 export const porterNavigation: NavigationItem[] = [
   { title: "Dashboard", href: "/portaria", icon: "home" },
-  { title: "Visitantes", href: "/portaria", icon: "users" },
+  { title: "Visitantes", href: "/portaria/visitantes", icon: "users" },
   { title: "Encomendas", href: "/portaria/encomendas", icon: "package" },
   { title: "Reservas", href: "/portaria/reservas", icon: "calendar" },
   { title: "Notificações", href: "/portaria/notificacoes", icon: "bell" },
