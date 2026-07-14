@@ -43,6 +43,14 @@ Para recuperacao de senha por e-mail, configure tambem:
 
 Em desenvolvimento, se `RESEND_API_KEY` ou `EMAIL_FROM` nao estiverem configurados, o link de redefinicao e registrado no console do servidor. Em producao, configure as variaveis antes de liberar o fluxo para usuarios reais.
 
+Para upload de fotos de encomendas, configure Cloudinary no servidor:
+
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
+
+Essas variaveis nao devem ser expostas ao cliente. O upload aceita JPG, JPEG, PNG e WEBP, com limite de 5 MB por foto. As imagens sao organizadas em `condotech/condominiums/{condominiumId}/packages/`.
+
 ## 3. Banco de Dados
 
 Use PostgreSQL gerenciado com SSL habilitado quando recomendado pelo provedor.
@@ -97,6 +105,7 @@ Teste os fluxos abaixo em ambiente publicado:
 - Visitantes.
 - QR Code.
 - Encomendas.
+- Upload e visualizacao de foto de encomenda como Admin, Portaria e Morador.
 - NotificaÃ§Ãµes.
 - ConfiguraÃ§Ãµes da conta.
 - ConfiguraÃ§Ãµes do condomÃ­nio.

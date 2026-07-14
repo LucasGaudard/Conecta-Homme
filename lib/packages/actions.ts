@@ -5,6 +5,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAuditLog } from "@/lib/audit/logger";
 import { requireCondominiumRole } from "@/lib/auth/authorization";
+import {
+  deleteCloudinaryImage,
+  uploadPackagePhoto,
+} from "@/lib/cloudinary/package-photo";
 import { handleActionError } from "@/lib/errors/handle-action-error";
 import { prisma } from "@/lib/prisma";
 import { createPackageSchema, deliverPackageSchema } from "@/lib/packages/validation";
@@ -43,7 +47,6 @@ export async function createPackageAction(formData: FormData) {
   const parsed = createPackageSchema.safeParse({
     carrier: getStringValue(formData, "carrier"),
     description: getStringValue(formData, "description"),
-    photoUrl: getStringValue(formData, "photoUrl"),
     pickupCode: getStringValue(formData, "pickupCode"),
     query: getStringValue(formData, "query"),
     trackingCode: getStringValue(formData, "trackingCode"),
@@ -57,6 +60,7 @@ export async function createPackageAction(formData: FormData) {
   }
 
   const data = parsed.data;
+  let uploadedPhoto: Awaited<ReturnType<typeof uploadPackagePhoto>> = null;
   const unit = await prisma.unit.findFirst({
     where: {
       condominiumId,
@@ -72,13 +76,15 @@ export async function createPackageAction(formData: FormData) {
   }
 
   try {
-    const createdPackage = await prisma.$transaction(async (tx) => {
+    uploadedPhoto = await uploadPackagePhoto(formData.get("packagePhoto"), condominiumId);
+
+    await prisma.$transaction(async (tx) => {
       const packageRecord = await tx.package.create({
         data: {
           carrier: data.carrier,
           condominiumId,
           description: data.description,
-          photoUrl: data.photoUrl,
+          photoUrl: uploadedPhoto?.secureUrl,
           pickupCode: data.pickupCode,
           receivedAt: new Date(),
           receivedById: user.id,
@@ -99,24 +105,31 @@ export async function createPackageAction(formData: FormData) {
         },
       });
 
-      return packageRecord;
-    });
-
-    await createAuditLog({
-      action: "CREATE",
-      description: "Encomenda cadastrada para unidade.",
-      entityId: createdPackage.id,
-      entityType: "Package",
-      module: "PACKAGE",
-      user,
+      await createAuditLog(
+        {
+          action: "CREATE",
+          description: "Encomenda cadastrada para unidade.",
+          entityId: packageRecord.id,
+          entityType: "Package",
+          module: "PACKAGE",
+          user,
+        },
+        tx,
+      );
     });
   } catch (error) {
+    if (uploadedPhoto) {
+      await deleteCloudinaryImage(uploadedPhoto.publicId).catch((cleanupError) => {
+        console.error("[packages] failed to cleanup package photo", cleanupError);
+      });
+    }
+
     redirectToPackages(path, data.query, {
       error: handleActionError(error, {
         context: {
           action: "createPackageAction",
           condominiumId,
-          metadata: { unitId: data.unitId },
+          metadata: { hasPhoto: Boolean(uploadedPhoto), unitId: data.unitId },
           module: "PACKAGE",
           role: user.role,
           userId: user.id,

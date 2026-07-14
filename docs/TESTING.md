@@ -40,9 +40,17 @@ Use esta checklist antes de promover a V2.0. Prepare pelo menos dois condominios
 ### Encomendas
 
 - Como Portaria A, registrar encomenda para unidade de A.
+- Registrar encomenda sem foto e confirmar que continua sendo aceita.
+- Registrar encomenda com JPG valido como Admin A.
+- Registrar encomenda com PNG ou WEBP valido como Portaria A.
+- Tentar anexar arquivo maior que 5 MB e confirmar recusa amigavel.
+- Tentar anexar PDF ou outro formato e confirmar recusa amigavel.
 - Confirmar que Morador A e Admin A visualizam a encomenda.
+- Confirmar que Admin A, Portaria A e Morador A visualizam miniatura e conseguem abrir a foto ampliada.
 - Confirmar que Portaria B, Morador B e Admin B nao visualizam a encomenda de A.
 - Marcar entrega em A e confirmar que B continua sem acesso.
+- Confirmar que a foto continua visivel apos marcar a encomenda como entregue.
+- Simular falha de Cloudinary em ambiente controlado e confirmar que a encomenda nao e criada parcialmente.
 
 ### Reservas
 
@@ -160,10 +168,14 @@ Use esta lista antes de deploy, demonstração ou entrega. Execute os testes com
 
 - Como Portaria, acesse `/portaria/encomendas`.
 - Busque unidade.
+- Cadastre encomenda sem foto.
+- Cadastre encomenda com foto JPG, PNG ou WEBP de ate 5 MB.
+- Tente cadastrar com PDF e com imagem maior que 5 MB, esperando bloqueio.
 - Cadastre encomenda com transportadora, código e descrição.
 - Confirme notificação ao morador.
 - Marque encomenda como entregue.
 - Como Morador, acesse `/morador/encomendas`.
+- Confirme que a miniatura da foto aparece e o link abre a imagem.
 - Como Admin, acesse `/admin/encomendas`, filtre e confira a tabela.
 
 ## 9. Notificações

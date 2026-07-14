@@ -18,7 +18,6 @@ const optionalText = z
 export const createPackageSchema = z.object({
   carrier: optionalText,
   description: optionalText,
-  photoUrl: optionalText.pipe(z.string().url("Informe uma URL de foto válida.").optional()),
   pickupCode: optionalText,
   query: z.string().optional(),
   trackingCode: optionalText,
