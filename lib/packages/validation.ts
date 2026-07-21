@@ -15,9 +15,19 @@ const optionalText = z
   .transform((value) => (value.length > 0 ? value : undefined))
   .optional();
 
+const packageDescription = z
+  .string()
+  .transform((value) => value.trim().replace(/\s+/g, " "))
+  .pipe(
+    z
+      .string()
+      .min(3, "Informe uma descrição da encomenda.")
+      .max(300, "A descrição deve ter no máximo 300 caracteres."),
+  );
+
 export const createPackageSchema = z.object({
   carrier: optionalText,
-  description: optionalText,
+  description: packageDescription,
   pickupCode: optionalText,
   query: z.string().optional(),
   trackingCode: optionalText,

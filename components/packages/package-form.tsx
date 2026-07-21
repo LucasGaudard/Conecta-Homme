@@ -4,7 +4,13 @@
 
 import type { Unit } from "@prisma/client";
 import { ImagePlus, PackagePlus, X } from "lucide-react";
-import { type ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  type ChangeEvent,
+  type FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -19,7 +25,9 @@ const acceptedImageTypes = ["image/jpeg", "image/png", "image/webp"];
 const maxPhotoSize = 5 * 1024 * 1024;
 
 export function PackageForm({ query, units }: PackageFormProps) {
+  const descriptionInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [descriptionError, setDescriptionError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [photoName, setPhotoName] = useState<string | null>(null);
@@ -62,7 +70,7 @@ export function PackageForm({ query, units }: PackageFormProps) {
     }
 
     if (!acceptedImageTypes.includes(file.type)) {
-      setPhotoError("Envie uma foto em JPG, PNG ou WEBP.");
+      setPhotoError("Use uma imagem JPG, PNG ou WEBP.");
       event.target.value = "";
       return;
     }
@@ -77,8 +85,29 @@ export function PackageForm({ query, units }: PackageFormProps) {
     setPreviewUrl(URL.createObjectURL(file));
   }
 
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    const description = descriptionInputRef.current?.value.trim().replace(/\s+/g, " ") ?? "";
+
+    if (description.length < 3) {
+      event.preventDefault();
+      setDescriptionError("Informe uma descrição da encomenda.");
+      descriptionInputRef.current?.focus();
+      return;
+    }
+
+    setDescriptionError(null);
+
+    if (descriptionInputRef.current) {
+      descriptionInputRef.current.value = description;
+    }
+  }
+
   return (
-    <form action={createPackageAction} className="surface-card space-y-5 p-5">
+    <form
+      action={createPackageAction}
+      className="surface-card space-y-5 p-5"
+      onSubmit={handleSubmit}
+    >
       <input type="hidden" name="query" value={query} />
       <div>
         <h3 className="text-base font-semibold text-navy-950">Cadastrar encomenda</h3>
@@ -88,7 +117,7 @@ export function PackageForm({ query, units }: PackageFormProps) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-2 sm:col-span-2">
-          <span className="field-label">Unidade</span>
+          <span className="field-label">Unidade *</span>
           <select
             name="unitId"
             required
@@ -108,24 +137,41 @@ export function PackageForm({ query, units }: PackageFormProps) {
           ) : null}
         </label>
         <label className="space-y-2">
-          <span className="field-label">Transportadora</span>
+          <span className="field-label">Transportadora — opcional</span>
           <Input name="carrier" placeholder="Opcional" />
         </label>
         <label className="space-y-2">
-          <span className="field-label">Código de rastreio</span>
+          <span className="field-label">Código de rastreio — opcional</span>
           <Input name="trackingCode" placeholder="Opcional" />
         </label>
         <label className="space-y-2">
-          <span className="field-label">Código de retirada</span>
+          <span className="field-label">Código de retirada — opcional</span>
           <Input name="pickupCode" placeholder="Opcional" />
         </label>
         <label className="space-y-2 sm:col-span-2">
-          <span className="field-label">Descrição</span>
-          <Input name="description" placeholder="Opcional" />
+          <span className="field-label">Descrição *</span>
+          <Input
+            ref={descriptionInputRef}
+            aria-describedby="package-description-error"
+            aria-invalid={Boolean(descriptionError)}
+            maxLength={300}
+            minLength={3}
+            name="description"
+            onChange={() => setDescriptionError(null)}
+            placeholder="Ex.: Caixa pequena, pacote de loja ou documento"
+            required
+          />
+          {descriptionError ? (
+            <p id="package-description-error" className="text-sm text-red-600">
+              {descriptionError}
+            </p>
+          ) : null}
         </label>
         <div className="space-y-3 sm:col-span-2">
           <div className="space-y-2">
-            <span className="field-label">Foto da encomenda</span>
+            <span className="field-label">
+              Foto da encomenda — opcional, mas recomendada
+            </span>
             <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50/70 px-4 py-6 text-center transition hover:border-slate-400 hover:bg-slate-50">
               <ImagePlus className="h-8 w-8 text-slate-400" />
               <span className="mt-2 text-sm font-medium text-navy-950">
@@ -143,6 +189,9 @@ export function PackageForm({ query, units }: PackageFormProps) {
                 type="file"
               />
             </label>
+            <p className="text-sm text-slate-500">
+              Recomendado para facilitar a identificação pelo morador.
+            </p>
           </div>
 
           {photoError ? <p className="text-sm text-red-600">{photoError}</p> : null}
@@ -179,7 +228,7 @@ export function PackageForm({ query, units }: PackageFormProps) {
         <SubmitButton
           disabled={units.length === 0}
           className="w-full sm:w-auto"
-          pendingLabel="Enviando..."
+          pendingLabel={photoName ? "Enviando foto..." : "Cadastrando..."}
         >
           <PackagePlus className="h-4 w-4" />
           Cadastrar encomenda

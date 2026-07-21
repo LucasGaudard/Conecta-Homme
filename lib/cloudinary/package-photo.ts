@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { AppError } from "@/lib/errors/app-error";
 
 const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 const maxPackagePhotoSize = 5 * 1024 * 1024;
@@ -13,13 +14,32 @@ type UploadedPackagePhoto = {
   secureUrl: string;
 };
 
+type PackagePhotoUploadErrorCode =
+  | "cloudinary_failure"
+  | "invalid_type"
+  | "missing_config"
+  | "too_large";
+
+class PackagePhotoUploadError extends AppError {
+  readonly code: PackagePhotoUploadErrorCode;
+
+  constructor(code: PackagePhotoUploadErrorCode, message: string) {
+    super(message);
+    this.name = "PackagePhotoUploadError";
+    this.code = code;
+  }
+}
+
 function getCloudinaryConfig() {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
   const apiKey = process.env.CLOUDINARY_API_KEY;
   const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
   if (!cloudName || !apiKey || !apiSecret) {
-    throw new Error("Upload de foto indisponível. Acione o suporte.");
+    throw new PackagePhotoUploadError(
+      "missing_config",
+      "O serviço de imagens não está configurado.",
+    );
   }
 
   return { apiKey, apiSecret, cloudName };
@@ -39,16 +59,42 @@ function signCloudinaryParams(
 
 function assertPackagePhoto(file: File) {
   if (!allowedImageTypes.has(file.type)) {
-    throw new Error("Envie uma foto em JPG, PNG ou WEBP.");
+    throw new PackagePhotoUploadError(
+      "invalid_type",
+      "Use uma imagem JPG, PNG ou WEBP.",
+    );
   }
 
   if (file.size > maxPackagePhotoSize) {
-    throw new Error("A foto deve ter no máximo 5 MB.");
+    throw new PackagePhotoUploadError(
+      "too_large",
+      "A foto deve ter no máximo 5 MB.",
+    );
   }
 }
 
 function isCloudinaryUploadResponse(value: unknown): value is CloudinaryUploadResponse {
   return Boolean(value && typeof value === "object");
+}
+
+function getCloudinaryErrorMessage(value: unknown) {
+  if (!value || typeof value !== "object" || !("error" in value)) {
+    return undefined;
+  }
+
+  const error = (value as { error?: unknown }).error;
+
+  if (!error || typeof error !== "object" || !("message" in error)) {
+    return undefined;
+  }
+
+  const message = (error as { message?: unknown }).message;
+
+  return typeof message === "string" ? message : undefined;
+}
+
+function logPackagePhotoUploadError(details: Record<string, unknown>) {
+  console.error("[package-photo-upload-error]", details);
 }
 
 export async function uploadPackagePhoto(
@@ -82,17 +128,47 @@ export async function uploadPackagePhoto(
   formData.set("public_id", publicId);
   formData.set("signature", signature);
 
-  const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-    {
-      body: formData,
-      method: "POST",
-    },
-  );
+  let response: Response;
+
+  try {
+    response = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      {
+        body: formData,
+        method: "POST",
+      },
+    );
+  } catch (error) {
+    logPackagePhotoUploadError({
+      cloudNameConfigured: Boolean(cloudName),
+      error: error instanceof Error ? error.message : String(error),
+      fileSize: value.size,
+      fileType: value.type,
+      stage: "request",
+    });
+    throw new PackagePhotoUploadError(
+      "cloudinary_failure",
+      "Não foi possível enviar a foto. Tente novamente ou cadastre sem foto.",
+    );
+  }
+
   const body: unknown = await response.json().catch(() => null);
 
   if (!response.ok || !isCloudinaryUploadResponse(body) || !body.secure_url || !body.public_id) {
-    throw new Error("Não foi possível enviar a foto da encomenda.");
+    logPackagePhotoUploadError({
+      cloudinaryMessage: getCloudinaryErrorMessage(body),
+      cloudNameConfigured: Boolean(cloudName),
+      fileSize: value.size,
+      fileType: value.type,
+      responseOk: response.ok,
+      status: response.status,
+      statusText: response.statusText,
+      stage: "response",
+    });
+    throw new PackagePhotoUploadError(
+      "cloudinary_failure",
+      "Não foi possível enviar a foto. Tente novamente ou cadastre sem foto.",
+    );
   }
 
   return {
