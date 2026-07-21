@@ -101,6 +101,11 @@ export function PackageForm({ query, units }: PackageFormProps) {
               </option>
             ))}
           </select>
+          {units.length === 0 ? (
+            <p className="text-sm text-slate-500">
+              Nenhuma unidade ativa encontrada neste condomínio.
+            </p>
+          ) : null}
         </label>
         <label className="space-y-2">
           <span className="field-label">Transportadora</span>

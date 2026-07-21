@@ -1,4 +1,4 @@
-import { PackageStatus } from "@prisma/client";
+import { PackageStatus, UnitStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { requireCondominiumRole } from "@/lib/auth/authorization";
 import { prisma } from "@/lib/prisma";
@@ -13,23 +13,21 @@ export async function searchUnitsForPackage(
   const { condominiumId } = await requireCondominiumRole(role);
   const normalizedQuery = query.trim();
 
-  if (!normalizedQuery) {
-    return [];
-  }
-
   return prisma.unit.findMany({
     where: {
       condominiumId,
-      OR: [
-        { block: { contains: normalizedQuery, mode: "insensitive" } },
-        { apartment: { contains: normalizedQuery, mode: "insensitive" } },
-        { responsibleName: { contains: normalizedQuery, mode: "insensitive" } },
-        { phone: { contains: normalizedQuery, mode: "insensitive" } },
-        { email: { contains: normalizedQuery, mode: "insensitive" } },
-      ],
+      status: UnitStatus.ACTIVE,
+      OR: normalizedQuery
+        ? [
+            { block: { contains: normalizedQuery, mode: "insensitive" } },
+            { apartment: { contains: normalizedQuery, mode: "insensitive" } },
+            { responsibleName: { contains: normalizedQuery, mode: "insensitive" } },
+            { phone: { contains: normalizedQuery, mode: "insensitive" } },
+            { email: { contains: normalizedQuery, mode: "insensitive" } },
+          ]
+        : undefined,
     },
     orderBy: [{ block: "asc" }, { apartment: "asc" }],
-    take: 8,
   });
 }
 
